@@ -1,0 +1,48 @@
+<h1><?php echo $this->titlePage; ?></h1>
+<form action="" method=get">
+    <div class="formfield">
+        <label for="">Nome:</label>
+        <input id="nomeMerc" name="nomeMerc" type="text">
+    </div>
+    <div class="formbutton">
+        <button id="btBuscarMerc" type="button">Buscar</button>
+        <button id="btNovaMerc" type="button" value="/mercadoria/formulario">Novo</button> 
+    </div>
+</form>
+
+<br />
+
+<!-- grid para exibir os dados -->
+<div id="divResMerc">
+
+</div>
+
+<br />
+
+<br />
+
+<script>
+
+    var mercAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
+
+    $(function(){
+    
+        $('#btNovaMerc').click(function(){
+            var url = $(this).attr('value');
+            $('#ui-tabs-8').load(url);
+            return false;
+        });
+    
+    
+        $( "#nomeMerc" ).autocomplete({
+            source: mercAutoComplete
+        });
+    
+        $('#divResMerc').load('/mercadoria/grid/nome/' + $('#nomeMerc').val());
+        $('#btBuscarMerc').click(function(){
+        
+            $('#divResMerc').load('/mercadoria/grid/nome/' + $('#nomeMerc').val());
+        });
+    }); 
+    
+</script>

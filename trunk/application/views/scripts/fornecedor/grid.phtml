@@ -1,0 +1,129 @@
+<table>
+    <tr>
+        <th>Razão Social</th>
+        <th>CNPJ</th>
+        <th>Telefone</th>
+        <th>E-mail</th>
+        <th>Ações</th>
+    </tr>
+
+    <tr class="alt" >
+        <?php foreach ($this->paginator as $k => $fornecedor): ?>
+        <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
+            <td><?php echo $fornecedor['razao-social'] ?></td>
+            <td><?php echo $fornecedor['cnpj'] ?></td>
+            <td><?php echo $fornecedor['telefone'] ?></td>
+            <td><?php echo $fornecedor['email'] ?></td>
+            <td>
+                <a class="linkEditar" href="/fornecedor/formulario/id/<?php echo $fornecedor['id_fornecedor'] ?>">
+                    <img src="/img/edit-icon.gif" title="Editar registro" />
+                </a>
+                <a class="btExcluir" href="/fornecedor/excluir/id/<?php echo $fornecedor['id_fornecedor'] ?>">
+                    <img src="/img/delete-icon.gif" title="Excluir Registro" />
+                </a>
+            </td>
+        </tr>    
+    <?php endforeach; ?>
+
+</table>
+
+<?php echo $this->paginationControl($this->paginator, 'Sliding', 'my_pagination_control.phtml'); ?>
+
+<div id="dcUsuario">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse fornecedor?</p>
+</div>
+
+<div id="fornecedorErro">
+    <p>Erro</p>    
+</div>
+
+<div id="fornecedorSucesso">
+    <p>Sucesso</p>    
+</div>
+
+<script>
+    
+    var url = "";
+    $(function(){       
+                
+        $( "#fornecedorSucesso" ).dialog({
+            autoOpen: false
+        });
+        
+        $( "#fornecedorErro" ).dialog({
+            autoOpen: false
+        });
+                
+        $("#dcUsuario").dialog({
+            resizable: false,
+            height:250,
+            width:500,
+            modal: true,
+            autoOpen: false,
+                
+            buttons: {
+                "Ok": function() {
+                    $.get(url, null, function(retorno){
+                        if(retorno.tipo == 'sucesso'){
+                            $('#fornecedorSucesso').html(retorno.msg);
+                            $('#fornecedorSucesso').dialog("open");
+                            $('#fornecedorSucesso').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                                
+                            $('#divResUsuario').load('/fornecedor/grid/nome/' + $('#nomeUsu').val());
+                                
+                        } else {
+                            $('#fornecedorErro').html(retorno.msg);
+                            $('#fornecedorErro').dialog("open");
+                            $('#fornecedorErro').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                            $('#divResUsuario').load('/fornecedor/grid/nome/' + $('#nomeUsu').val());
+                        }                    
+                    }, 'json');
+                    $( this ).dialog("close");
+                    
+                },
+                Cancel: function() {
+                    $('#divResUsuario').load('/fornecedor/grid/nome/' + $('#nomeUsu').val());
+                    $( this ).dialog( "close" );
+                        
+                }
+                    
+            }
+                
+        });
+                
+        $('.pagination a').click(function(){
+           
+            var href = $(this).attr('href');
+            $('#divResUsuario').load(href);
+            return false;
+        });
+        
+        $('.linkEditar').click(function(){
+            var url = $(this).attr('href');
+            $('#ui-tabs-3').load(url);
+            return false;
+        });
+        
+        $('.btExcluir').click(function(){
+            
+            url = $(this).attr('href');
+            $("#dcUsuario").dialog("open");
+            
+            return false;
+        });
+        
+    })
+    
+</script>

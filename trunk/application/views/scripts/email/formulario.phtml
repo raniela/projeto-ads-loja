@@ -1,0 +1,34 @@
+<h1><?php echo $this->titulo; ?></h1>
+
+<!-- formulário -->
+<form action="/email/enviar" method="post" enctype="multipart/form-data">
+    <div class="formfield">
+        <label for="">Seu email:</label>
+        <input id="email_de" name="email_de" type="text" value="<?php echo $this->email['email_de']?>"/>
+    </div>
+    <div class="formfield">
+        <label for="">Senha:</label>
+        <input id="senha" name="senha" type="password" value="<?php echo $this->email['senha']?>"/>
+    </div>
+    <div class="formfield">
+        <label for="">Para:</label>
+        <input id="email_para" name="email_para" type="text" value="<?php echo $this->email['email_para']?>"/>
+    </div>
+    <div class="formfield">
+        <label for="">Assunto:</label>
+        <input id="assunto" name="assunto" type="text" value="<?php echo $this->email['senha']?>"/>
+    </div>
+    <div class="formfield">
+        <label for="">Mensagem:</label>
+        <textarea id="texto"  name="texto" type="text" size="50" ><?php echo $this->email['texto']?></textarea>
+    </div>
+    <div class="formfield">
+        <label for="">Anexo:</label>
+        <input type="file" name="file" id="file" />
+    </div>
+    
+    <div class="formbutton">
+        <input type="submit"  value="Enviar" />
+        <button type="button" onclick="history.back()">Voltar</button> 
+    </div>
+</form>

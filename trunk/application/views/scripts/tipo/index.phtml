@@ -1,0 +1,48 @@
+<h1><?php echo $this->titlePage; ?></h1>
+<form action="" method=get">
+    <div class="formfield">
+        <label for="">Nome:</label>
+        <input id="nomeTipo" name="nomeTipo" type="text">
+    </div>
+    <div class="formbutton">
+        <button id="btBuscarTipo" type="button">Buscar</button>
+        <button id="btNovoTipo" type="button" value="/tipo/formulario">Novo</button> 
+    </div>
+</form>
+
+<br />
+
+<!-- grid para exibir os dados -->
+<div id="divResTipo">
+
+</div>
+
+<br />
+
+<br />
+
+<script>
+
+    var tipoAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
+
+    $(function(){
+    
+        $('#btNovoTipo').click(function(){
+            var url = $(this).attr('value');
+            $('#ui-tabs-7').load(url);
+            return false;
+        });
+    
+    
+        $( "#nomeTipo" ).autocomplete({
+            source: tipoAutoComplete
+        });
+    
+        $('#divResTipo').load('/tipo/grid/nome/' + $('#nomeTipo').val());
+        $('#btBuscarTipo').click(function(){
+        
+            $('#divResTipo').load('/tipo/grid/nome/' + $('#nomeTipo').val());
+        });
+    }); 
+    
+</script>

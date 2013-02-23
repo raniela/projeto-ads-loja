@@ -1,0 +1,126 @@
+<table>
+    <tr>
+        <th>Subtipo</th>
+        <th>Tipo</th>
+        <th>Ações</th>
+    </tr>
+
+    <tr class="alt" >
+        <?php foreach ($this->paginator as $k => $subtipos): ?>
+        <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
+            <td><?php echo $subtipos['subtipo'] ?></td>
+            <td><?php echo $subtipos['tipo'] ?></td>
+
+            <td>
+                <a class="linkEditar" href="/subtipo/formulario/id/<?php echo $subtipo['id_subtipo'] ?>">
+                    <img src="/img/edit-icon.gif" title="Editar registro" />
+                </a>
+                <a class="btExcluir" href="/subtipo/excluir/id/<?php echo $subtipo['id_subtipo'] ?>">
+                    <img src="/img/delete-icon.gif" title="Excluir Registro" />
+                </a>
+            </td>
+        </tr>    
+    <?php endforeach; ?>
+
+</table>
+
+<?php echo $this->paginationControl($this->paginator, 'Sliding', 'my_pagination_control.phtml'); ?>
+
+<div id="dcSubtipo">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse subtipo?</p>
+</div>
+
+<div id="subtipoErro">
+    <p>Erro</p>    
+</div>
+
+<div id="subtipoSucesso">
+    <p>Sucesso</p>    
+</div>
+
+<script>
+    
+    var url = "";
+    $(function(){       
+                
+        $( "#subtipoSucesso" ).dialog({
+            autoOpen: false
+        });
+        
+        $( "#subtipoErro" ).dialog({
+            autoOpen: false
+        });
+                
+        $("#dcSubtipo").dialog({
+            resizable: false,
+            height:250,
+            width:500,
+            modal: true,
+            autoOpen: false,
+                
+            buttons: {
+                "Ok": function() {
+                    $.get(url, null, function(retorno){
+                        if(retorno.tipo == 'sucesso'){
+                            $('#subtipoSucesso').html(retorno.msg);
+                            $('#subtipoSucesso').dialog("open");
+                            $('#subtipoSucesso').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                                
+                            $('#divResSubtipo').load('/subtipo/grid/nome/' + $('#nomeSubtipo').val());
+                                
+                        } else {
+                            $('#subtipoErro').html(retorno.msg);
+                            $('#subtipoErro').dialog("open");
+                            $('#subtipoErro').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                            $('#divResSubtipo').load('/subtipo/grid/nome/' + $('#nomeSubtipo').val());
+                        }                    
+                    }, 'json');
+                    $( this ).dialog("close");
+                    
+                },
+                Cancel: function() {
+                    $('#divResSubtipo').load('/subtipo/grid/nome/' + $('#nomeSubtipo').val());
+                    $( this ).dialog( "close" );
+                        
+                }
+                    
+            }
+                
+        });
+                
+        $('.pagination a').click(function(){
+           
+            var href = $(this).attr('href');
+            $('#divResSubtipo').load(href);
+            return false;
+        });
+        
+        $('.linkEditar').click(function(){
+            var url = $(this).attr('href');
+            $('#ui-tabs-3').load(url);
+            return false;
+        });
+        
+        $('.btExcluir').click(function(){
+            
+            url = $(this).attr('href');
+            $("#dcSubtipo").dialog("open");
+            
+            return false;
+        });
+        
+    })
+    
+</script>

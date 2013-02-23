@@ -1,0 +1,120 @@
+body,html {
+    font-size:100%;
+    margin: 0;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    color: #000;
+    background-color: #fff;
+}
+h1 {
+    font-size:1.4em;
+    color: #2779aa;
+    background-color: transparent;
+    clear: both;
+}
+
+h01 {
+    font-size:1em;
+    color: #2779aa;
+    background-color: transparent;
+    clear: both;
+}
+
+#content {
+    width: 1600px;
+    margin: 0 auto;
+
+}
+label {
+    width: 100px;
+    display: block;
+    float: left;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.formbutton {
+    margin-left: 100px;
+}
+
+.formfield {
+    margin-bottom: 5px;
+}
+
+a {
+    color: #2779aa;
+}
+
+
+/* MENU */
+#logged {
+    font-size: 80%;
+
+}
+#logged #menu {
+    width: 70%;
+    float: left;
+    margin-bottom: 20px;
+}
+
+#logged #user {
+    float: left;
+    width: 30%;
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+
+/* GRID */
+table {
+    border-collapse: collapse;
+    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    width: 100%;
+}
+table td, table th {
+    border: 1px solid #7daecc;
+    padding: 3px 7px 2px;
+}
+table th {
+    background-color: #2779aa;
+    color: #FFFFFF;
+    text-align: left;
+}
+table tr.alt td {
+    background-color: #d3e4ee;
+    color: #000000;
+}
+
+.pagination {
+    width: 100%;
+    text-align: right;
+    font-size: 80%;
+    color: #2779aa;
+}
+
+.pagination a.current {
+    color: #000000 !important;
+}
+
+button, input[type="submit"] {
+    background: #d3e4ee;
+}
+
+.btCancelar {
+    background: blue;
+}
+
+
+.formfield, .formbutton {
+    clear: both;
+        padding: 10px;
+}
+
+input {
+    float: left;
+}
+
+label.error {
+    color: red;
+    width: inherit;
+    float: left;
+ }

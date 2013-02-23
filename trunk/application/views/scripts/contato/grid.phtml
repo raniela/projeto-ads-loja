@@ -1,0 +1,167 @@
+<table>
+
+    <tr>
+
+        <th>Nome</th>
+        <th>Sobrenome</th>
+        <th>Celular</th>
+        <th>Telefone</th>
+        <th>E-email</th>
+        <th>Data Nascimento</th>
+        <th>Grupo</th>
+        <th>Ações</th>
+    </tr>
+
+    <tr class="alt" >
+        <?php foreach ($this->paginator as $k => $contato): ?>
+        <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
+            <td><?php echo $contato['nome'] ?></td>
+            <td><?php echo $contato['sobrenome'] ?></td>
+            <td><?php echo $contato['celular'] ?></td>
+            <td><?php echo $contato['telefone'] ?></td>
+            <td><?php echo $contato['email'] ?></td>
+            <td><?php echo $this->formatarData($contato['data_nascimento']) ?></td>
+            <td><?php echo $contato['nome_grupo'] ?></td>
+            <td>
+                <a class="btConsultarContato" href="/contato/consultar/id/<?php echo $contato['id_contato'] ?>">
+                    <img src="/img/lupa.png" title="Visualizar registro" />
+                </a>                        
+                <a class="linkEditarContato" href="/contato/formulario/id/<?php echo $contato['id_contato'] ?>">
+                    <img src="/img/edit-icon.gif" title="Editar registro" />
+                </a>
+                <a class="btExcluir" href="/contato/excluir/id/<?php echo $contato['id_contato'] ?>">
+                    <img src="/img/delete-icon.gif" title="Excluir Registro" /></a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+
+<?php echo $this->paginationControl($this->paginator, 'Sliding', 'my_pagination_control.phtml'); ?>
+
+<div id="dcContato">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse grupo?</p>
+</div>
+
+<div id="contatoErro">
+    <p>Erro</p>    
+</div>
+
+<div id="contatoSucesso">
+    <p>Sucesso</p>    
+</div>
+
+<script>
+    var url = "";
+    
+    $(function(){
+        
+        $( "#contatoSucesso" ).dialog({
+            autoOpen: false
+        });
+        
+        $( "#contatoErro" ).dialog({
+            autoOpen: false
+        });
+        
+        $('.pagination a').click(function(){      
+            // $(this) pega o obj clicado
+            var href = $(this).attr('href');
+            $('#divResultado').load(href);
+            return false;
+        });
+        
+        $('.btConsultarContato').click(function(){
+            var url = $(this).attr('href');
+            $('#ui-tabs-1').load(url);
+            return false;
+        });
+        
+        $('.linkEditarContato').click(function(){
+            var url = $(this).attr('href');
+            $('#ui-tabs-1').load(url);
+            return false;
+        });
+        
+        
+        $('#dcContato').dialog({
+            resizable: false,
+            height:250,
+            width:500,
+            modal: true,
+            autoOpen: false,
+                    
+            buttons: {
+                Ok: function(){
+                    $.get(url, null, function(retorno){
+                        if(retorno.tipo == 'sucesso'){
+                            $('#contatoSucesso').html(retorno.msg);
+                            $('#contatoSucesso').dialog("open");
+                            $('#contatoSucesso').dialog({
+                                buttons: {
+                                    Ok: function(){
+                                        $(this).dialog("close");
+                                    }
+                                            
+                                }
+                            });
+                            $('#divResultado').load('/contato/grid/nome/' + $('#nomeCon').val() + '/id_grupo/' + $('#id_grupo').val());
+                        }else{
+                            $('#contatoErro').html(retorno.msg);
+                            $('#contatoErro').dialog("open");
+                            $('#contatoErro').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                            $('#divResultado').load('/contato/grid/nome/' + $('#nomeCon').val() + '/id_grupo/' + $('#id_grupo').val());
+                        }
+                    }, 'json');
+                    $( this ).dialog("close");
+                },
+                Cancel: function() {
+                    $('#divResGrupo').load('/grupo/grid/nome/' + $('#nomeGru').val());
+                    $( this ).dialog( "close" );
+                        
+                }
+            }
+                    
+        });
+        
+        
+        $('.btExcluir').click(function(){
+            url = $(this).attr('href');
+            $('#dcContato').dialog("open");
+                    
+            return false;
+        });
+        
+    })
+    
+    function dump(arr,level) {
+        var dumped_text = "";
+        if(!level) level = 0;
+	
+        //The padding given at the beginning of the line.
+        var level_padding = "";
+        for(var j=0;j<level+1;j++) level_padding += "    ";
+	
+        if(typeof(arr) == 'object') { //Array/Hashes/Objects 
+            for(var item in arr) {
+                var value = arr[item];
+			
+                if(typeof(value) == 'object') { //If it is an array,
+                    dumped_text += level_padding + "'" + item + "' ...\n";
+                    dumped_text += dump(value,level+1);
+                } else {
+                    dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
+                }
+            }
+        } else { //Stings/Chars/Numbers etc.
+            dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
+        }
+        return dumped_text;
+    }
+    
+</script>

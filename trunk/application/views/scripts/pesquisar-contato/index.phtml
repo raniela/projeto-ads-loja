@@ -1,0 +1,30 @@
+<form action="" method=get">
+    <div class="formfield">
+        <label for="">ID:</label>
+        <input name="id_contato" id="id_contato" type="text" >
+    </div>
+    <div class="formbutton">
+        <button id="btBuscar" type="button">Buscar</button>
+    </div>
+
+</form>
+
+
+<div id="divResultado">
+
+</div>
+
+<script>
+
+
+    $(function(){
+
+        $('#btBuscar').click(function(){
+
+            $('#divResultado').load('/pesquisar-contato/resultado-pesquisa/id_contato/' + $('#id_contato').val());
+
+        });
+
+    });
+
+</script>

@@ -1,0 +1,48 @@
+<h1><?php echo $this->titlePage; ?></h1>
+<form action="" method=get">
+    <div class="formfield">
+        <label for="">Nome:</label>
+        <input id="nomeSubtipo" name="nomeSubtipo" type="text">
+    </div>
+    <div class="formbutton">
+        <button id="btBuscarSubtipo" type="button">Buscar</button>
+        <button id="btNovoSubtipo" type="button" value="/subtipo/formulario">Novo</button> 
+    </div>
+</form>
+
+<br />
+
+<!-- grid para exibir os dados -->
+<div id="divResSubtipo">
+
+</div>
+
+<br />
+
+<br />
+
+<script>
+
+    var subtipoAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
+
+    $(function(){
+    
+        $('#btNovoSubtipo').click(function(){
+            var url = $(this).attr('value');
+            $('#ui-tabs-6').load(url);
+            return false;
+        });
+    
+    
+        $( "#nomeSubtipo" ).autocomplete({
+            source: subtipoAutoComplete
+        });
+    
+        $('#divResSubtipo').load('/subtipo/grid/nome/' + $('#nomeSubtipo').val());
+        $('#btBuscarSubtipo').click(function(){
+        
+            $('#divResSubtipo').load('/subtipo/grid/nome/' + $('#nomeSubtipo').val());
+        });
+    }); 
+    
+</script>

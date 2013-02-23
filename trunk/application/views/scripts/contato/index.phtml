@@ -1,0 +1,53 @@
+<h1><?php echo $this->titlePage; ?></h1>
+<!-- formulário para filtro -->
+<form action="" method="get">
+    <div class="formfield">
+        <label for="">Nome:</label>
+        <input type="text" name="nomeCon" id="nomeCon">
+    </div>
+    <div class="formfield">
+        <label for="">Grupo:</label>
+        <?php echo $this->formSelect('id_grupo', null, array(), $this->dataCombo); ?>
+    </div>
+    <div class="formbutton">
+        <button id="btBuscarCon" type="button">Buscar</button>
+        <button id="btNovoCont" type="button" href="/contato/formulario/">Novo</button>
+    </div>
+</form>
+
+<br />
+
+<!-- grid para exibir os dados -->
+<div id="divResultado">
+
+</div>
+
+<script>
+    
+    var contatoAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
+   
+    var contato = "contato";
+   
+    $(function(){
+        $( "#nomeCon" ).autocomplete({
+            source: contatoAutoComplete
+        });
+        
+        $('#btNovoCont').click(function(){
+            var url = $(this).attr('href');
+            $('#ui-tabs-1').load(url);
+            return false;
+        });
+        
+               
+        //alert($('#teste').attr('maxlength'));
+        $('#divResultado').load('/contato/grid/nome/' + $('#nomeCon').val() + '/id_grupo/' + $('#id_grupo').val());
+        $('#btBuscarCon').click(function(){
+
+            $('#divResultado').load('/contato/grid/nome/' + $('#nomeCon').val()+ '/id_grupo/' + $('#id_grupo').val());
+
+        });
+
+    });
+
+</script>

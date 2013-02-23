@@ -1,0 +1,48 @@
+<h1><?php echo $this->titlePage; ?></h1>
+<form action="" method=get">
+    <div class="formfield">
+        <label for="">Nome:</label>
+        <input id="nomeUsu" name="nomeUsu" type="text">
+    </div>
+    <div class="formbutton">
+        <button id="btBuscarUsu" type="button">Buscar</button>
+        <button id="btNovoUsu" type="button" value="/usuario/formulario">Novo</button> 
+    </div>
+</form>
+
+<br />
+
+<!-- grid para exibir os dados -->
+<div id="divResUsuario">
+
+</div>
+
+<br />
+
+<br />
+
+<script>
+
+    var usuarioAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
+
+    $(function(){
+    
+        $('#btNovoUsu').click(function(){
+            var url = $(this).attr('value');
+            $('#ui-tabs-3').load(url);
+            return false;
+        });
+    
+    
+        $( "#nomeUsu" ).autocomplete({
+            source: usuarioAutoComplete
+        });
+    
+        $('#divResUsuario').load('/usuario/grid/nome/' + $('#nomeUsu').val());
+        $('#btBuscarUsu').click(function(){
+        
+            $('#divResUsuario').load('/usuario/grid/nome/' + $('#nomeUsu').val());
+        });
+    }); 
+    
+</script>

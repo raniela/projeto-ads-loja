@@ -1,0 +1,76 @@
+<h1><?php echo $this->titulo; ?></h1>
+
+<!-- formulário -->
+
+<form id="formTipo" action="/tipo/salvar" method="post" enctype="multipart/form-data">
+    <div class="formfield">
+        <label for="">Descrição:</label>
+        <input class="required teste" id="descricao" name="descricao" type="text" size="30" value=""/>
+    </div>
+    <div class="formbutton">
+        <input id="btEnviar" type="submit" value="Enviar" />
+        <button type="button" id="btVoltarTipo">Voltar</button> 
+    </div>
+</form>
+
+<div id="sucessoTipo">
+    <p>Sucesso</p>
+</div>
+
+
+<script>
+
+    $(function(){
+
+        $( "#sucessoTipo" ).dialog({
+            autoOpen: false
+        });
+        
+        //$('#form').populate(dataForm);
+        
+        $('#formTipo').validate({
+            submitHandler: function(form){
+                jQuery(form).ajaxSubmit({
+                    dataType:  'json', 
+                    success: function(r){
+                        if(r.tipo == 'sucesso'){                    
+                            $('#sucessoTipo p').html(r.msg);
+                            $('#sucessoTipo').dialog("open");
+                            $( "#sucessoTipo" ).dialog({
+                                modal: true,
+                                buttons: {
+                                    Ok: function() {
+                                        $(this).dialog("close");
+                                        window.location = r.url;
+                                    }
+                                }
+                            });
+                            
+                            //$('#divMsg').html(r.msg)
+                            //window.location = r.url;
+                        } else {
+                            $('#sucessoTipo p').html(r.msg);
+                            $('#sucessoTipo').dialog("open");
+                            $( "#sucessoTipo" ).dialog({
+                                modal: true,
+                                buttons: {
+                                    Ok: function() {
+                                        $(this).dialog("close");
+                                        window.location = r.url;
+                                    }
+                                }
+                                
+                            });
+                        }
+          
+                    } 
+                });
+            }
+        });
+        
+        $('#btVoltarTipo').click(function(){
+            $('#ui-tabs-7').load('/tipo/index/menu/1');
+        })
+        
+    });
+</script>

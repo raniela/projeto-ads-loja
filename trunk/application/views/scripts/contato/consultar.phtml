@@ -1,0 +1,101 @@
+<h1><?php echo $this->titlePage ?></h1>
+
+<div>
+
+    <p>
+        <label>Celular: </label> <?php echo $this->contato['celular'] ?>
+    </p>
+    <p>
+        <label>Telefone: </label> <?php echo $this->contato['telefone'] ?>
+    </p>
+    <p>
+        <label>E-mail: </label> <?php echo $this->contato['email'] ?>
+    </p>
+    <p>
+        <label>Grupo: </label> <?php echo $this->grupo['nome'] ?>
+    </p>
+    <p>
+        <button onclick="window.print()">Imprimir</button>
+        <button class="btEditarConsulta" href="/contato/formulario/id/<?php echo $this->contato['id_contato'] ?>">Editar</button>
+        <button class="btExcluirConsultar" type="button" href="/contato/excluir/id/<?php echo $this->contato['id_contato'] ?>">Excluir</button>
+        <button class="btVoltarConsulta">Voltar</button>
+    </p>
+</div>
+<div>
+    <img  src="/files/<?php echo $this->contato['foto'] ?>"  width="250"/>
+</div>
+
+<div id="dcConsultar">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse contato?</p>
+</div>
+
+
+<script>
+    
+    $(function(){
+        
+        $('.btEditarConsulta').click(function(){
+            var url = $(this).attr('href');
+            $('#ui-tabs-1').load(url);
+        })
+        
+        $('.btVoltarConsulta').click(function(){
+            $('#ui-tabs-1').load('/contato/index/menu/1');
+        })
+        
+        $('#dcConsultar').dialog({
+            resizable: false,
+            height:250,
+            width:500,
+            modal: true,
+            autoOpen: false,
+                    
+            buttons: {
+                Ok: function(){
+                    $.get(url, null, function(retorno){
+                        if(retorno.tipo == 'sucesso'){
+                            $('#dcConsultar').html(retorno.msg);
+                            $('#dcConsultar').dialog("open");
+                            $('#dcConsultar').dialog({
+                                buttons: {
+                                    Ok: function(){
+                                        $(this).dialog("close");
+                                    }
+                                            
+                                }
+                            });
+                            $('#ui-tabs-1').load('/contato/index/menu/1');
+                        }else{
+                            $('#dcConsultar').html(retorno.msg);
+                            $('#dcConsultar').dialog("open");
+                            $('#dcConsultar').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                            $('#ui-tabs-1').load('/contato/index/menu/1');
+                        }
+                    }, 'json');
+                    $( this ).dialog("close");
+                },
+                Cancel: function() {
+                    $('#ui-tabs-1').load('/contato/index/menu/1');
+                    $( this ).dialog( "close" );
+                        
+                }
+            }
+                    
+        });
+        
+        $('.btExcluirConsultar').click(function(){
+            url = $(this).attr('href');
+            $('#dcConsultar').dialog("open");
+                    
+            return false;
+        });
+        
+    })
+        
+</script>

@@ -1,0 +1,126 @@
+<table>
+    <tr>
+        <th>Nome</th>
+        <th>E-email</th>
+        <th>Ações</th>
+    </tr>
+
+    <tr class="alt" >
+        <?php foreach ($this->paginator as $k => $clientes): ?>
+        <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
+            <td><?php echo $clientes['nome'] ?></td>
+            <td><?php echo $clientes['email'] ?></td>
+
+            <td>
+                <a class="linkEditar" href="/cliente/formulario/id/<?php echo $cliente['id_cliente'] ?>">
+                    <img src="/img/edit-icon.gif" title="Editar registro" />
+                </a>
+                <a class="btExcluir" href="/cliente/excluir/id/<?php echo $cliente['id_cliente'] ?>">
+                    <img src="/img/delete-icon.gif" title="Excluir Registro" />
+                </a>
+            </td>
+        </tr>    
+    <?php endforeach; ?>
+
+</table>
+
+<?php echo $this->paginationControl($this->paginator, 'Sliding', 'my_pagination_control.phtml'); ?>
+
+<div id="dcCliente">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse cliente?</p>
+</div>
+
+<div id="clienteErro">
+    <p>Erro</p>    
+</div>
+
+<div id="clienteSucesso">
+    <p>Sucesso</p>    
+</div>
+
+<script>
+    
+    var url = "";
+    $(function(){       
+                
+        $( "#clienteSucesso" ).dialog({
+            autoOpen: false
+        });
+        
+        $( "#clienteErro" ).dialog({
+            autoOpen: false
+        });
+                
+        $("#dcCliente").dialog({
+            resizable: false,
+            height:250,
+            width:500,
+            modal: true,
+            autoOpen: false,
+                
+            buttons: {
+                "Ok": function() {
+                    $.get(url, null, function(retorno){
+                        if(retorno.tipo == 'sucesso'){
+                            $('#clienteSucesso').html(retorno.msg);
+                            $('#clienteSucesso').dialog("open");
+                            $('#clienteSucesso').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                                
+                            $('#divResCliente').load('/cliente/grid/nome/' + $('#nomeCliente').val());
+                                
+                        } else {
+                            $('#clienteErro').html(retorno.msg);
+                            $('#clienteErro').dialog("open");
+                            $('#clienteErro').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                            $('#divResCliente').load('/cliente/grid/nome/' + $('#nomeCliente').val());
+                        }                    
+                    }, 'json');
+                    $( this ).dialog("close");
+                    
+                },
+                Cancel: function() {
+                    $('#divResCliente').load('/cliente/grid/nome/' + $('#nomeCliente').val());
+                    $( this ).dialog( "close" );
+                        
+                }
+                    
+            }
+                
+        });
+                
+        $('.pagination a').click(function(){
+           
+            var href = $(this).attr('href');
+            $('#divResCliente').load(href);
+            return false;
+        });
+        
+        $('.linkEditar').click(function(){
+            var url = $(this).attr('href');
+            $('#ui-tabs-3').load(url);
+            return false;
+        });
+        
+        $('.btExcluir').click(function(){
+            
+            url = $(this).attr('href');
+            $("#dcCliente").dialog("open");
+            
+            return false;
+        });
+        
+    })
+    
+</script>

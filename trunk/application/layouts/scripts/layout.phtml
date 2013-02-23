@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <title>Loja</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" media="screen" href="/css/screen.css" />
+        <link type="text/css" href="/css/cupertino/jquery-ui-1.10.1.custom.css" rel="stylesheet" />
+        <script type="text/javascript"  src="/js/jquery-1.9.1.js"></script>
+        <script type="text/javascript"  src="/js/jquery-ui-1.10.1.custom.min.js"></script>
+
+        <script type="text/javascript"  src="/js/jquery.maskedinput.js"></script>
+        <script type="text/javascript"  src="/js/jquery.validate.js"></script>
+        <script type="text/javascript"  src="/js/additional-methods.js"></script>
+        <script type="text/javascript"  src="/js/jquery.form.js"></script>
+        <script type="text/javascript"  src="/js/jquery.alphanumeric.js"></script>
+        <script type="text/javascript"  src="/js/jquery.populate.js"></script>
+        <script type="text/javascript"  src="/js/messages_ptbr.js"></script>
+
+        <script type="text/javascript"  src="/js/global.js"></script>
+    </head>
+    <body>
+        <div id="content">
+
+            <!-- menu  -->
+            <div id="logged">
+                <div id="menu">
+
+                </div>
+                <div id="user">
+                    <?php
+                    $auth = Zend_Auth::getInstance();
+                    if ($auth->hasIdentity()):
+                        ?>
+                        <div class="formfield">
+                            <b>Logado como: </b> 
+
+                            <?php
+                            $usuario = Zend_Auth::getInstance()->getIdentity();
+                            echo $usuario->nome;
+                            ?>
+                        
+                            <!--<button type="button" id="sair" onclick="location.href='/index/sair'">Sair</button>-->
+                            <a href="/index/sair">Sair</a>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>  
+            <span style="color: red" id="divMsg">
+                <?php if ($this->msg): ?>
+                    <?php if (is_array($this->msg)): ?>
+
+                        <?php echo implode("; ", $this->msg); ?>
+                    <?php else: ?>
+                        <?php echo $this->msg ?>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </span>
+            <h1><?php echo $this->titlePage ?></h1>
+            <?php echo $this->layout()->content; ?>
+        </div>
+    </body>
+</html>

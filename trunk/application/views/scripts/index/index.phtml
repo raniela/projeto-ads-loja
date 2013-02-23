@@ -1,0 +1,41 @@
+<h1><?php echo $this->titulo; ?></h1>
+
+<div>
+    <form action="" method="post">
+        <div class="formfield">
+            <label for="email">E-mail</label>
+            <input type="text" name="email" id="email" maxlength="255"/>
+        </div>
+        <div class="formfield">
+            <label for="senha">Senha:</label>
+            <input type="password" name="senha" id="senha" maxlength="45"/>
+        </div>
+        <div class="formbutton">
+            <input type="submit" value="enviar"/>
+        </div>
+    </form>
+</div>
+
+<script>
+    
+    $(function(){
+      
+        $('#btEnviar').click(function(){
+            if($('#email').val() == ""){
+                alert('Informe um email');
+                $('#email').focus();
+                return false;
+            }
+            
+            if($('#senha').val() == ""){
+                alert('Informe uma senha');
+                $('#senha').focus();
+                return false;
+            }
+            
+        });
+      
+        
+    })
+    
+</script>

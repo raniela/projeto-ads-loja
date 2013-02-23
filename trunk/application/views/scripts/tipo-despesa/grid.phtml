@@ -1,0 +1,123 @@
+<table>
+    <tr>
+        <th>Descrição</th>
+        <th>Ações</th>
+    </tr>
+
+    <tr class="alt" >
+        <?php foreach ($this->paginator as $k => $tiposDespesa): ?>
+        <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
+            <td><?php echo $tiposDespesa['nome'] ?></td>
+            <td>
+                <a class="linkEditar" href="/tipo-despesa/formulario/id/<?php echo $tiposDespesa['id_tipoDespesa'] ?>">
+                    <img src="/img/edit-icon.gif" title="Editar registro" />
+                </a>
+                <a class="btExcluir" href="/tipo-despesa/excluir/id/<?php echo $tiposDespesa['id_tipoDespesa'] ?>">
+                    <img src="/img/delete-icon.gif" title="Excluir Registro" />
+                </a>
+            </td>
+        </tr>    
+    <?php endforeach; ?>
+
+</table>
+
+<?php echo $this->paginationControl($this->paginator, 'Sliding', 'my_pagination_control.phtml'); ?>
+
+<div id="dcTipoDespesa">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse tipoDespesa?</p>
+</div>
+
+<div id="tipoDespesaErro">
+    <p>Erro</p>    
+</div>
+
+<div id="tipoDespesaSucesso">
+    <p>Sucesso</p>    
+</div>
+
+<script>
+    
+    var url = "";
+    $(function(){       
+                
+        $( "#tipoDespesaSucesso" ).dialog({
+            autoOpen: false
+        });
+        
+        $( "#tipoDespesaErro" ).dialog({
+            autoOpen: false
+        });
+                
+        $("#dcTipoDespesa").dialog({
+            resizable: false,
+            height:250,
+            width:500,
+            modal: true,
+            autoOpen: false,
+                
+            buttons: {
+                "Ok": function() {
+                    $.get(url, null, function(retorno){
+                        if(retorno.tipo == 'sucesso'){
+                            $('#tipoDespesaSucesso').html(retorno.msg);
+                            $('#tipoDespesaSucesso').dialog("open");
+                            $('#tipoDespesaSucesso').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                                
+                            $('#divResTipoDespesa').load('/tipo-despesa/grid/nome/' + $('#nomeTipoDespesa').val());
+                                
+                        } else {
+                            $('#tipoDespesaErro').html(retorno.msg);
+                            $('#tipoDespesaErro').dialog("open");
+                            $('#tipoDespesaErro').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                            $('#divResTipoDespesa').load('/tipo-despesa/grid/nome/' + $('#nomeTipoDespesa').val());
+                        }                    
+                    }, 'json');
+                    $( this ).dialog("close");
+                    
+                },
+                Cancel: function() {
+                    $('#divResTipoDespesa').load('/tipo-despesa/grid/nome/' + $('#nomeTipoDespesa').val());
+                    $( this ).dialog( "close" );
+                        
+                }
+                    
+            }
+                
+        });
+                
+        $('.pagination a').click(function(){
+           
+            var href = $(this).attr('href');
+            $('#divResTipoDespesa').load(href);
+            return false;
+        });
+        
+        $('.linkEditar').click(function(){
+            var url = $(this).attr('href');
+            $('#ui-tabs-9').load(url);
+            return false;
+        });
+        
+        $('.btExcluir').click(function(){
+            
+            url = $(this).attr('href');
+            $("#dcTipoDespesa").dialog("open");
+            
+            return false;
+        });
+        
+    })
+    
+</script>

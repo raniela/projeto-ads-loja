@@ -1,0 +1,123 @@
+<table>
+    <tr>
+        <th>Tipo</th>
+        <th>Ações</th>
+    </tr>
+
+    <tr class="alt" >
+        <?php foreach ($this->paginator as $k => $tipos): ?>
+        <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
+            <td><?php echo $tipos['tipo'] ?></td>
+            <td>
+                <a class="linkEditar" href="/tipo/formulario/id/<?php echo $tipo['id_tipo'] ?>">
+                    <img src="/img/edit-icon.gif" title="Editar registro" />
+                </a>
+                <a class="btExcluir" href="/tipo/excluir/id/<?php echo $tipo['id_tipo'] ?>">
+                    <img src="/img/delete-icon.gif" title="Excluir Registro" />
+                </a>
+            </td>
+        </tr>    
+    <?php endforeach; ?>
+
+</table>
+
+<?php echo $this->paginationControl($this->paginator, 'Sliding', 'my_pagination_control.phtml'); ?>
+
+<div id="dcTipo">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse Tipo?</p>
+</div>
+
+<div id="tipoErro">
+    <p>Erro</p>    
+</div>
+
+<div id="tipoSucesso">
+    <p>Sucesso</p>    
+</div>
+
+<script>
+    
+    var url = "";
+    $(function(){       
+                
+        $( "#tipoSucesso" ).dialog({
+            autoOpen: false
+        });
+        
+        $( "#tipoErro" ).dialog({
+            autoOpen: false
+        });
+                
+        $("#dcTipo").dialog({
+            resizable: false,
+            height:250,
+            width:500,
+            modal: true,
+            autoOpen: false,
+                
+            buttons: {
+                "Ok": function() {
+                    $.get(url, null, function(retorno){
+                        if(retorno.tipo == 'sucesso'){
+                            $('#tipoSucesso').html(retorno.msg);
+                            $('#tipoSucesso').dialog("open");
+                            $('#tipoSucesso').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                                
+                            $('#divResSubtipo').load('/tipo/grid/nome/' + $('#nomeSubtipo').val());
+                                
+                        } else {
+                            $('#tipoErro').html(retorno.msg);
+                            $('#tipoErro').dialog("open");
+                            $('#tipoErro').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                            $('#divResTipo').load('/tipo/grid/nome/' + $('#nomeTipo').val());
+                        }                    
+                    }, 'json');
+                    $( this ).dialog("close");
+                    
+                },
+                Cancel: function() {
+                    $('#divResTipo').load('/tipo/grid/nome/' + $('#nomeTipo').val());
+                    $( this ).dialog( "close" );
+                        
+                }
+                    
+            }
+                
+        });
+                
+        $('.pagination a').click(function(){
+           
+            var href = $(this).attr('href');
+            $('#divResTipo').load(href);
+            return false;
+        });
+        
+        $('.linkEditar').click(function(){
+            var url = $(this).attr('href');
+            $('#ui-tabs-3').load(url);
+            return false;
+        });
+        
+        $('.btExcluir').click(function(){
+            
+            url = $(this).attr('href');
+            $("#dcTipo").dialog("open");
+            
+            return false;
+        });
+        
+    })
+    
+</script>

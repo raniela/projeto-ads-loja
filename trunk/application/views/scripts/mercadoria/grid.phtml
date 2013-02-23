@@ -1,0 +1,127 @@
+<table>
+    <tr>
+        <th>Descrição</th>
+        <th>Quantidade em estoque</th>
+        <th>Valor</th>
+        <th>Ações</th>
+    </tr>
+
+    <tr class="alt" >
+        <?php foreach ($this->paginator as $k => $mercadorias): ?>
+        <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
+            <td><?php echo $mercadorias['descricao'] ?></td>
+            <td><?php echo $mercadorias['qtde'] ?></td>
+            <td><?php echo $mercadorias['valor'] ?></td>
+            <td>
+                <a class="linkEditar" href="/mercadoria/formulario/id/<?php echo $mercadoria['id_mercadoria'] ?>">
+                    <img src="/img/edit-icon.gif" title="Editar registro" />
+                </a>
+                <a class="btExcluir" href="/mercadoria/excluir/id/<?php echo $mercadoria['id_mercadoria'] ?>">
+                    <img src="/img/delete-icon.gif" title="Excluir Registro" />
+                </a>
+            </td>
+        </tr>    
+    <?php endforeach; ?>
+
+</table>
+
+<?php echo $this->paginationControl($this->paginator, 'Sliding', 'my_pagination_control.phtml'); ?>
+
+<div id="dcMercadoria">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse mercadoria?</p>
+</div>
+
+<div id="mercadoriaErro">
+    <p>Erro</p>    
+</div>
+
+<div id="mercadoriaSucesso">
+    <p>Sucesso</p>    
+</div>
+
+<script>
+    
+    var url = "";
+    $(function(){       
+                
+        $( "#mercadoriaSucesso" ).dialog({
+            autoOpen: false
+        });
+        
+        $( "#mercadoriaErro" ).dialog({
+            autoOpen: false
+        });
+                
+        $("#dcMercadoria").dialog({
+            resizable: false,
+            height:250,
+            width:500,
+            modal: true,
+            autoOpen: false,
+                
+            buttons: {
+                "Ok": function() {
+                    $.get(url, null, function(retorno){
+                        if(retorno.tipo == 'sucesso'){
+                            $('#mercadoriaSucesso').html(retorno.msg);
+                            $('#mercadoriaSucesso').dialog("open");
+                            $('#mercadoriaSucesso').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                                
+                            $('#divResMerc').load('/mercadoria/grid/nome/' + $('#nomeMercadoria').val());
+                                
+                        } else {
+                            $('#mercadoriaErro').html(retorno.msg);
+                            $('#mercadoriaErro').dialog("open");
+                            $('#mercadoriaErro').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                            $('#divResMerc').load('/mercadoria/grid/nome/' + $('#nomeMercadoria').val());
+                        }                    
+                    }, 'json');
+                    $( this ).dialog("close");
+                    
+                },
+                Cancel: function() {
+                    $('#divResMerc').load('/mercadoria/grid/nome/' + $('#nomeMercadoria').val());
+                    $( this ).dialog( "close" );
+                        
+                }
+                    
+            }
+                
+        });
+                
+        $('.pagination a').click(function(){
+           
+            var href = $(this).attr('href');
+            $('#divResMerc').load(href);
+            return false;
+        });
+        
+        $('.linkEditar').click(function(){
+            var url = $(this).attr('href');
+            $('#ui-tabs-8').load(url);
+            return false;
+        });
+        
+        $('.btExcluir').click(function(){
+            
+            url = $(this).attr('href');
+            $("#dcMercadoria").dialog("open");
+            
+            return false;
+        });
+        
+    })
+    
+</script>

@@ -1,0 +1,25 @@
+<form action="" method="get">
+    <div class="formfield">
+        <label for="">Estado</label>
+        <?php echo $this->formSelect('id_estado', null, array(), $this->comboPesquisa); ?>
+    </div>
+    <div class="formbutton">
+        <button id="pesquisar" name="pesquisar" type="button">Pesquisar</button>
+    </div>
+</form>
+
+<div id="buscaPesquisa">
+
+</div>
+
+<script>
+
+    $(function(){
+    
+        $('#pesquisar').click(function(){
+            $('#buscaPesquisa').load('/pesquisar/busca/id_estado/' + $('#id_estado').val());
+        
+        });
+    });
+
+</script>
