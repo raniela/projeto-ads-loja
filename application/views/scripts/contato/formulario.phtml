@@ -1,0 +1,158 @@
+<h1><?php echo $this->titulo; ?></h1>
+
+<!-- formulário -->
+<form id="form" action="/contato/salvar/id/<?php echo $this->contato['id_contato'] ?>" method="post" >
+    <div class="formfield">
+        <label for="">Nome:</label>
+        <input id="nome" name="nome" class="required" value="<?php echo $this->contato['nome'] ?>" type="text"/>
+    </div>
+    <div class="formfield">
+        <label for="">Sobrenome:</label>
+        <input class="required"  id="sobrenome" name="sobrenome" value="<?php echo $this->contato['sobrenome'] ?>" type="text"/>
+    </div>
+    <div class="formfield">
+        <label for="">Celular:</label>
+        <input class="required"  id="celular" name="celular" value="<?php echo $this->contato['celular'] ?>" type="text"/>
+    </div>
+    <div class="formfield">
+        <label for="">Telefone:</label>
+        <input class="required"  id="telefone" name="telefone" value="<?php echo $this->contato['telefone'] ?>" type="text"/>
+    </div>
+    <div class="formfield">
+        <label for="">E-mail:</label>
+        <input class="required email"  id="email" name="email" value="<?php echo $this->contato['email'] ?>" type="text"/>
+    </div>
+    <div class="formfield">
+        <label for="">Data Nasc.</label>
+        <?php $data_nasc = $this->contato['data_nascimento'] ?>
+        <input id="data_nascimento" name="data_nascimento" value="<?php echo $this->formatarData($data_nasc) ?>" type="text" />
+    </div>
+
+    <div class="formfield">
+        <label for="">Foto:</label>
+        <input type="file" name="foto" id="foto" class="required" accept="jpg|png|gif" />
+        <? if ($this->contato['id_contato'] != ""): ?>
+            <img src="/files/<?php echo $this->contato['foto'] ?>"  width="70" />
+        <? endif; ?>
+
+    </div>
+
+    <div class="formfield">
+        <label for="">Grupo:</label>
+        <input class="required" id="grupo" name="grupo" value="<?php echo $this->params['nome'] ?>" type="text"/>
+        <input type="hidden" name="id_grupo" id="id_grupo" value="<?php echo $this->params['id_grupo'] ?>" />
+    </div>
+
+
+    <!--<div class="formfield">
+        <label for="">Grupo:</label>
+    <?php
+    //echo $this->formSelect('id_grupo', $this->contato['id_grupo'], array(), $this->dataCombo)
+    ?>-->
+
+
+    <div class="formfield">
+        <label for="">Estado:</label>
+        <?php echo $this->formSelect('id_estado', $this->cidade['id_estado'], array(), $this->getDataCmbEstado) ?>
+    </div>
+
+
+    <div id="divCidade" class="formfield">
+        <label for="">Cidade:</label>
+        <td>
+            <?php echo $this->formSelect('id_cidade', $this->contato['id_cidade'], array(), $this->comboCid); ?>
+        </td>
+    </div>
+
+    <div class="formbutton">
+        <input id="btEnviar" type="submit"  value="Enviar" />
+        <button id="btVoltarContato" type="button">Voltar</button> 
+    </div>
+
+
+</form>
+
+
+
+<script>
+    
+    
+    var dadosAutoComplete = <?php echo Zend_Json::encode($this->completeGrupos); ?>
+    
+    
+    var id_contato = '<?php echo $this->contato['id_contato'] ?>';
+    
+
+ 
+    $(function(){
+        
+        
+        
+        $('#btVoltarContato').click(function(){
+            $('#ui-tabs-1').load('/contato/index/menu/1');
+        })
+        
+        $( "#data_nascimento" ).datepicker({ dateFormat: 'dd/mm/yy'});
+        
+        /*
+        $( "#grupo" ).autocomplete({
+            source: dadosAutoComplete,
+            select:  function( event, ui ) {
+                alert(ui.item);
+            }
+        });*/
+        
+        $( "#grupo" ).autocomplete({
+            minLength: 0,
+            source: dadosAutoComplete,
+            select: function( event, ui ) {
+                if ( ui.item ) {
+                    $('#id_grupo').val(ui.item.id);
+                }
+            },
+            change: function( event, ui ) {
+                if ( !ui.item ) {
+                    $(this).val('');
+                    $('#id_grupo').val('');
+                }
+            }
+        });
+        
+        
+               
+    
+        if(id_contato != ''){
+            $('#foto').removeClass('required');
+        }
+
+    
+        $('#form').validate({
+            submitHandler: function(form) {
+                jQuery(form).ajaxSubmit({
+                    dataType:  'json', 
+                    success: function(r){
+                        if(r.tipo == 'sucesso'){                    
+                            $('#divMsg').html(r.msg)
+                            window.location = r.url;
+                        } else {
+                            $('#divMsg').html(r.msg)
+                        }
+                    } 
+                });
+            }
+        });    
+    
+    
+        $("#data_nascimento").mask("99/99/9999");
+        $("#celular").mask("(99) 9999-9999");
+        $("#telefone").mask("(99) 9999-9999");
+        
+
+        $('#id_estado').change(function(){
+
+            $('#divCidade').load('/cidade/combo-ajax/id_estado/' + $('#id_estado').val());
+
+        });
+    });
+    
+</script>

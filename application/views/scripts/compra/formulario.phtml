@@ -1,0 +1,130 @@
+<h1><?php echo $this->titulo; ?></h1>
+
+<!-- formulário -->
+
+<form id="formCompra" action="/compra/salvar" method="post" enctype="multipart/form-data">
+    <div class="formfield">
+        <label for="">Nº Nota Fiscal:</label>
+        <input class="required" id="num-nota" name="num-nota" type="text" size="50" value=""/>
+    </div>
+
+    <div class="formfield">
+        <label for="">Valor Total:</label>
+        <input class="required teste" id="valor" name="valor" type="text" size="30" value=""/>
+    </div>
+
+    <div id="mercadoria" class="formfield">
+        <label for="">Mercadoria:</label>
+        <input class="required" id="mercadoria" name="mercadoria" type="text" size="50" value=""/>
+        <label style="width: 80px" for="">&nbsp;Quantidade:</label>
+        <input class="required" id="qtde" name="qtde" type="text" size="5" value=""/>
+        <a id="btAdicionar" style="cursor: pointer">
+            &nbsp;&nbsp;&nbsp;<img src="/img/add_256.png" width="20" height="20" title="Adicionar Mercadoria" />
+        </a>
+    </div>
+
+    <div id="teste">
+        
+        
+    </div>
+    
+    <div class="formfield">
+        <label for="">Descrição:</label>
+        <input class="required" id="descricao" name="descricao" type="text" size="30" value=""/>
+    </div>
+
+    <div class="formfield">
+        <label for="">Data:</label>
+        <input class="required" id="data" name="data" type="text" size="15" value=""/>
+    </div>
+    
+    <div class="formfield">
+        <label for="">Fornecedor:</label>
+        <input class="required" id="fornecedor" name="fornecedor" type="text" size="30" value=""/>
+    </div>
+
+    <div class="formbutton">
+        <input id="btEnviar" type="submit" value="Enviar" />
+        <button type="button" id="btVoltarCompra">Voltar</button> 
+    </div>
+</form>
+
+<div id="sucessoCompra">
+    <p>Sucesso</p>
+</div>
+
+
+<script>
+
+    $(function(){
+
+        $( "#sucessoCompra" ).dialog({
+            autoOpen: false
+        });
+        
+        $("#data").datepicker({dateFormat:'dd/mm/yy'});
+        
+        //$('#form').populate(dataForm);
+        
+        $('#formCompra').validate({
+            submitHandler: function(form){
+                jQuery(form).ajaxSubmit({
+                    dataType:  'json', 
+                    success: function(r){
+                        if(r.tipo == 'sucesso'){                    
+                            $('#sucessoCompra p').html(r.msg);
+                            $('#sucessoCompra').dialog("open");
+                            $( "#sucessoCompra" ).dialog({
+                                modal: true,
+                                buttons: {
+                                    Ok: function() {
+                                        $(this).dialog("close");
+                                        window.location = r.url;
+                                    }
+                                }
+                            });
+                            
+                            //$('#divMsg').html(r.msg)
+                            //window.location = r.url;
+                        } else {
+                            $('#sucessoCompra p').html(r.msg);
+                            $('#sucessoCompra').dialog("open");
+                            $( "#sucessoCompra" ).dialog({
+                                modal: true,
+                                buttons: {
+                                    Ok: function() {
+                                        $(this).dialog("close");
+                                        window.location = r.url;
+                                    }
+                                }
+                                
+                            });
+                        }
+          
+                    } 
+                });
+            }
+        });
+        
+        $('#btVoltarCompra').click(function(){
+            $('#ui-tabs-5').load('/compra/index/menu/1');
+        })
+        
+        var html;
+        
+        html = "<div class='formfield'>" +
+            "<label for=''>Mercadoria:</label>" +
+            "<input class='required' id='mercadoria' name='mercadoria' type='text' size='50'/>" +
+            "<label style='width: 80px' for=''>&nbsp;Quantidade:</label>" +
+            "<input class='required' id='qtde' name='qtde' type='text' size='5 value=''/>" +
+            "<a id='btRemover' style='cursor: pointer'>" +
+            "&nbsp;&nbsp;<img src='/img/symbol_remove.png' width='30' height='30' title='Remover Mercadoria' />" +
+            "</a>" +
+            "</div>";
+        
+        $('#btAdicionar').click(function(){
+            $("#teste").append(html);
+        });
+        
+    });
+</script>

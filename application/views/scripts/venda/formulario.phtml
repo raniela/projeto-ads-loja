@@ -1,0 +1,144 @@
+<h1><?php echo $this->titulo; ?></h1>
+
+<!-- formulário -->
+
+<form id="formVenda" action="/venda/salvar" method="post" enctype="multipart/form-data">
+    <div class="formfield">
+        <label for="">Cliente:</label>
+        <input class="required" id="cliente" name="cliente" type="text" size="50" value=""/>
+    </div>
+
+    <div id="produto" class="formfield">
+        <label for="">Produto:</label>
+        <input class="required" id="produto" name="produto" type="text" size="50" value=""/>
+        <label style="width: 80px" for="">&nbsp;Quantidade:</label>
+        <input class="required" id="qtde" name="qtde" type="text" size="5" value=""/>
+        <a id="btAdicionar" style="cursor: pointer">
+            &nbsp;&nbsp;&nbsp;<img src="/img/add_256.png" width="20" height="20" title="Adicionar Produto" />
+        </a>
+    </div>
+
+    <div id="teste">
+        
+        
+    </div>
+    
+    <div class="formfield">
+        <label for="">Tipo de Pagamento:</label>
+        <select name="tipo">
+            <option selected value="Selecione">Selecione</option>
+            <option value="vista">A Vista</option>
+            <option value="prazo">A Prazo</option>
+        </select>
+    </div>
+
+    <div class="formfield">
+        <label for="">Forma de Pagamento:</label>
+        <select name="forma">
+            <option selected value="Selecione">Selecione</option>
+            <option value="dinheiro">Dinheiro</option>
+            <option value="credito">Cartão de Crédito</option>
+            <option value="debito">Cartão de Débito</option>
+        </select>
+    </div>
+
+    <div class="formfield">
+        <label for="">Desconto:</label>
+        <input class="required" id="desconto" name="desconto" type="text" size="15" value=""/>
+    </div>
+
+    <div class="formfield">
+        <label for="">Data:</label>
+        <input class="required" id="datepicker" name="data" type="text" size="15" value=""/>
+    </div>
+
+    <div class="formbutton">
+        <input id="btEnviar" type="submit" value="Enviar" />
+        <button type="button" id="btVoltarVenda">Voltar</button> 
+    </div>
+</form>
+
+<div id="sucessoVenda">
+    <p>Sucesso</p>
+</div>
+
+
+<script>
+
+    $(function(){
+        
+        $("#datepicker").datepicker({dateFormat:'dd/mm/yy'});
+        
+        $( "#sucessoVenda" ).dialog({
+            autoOpen: false
+        });
+        
+        //$('#form').populate(dataForm);
+        
+        $('#formVenda').validate({
+            submitHandler: function(form){
+                jQuery(form).ajaxSubmit({
+                    dataType:  'json', 
+                    success: function(r){
+                        if(r.tipo == 'sucesso'){                    
+                            $('#sucessoVenda p').html(r.msg);
+                            $('#sucessoVenda').dialog("open");
+                            $( "#sucessoVenda" ).dialog({
+                                modal: true,
+                                buttons: {
+                                    Ok: function() {
+                                        $(this).dialog("close");
+                                        window.location = r.url;
+                                    }
+                                }
+                            });
+                            
+                            //$('#divMsg').html(r.msg)
+                            //window.location = r.url;
+                        } else {
+                            $('#sucessoVenda p').html(r.msg);
+                            $('#sucessoVenda').dialog("open");
+                            $( "#sucessoVenda" ).dialog({
+                                modal: true,
+                                buttons: {
+                                    Ok: function() {
+                                        $(this).dialog("close");
+                                        window.location = r.url;
+                                    }
+                                }
+                                
+                            });
+                        }
+          
+                    } 
+                });
+            }
+        });
+        
+        $('#btVoltarVenda').click(function(){
+            $('#ui-tabs-1').load('/venda/index/menu/1');
+        })
+        
+        var html;
+        
+        html = "<div class='formfield'>" +
+            "<label for=''>Produto:</label>" +
+            "<input class='required' id='produto' name='produto' type='text' size='50'/>" +
+            "<label style='width: 80px' for=''>&nbsp;Quantidade:</label>" +
+            "<input class='required' id='qtde' name='qtde' type='text' size='5 value=''/>" +
+            "<a id='btRemover' onClick='removerItem(this)' style='cursor: pointer'>" +
+            "&nbsp;&nbsp;<img src='/img/symbol_remove.png' width='30' height='30' title='Remover Produto' />" +
+            "</a>" +
+            "</div>";
+        
+        $('#btAdicionar').click(function(){
+            $("#teste").append(html);
+        });
+                               
+    });
+    
+    function removerItem(obj) {
+        $(obj).parent().remove();
+        //alert("a");
+    }
+</script>

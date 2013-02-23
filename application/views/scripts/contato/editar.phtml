@@ -1,0 +1,47 @@
+<!-- formulário -->
+<form action="" method="post" enctype="multipart/form-data">
+    <div class="formfield">
+        <label for="">Nome:</label>
+        <input id="nome" name="nome" value="<?php echo $this->contato['nome'] ?>" type="text"/>
+    </div>
+    <div class="formfield">
+        <label for="">Sobrenome:</label>
+        <input id="sobrenome" name="sobrenome" value="<?php echo $this->contato['sobrenome'] ?>" type="text"/>
+    </div>
+    <div class="formfield">
+        <label for="">Celular:</label>
+        <input id="celular" name="celular" value="<?php echo $this->contato['celular'] ?>" type="text"/>
+    </div>
+    <div class="formfield">
+        <label for="">Telefone:</label>
+        <input id="telefone" name="telefone" value="<?php echo $this->contato['telefone'] ?>" type="text"/>
+    </div>
+    <div class="formfield">
+        <label for="">E-mail:</label>
+        <input id="email" name="email" value="<?php echo $this->contato['email'] ?>" type="text"/>
+    </div>
+    <div class="formfield">
+        <label for="">Data Nasc.</label>
+        <?php $data_nasc = $this->contato['data_nascimento']?>
+        <input id="data_nascimento" name="data_nascimento" value="<?php echo $this->formatarData($data_nasc) ?>" type="text" />
+        <small>(dd/mm/aaaa)</small>
+    </div>
+    <div class="formfield">
+        <label for="">Foto:</label>
+        <input type="file" name="foto" id="foto" />
+    
+    <img src="/files/<?php echo $this->contato['foto'] ?>"  width="70" />
+    </div>
+    <div class="formfield">
+        <label for="">Grupo:</label>
+        <td> <?php echo $this->formSelect ('id_grupo',
+                                                $this->contato['id_grupo'],
+                                                array(),
+                                                $this->dataCombo) ?>
+        </td>  
+    </div>
+    <div class="formbutton">
+        <input type="submit"  value="Enviar" />
+        <button type="button" onclick="history.back()">Voltar</button> 
+    </div>
+</form>

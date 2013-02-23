@@ -1,0 +1,128 @@
+<table>
+    <tr>
+        <th>Data</th>
+        <th>Fornecedor</th>
+        <th>Valor</th>
+        <th>Ações</th>
+    </tr>
+
+    <tr class="alt" >
+        <?php foreach ($this->paginator as $k => $compras): ?>
+        <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
+            <td><?php echo $compras['data'] ?></td>
+            <td><?php echo $compras['fornecedor'] ?></td>
+            <td><?php echo $compras['valor'] ?></td>
+
+            <td>
+                <a class="linkEditar" href="/compra/formulario/id/<?php echo $compra['id_compra'] ?>">
+                    <img src="/img/edit-icon.gif" title="Editar registro" />
+                </a>
+                <a class="btExcluir" href="/compra/excluir/id/<?php echo $compra['id_compra'] ?>">
+                    <img src="/img/delete-icon.gif" title="Excluir Registro" />
+                </a>
+            </td>
+        </tr>    
+    <?php endforeach; ?>
+
+</table>
+
+<?php echo $this->paginationControl($this->paginator, 'Sliding', 'my_pagination_control.phtml'); ?>
+
+<div id="dcCompra">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse compra?</p>
+</div>
+
+<div id="compraErro">
+    <p>Erro</p>    
+</div>
+
+<div id="compraSucesso">
+    <p>Sucesso</p>    
+</div>
+
+<script>
+    
+    var url = "";
+    $(function(){       
+                
+        $( "#compraSucesso" ).dialog({
+            autoOpen: false
+        });
+        
+        $( "#compraErro" ).dialog({
+            autoOpen: false
+        });
+                
+        $("#dcCompra").dialog({
+            resizable: false,
+            height:250,
+            width:500,
+            modal: true,
+            autoOpen: false,
+                
+            buttons: {
+                "Ok": function() {
+                    $.get(url, null, function(retorno){
+                        if(retorno.tipo == 'sucesso'){
+                            $('#compraSucesso').html(retorno.msg);
+                            $('#compraSucesso').dialog("open");
+                            $('#compraSucesso').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                                
+                            $('#divResCompra').load('/compra/grid/nome/' + $('#nomeCompra').val());
+                                
+                        } else {
+                            $('#compraErro').html(retorno.msg);
+                            $('#compraErro').dialog("open");
+                            $('#compraErro').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                            $('#divResCompra').load('/compra/grid/nome/' + $('#nomeCompra').val());
+                        }                    
+                    }, 'json');
+                    $( this ).dialog("close");
+                    
+                },
+                Cancel: function() {
+                    $('#divResCompra').load('/compra/grid/nome/' + $('#nomeCompra').val());
+                    $( this ).dialog( "close" );
+                        
+                }
+                    
+            }
+                
+        });
+                
+        $('.pagination a').click(function(){
+           
+            var href = $(this).attr('href');
+            $('#divResCompra').load(href);
+            return false;
+        });
+        
+        $('.linkEditar').click(function(){
+            var url = $(this).attr('href');
+            $('#ui-tabs-3').load(url);
+            return false;
+        });
+        
+        $('.btExcluir').click(function(){
+            
+            url = $(this).attr('href');
+            $("#dcCompra").dialog("open");
+            
+            return false;
+        });
+        
+    })
+    
+</script>

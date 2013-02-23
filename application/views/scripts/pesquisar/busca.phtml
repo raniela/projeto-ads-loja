@@ -1,0 +1,34 @@
+<div class="formfield">
+    <label for="">Cidade:</label>
+    <input id="cidade" name="cidade" type="text"/>
+</div>
+
+<table>
+    <tr> 
+        <td>
+            Nome
+        </td>
+    </tr>
+    <? foreach ($this->cidades as $cidade): ?>
+        <tr class="alt">
+            <td>
+                <?php echo $cidade['nome'] ?>
+            </td>
+        </tr>
+    <? endforeach; ?>
+</table>
+<? echo $this->res ?>
+
+<script>
+
+    var dados = <?php echo Zend_Json::encode($this->completeCidade); ?>
+
+    $(function(){
+    
+        $( "#cidade" ).autocomplete({
+            source: dados
+        });
+    
+    });
+
+</script>

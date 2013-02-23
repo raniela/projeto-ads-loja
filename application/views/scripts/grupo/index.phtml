@@ -1,0 +1,71 @@
+<h1 id="tituloGrupo"><?php echo $this->titulo; ?></h1>
+<form id="formGrupo" enctype="multipart/form-data" action="" method=get">
+    <div class="formfield">
+        <label for="">Nome:</label>
+        <input name="nomeGru" id="nomeGru" type="text" >
+    </div>
+    <div class="formbutton">
+        <button id="btBuscarGru" type="button">Buscar</button>
+        <button id="btNovoGrupo" type="button" href="/grupo/formulario/">Novo</button>
+    </div>
+</form>
+
+<br/>
+
+<!-- grid para exibir os dados -->
+
+<div id="divResGrupo">
+
+
+</div>
+
+<br/>
+
+
+<!--
+<input id="teste" name="testeName" class="testeClass" maxlength="25" />
+-->
+
+<input type="hidden" value="<? echo $this->url ?>" nome="url" id="url">
+<br/>
+
+<script>
+
+    var grupoAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete) ?>;
+
+    var urlGrupo = $('#url').val();
+    
+    
+    $(function(){
+        
+        $('#btNovoGrupo').click(function(){
+            var url = $(this).attr('href');
+            $('#ui-tabs-2').load(url);
+            return false;
+        });
+        
+        
+        $( "#nomeGru" ).autocomplete({
+            source: grupoAutoComplete
+        });
+        //alert($('#teste').attr('maxlength'));
+        
+        
+        
+        $('#divResGrupo').load('/grupo/grid/nome/' + $('#nomeGru').val());
+        $('#btBuscarGru').click(function(){
+            var url = encodeURI('/grupo/grid/nome/' + $('#nomeGru').val());
+            $('#divResGrupo').load(url);
+
+        });
+            
+            $('#formEditar').load(urlGrupo);
+            /*
+            $('#divResGrupo').remove();
+            $('#formGrupo').remove();
+            $('#tituloGrupo').remove();*/
+            
+       
+    });
+
+</script>

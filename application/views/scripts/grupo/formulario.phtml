@@ -1,0 +1,78 @@
+<h1><?php echo $this->titulo; ?></h1>
+
+<!-- formulário -->
+
+<form id="form" action="/grupo/salvar/id/<?php echo $this->grupo['id_grupo'] ?>" method="post" enctype="multipart/form-data">
+    <div class="formfield">
+        <label for="">Nome:</label>
+        <input class="required" id="nome" name="g[nome]" type="text" value=""/>
+    </div>
+    <div class="formbutton">
+        <input id="btEnviar" type="submit"  value="Enviar" />
+        <button type="button" id="btVoltarGrupo">Voltar</button> 
+    </div>
+</form>
+
+<div id="sucessoGru">
+    <p>Sucesso</p>
+</div>
+
+<div id="erroGru">
+    <p>erro</p>
+</div>
+
+<script>
+    
+    var dataForm = <?php echo Zend_Json::encode(array('g' => $this->grupo)) ?>;
+    
+    $(function(){
+        
+        $('#btVoltarGrupo').click(function(){
+            $('#ui-tabs-2').load('/grupo/index/menu/1');
+        })
+        
+        $( "#erroGru" ).dialog({
+            autoOpen: false
+        });
+        
+        $( "#sucessoGru" ).dialog({
+            autoOpen: false
+        });
+        
+        $('#form').populate(dataForm);
+        
+        
+        $('#form').validate({
+            submitHandler: function(form) {
+                jQuery(form).ajaxSubmit({
+                    dataType:  'json', 
+                    success: function(r){
+                        if(r.tipo == 'sucesso'){                    
+                            $('#sucessoGru').html(r.msg);
+                            $('#sucessoGru').dialog("open");
+                            $( "#sucessoGru" ).dialog({
+                                modal: true,
+                                buttons: {
+                                    Ok: function() {
+                                        $(this).dialog("close");
+                                        window.location = r.url;
+                                    }
+                                }
+                            });
+                        } else {
+                            $('#erroGru').html(r.msg);
+                            $('#erroGru').dialog("open");
+                            $('#erroGru').dialog({
+                                buttons: {
+                                    Ok: function() {
+                                        $( this ).dialog( "close" );
+                                    }
+                                }
+                            });
+                        }
+                    } 
+                });
+            }
+        });
+    });
+</script>
