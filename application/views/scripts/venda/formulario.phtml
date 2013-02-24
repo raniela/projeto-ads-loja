@@ -25,8 +25,8 @@
     
     <div class="formfield">
         <label for="">Tipo de Pagamento:</label>
-        <select name="tipo">
-            <option selected value="Selecione">Selecione</option>
+        <select name="tipo" class="required">
+            <option selected value="">Selecione</option>
             <option value="vista">A Vista</option>
             <option value="prazo">A Prazo</option>
         </select>
@@ -34,8 +34,8 @@
 
     <div class="formfield">
         <label for="">Forma de Pagamento:</label>
-        <select name="forma">
-            <option selected value="Selecione">Selecione</option>
+        <select name="forma" class="required">
+            <option selected value="">Selecione</option>
             <option value="dinheiro">Dinheiro</option>
             <option value="credito">Cartão de Crédito</option>
             <option value="debito">Cartão de Débito</option>
@@ -44,7 +44,7 @@
 
     <div class="formfield">
         <label for="">Desconto:</label>
-        <input class="required" id="desconto" name="desconto" type="text" size="15" value=""/>
+        <input id="desconto" name="desconto" type="text" size="15" value=""/>
     </div>
 
     <div class="formfield">
