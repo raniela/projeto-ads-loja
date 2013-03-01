@@ -5,14 +5,14 @@
 <form id="formCliente" action="/cliente/salvar" method="post" enctype="multipart/form-data">
     <div class="formfield">
         <label for="">Nome:</label>
-        <input class="required" id="nome" name="nome" type="text" size="50" value=""/>
+        <input class="required" id="nome" name="nome" type="text" size="65" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">CPF:</label>
         <input class="required teste" id="cpf" name="cpf" type="text" size="30" value=""/>
         <label style="width: 40px" for="">&nbsp; RG:</label>
-        <input class="required" id="rg" name="rg" type="text" size="30" value=""/>
+        <input class="required" id="rg" name="rg" type="text" size="28" value=""/>
     </div>
 
     <div class="formfield">
@@ -29,34 +29,37 @@
         <label for="">E-mail:</label>
         <input class="required email" id="email" name="email" type="text"  size="30" value="" />
     </div>
+    <br/>
+  
+        <h01>Endereço:</h01>
+        <div class="formfield">
+            <label for="">Rua:</label>
+            <input class="required" id="rua" name="rua" type="text"  size="40" value="" />
+            <label style="width: 40px" for="">&nbsp;&nbsp;Nº:</label>
+            <input class="required" id="numero" name="numero" type="text"  size="15" value="" />
+        </div>
 
-    <div class="formfield">
-        <label for="">Endereço:</label>
-        <input class="required" id="rua" name="rua" type="text"  size="30" value="" />
-        <label style="width: 40px" for="">&nbsp;&nbsp;Nº:</label>
-        <input class="required" id="numero" name="numero" type="text"  size="10" value="" />
-    </div>
 
     <div class="formfield">
         <label for="">Bairro:</label>
-        <input class="required" id="bairro" name="bairro" type="text"  size="20" value="" />
-        <label style="width: 60px" for="">&nbsp; Cidade:</label>
-        <input class="required" id="cidade" name="cidade" type="text"  size="20" value="" />
+        <input class="required" id="bairro" name="bairro" type="text"  size="27" value="" />
+        <label style="width: 66px" for="">&nbsp; Cidade:</label>
+        <input class="required" id="cidade" name="cidade" type="text"  size="25" value="" />
     </div>
 
     <div class="formfield">
         <label for="">Estado:</label>
-        <input class="required" id="estado" name="estado" type="text"  size="10" value="" />
-        <label style="width: 40px" for="">&nbsp;CEP:</label>
-        <input class="required" id="cep" name="cep" type="text"  size="20" value="" />
+        <input class="required" id="estado" name="estado" type="text"  size="27" value="" />
+        <label style="width: 66px" for="">&nbsp;&nbsp;CEP:</label>
+        <input class="required" id="cep" name="cep" type="text"  size="25" value="" />
     </div>
     <div class="formbutton">
         <input id="btEnviar" type="submit" value="Enviar" />
-        <button type="button" id="btVoltarUsuario">Voltar</button> 
+        <button type="button" id="btVoltarCliente">Voltar</button> 
     </div>
 </form>
 
-<div id="sucessoUsu">
+<div id="sucessoCliente">
     <p>Sucesso</p>
 </div>
 
@@ -70,21 +73,21 @@
         $("#celular").mask("(99) 9999-9999");
         $("#cep").mask("99999-999");
         
-        $( "#sucessoUsu" ).dialog({
+        $( "#sucessoCliente" ).dialog({
             autoOpen: false
         });
         
         //$('#form').populate(dataForm);
         
-        $('#formUsu').validate({
+        $('#formCliente').validate({
             submitHandler: function(form){
                 jQuery(form).ajaxSubmit({
                     dataType:  'json', 
                     success: function(r){
                         if(r.tipo == 'sucesso'){                    
-                            $('#sucessoUsu p').html(r.msg);
-                            $('#sucessoUsu').dialog("open");
-                            $( "#sucessoUsu" ).dialog({
+                            $('#sucessoCliente p').html(r.msg);
+                            $('#sucessoCliente').dialog("open");
+                            $( "#sucessoCliente" ).dialog({
                                 modal: true,
                                 buttons: {
                                     Ok: function() {
@@ -97,9 +100,9 @@
                             //$('#divMsg').html(r.msg)
                             //window.location = r.url;
                         } else {
-                            $('#sucessoUsu p').html(r.msg);
-                            $('#sucessoUsu').dialog("open");
-                            $( "#sucessoUsu" ).dialog({
+                            $('#sucessoCliente p').html(r.msg);
+                            $('#sucessoCliente').dialog("open");
+                            $( "#sucessoCliente" ).dialog({
                                 modal: true,
                                 buttons: {
                                     Ok: function() {
@@ -116,8 +119,8 @@
             }
         });
         
-        $('#btVoltarUsuario').click(function(){
-            $('#ui-tabs-2').load('/usuario/index/menu/1');
+        $('#btVoltarCliente').click(function(){
+            $('#ui-tabs-2').load('/cliente/index/menu/1');
         })
         
         
