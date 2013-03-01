@@ -4,14 +4,14 @@
 
 <form id="formVenda" action="/venda/salvar" method="post" enctype="multipart/form-data">
     <div class="formfield">
-        <label for="">Cliente:</label>
+        <label for="">Nome:</label>
         <input class="required" id="cliente" name="cliente" type="text" size="50" value=""/>
     </div>
 
     <div id="produto" class="formfield">
         <label for="">Produto:</label>
         <input class="required" id="produto" name="produto" type="text" size="50" value=""/>
-        <label style="width: 80px" for="">&nbsp;Quantidade:</label>
+        <label style="width: 100px" for="">&nbsp;&nbsp;Quantidade:</label>
         <input class="required" id="qtde" name="qtde" type="text" size="5" value=""/>
         <a id="btAdicionar" style="cursor: pointer">
             &nbsp;&nbsp;&nbsp;<img src="/img/add_256.png" width="20" height="20" title="Adicionar Produto" />
@@ -25,7 +25,7 @@
     
     <div class="formfield">
         <label for="">Tipo de Pagamento:</label>
-        <select name="tipo" class="required">
+        <select style="width: 200px" name="tipo" class="required">
             <option selected value="">Selecione</option>
             <option value="vista">A Vista</option>
             <option value="prazo">A Prazo</option>
@@ -34,7 +34,7 @@
 
     <div class="formfield">
         <label for="">Forma de Pagamento:</label>
-        <select name="forma" class="required">
+        <select style="width: 200px" name="forma" class="required">
             <option selected value="">Selecione</option>
             <option value="dinheiro">Dinheiro</option>
             <option value="credito">Cartão de Crédito</option>
@@ -44,12 +44,12 @@
 
     <div class="formfield">
         <label for="">Desconto:</label>
-        <input id="desconto" name="desconto" type="text" size="15" value=""/>
+        <input id="desconto" name="desconto" type="text" size="21px" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">Data:</label>
-        <input class="required" id="datepicker" name="data" type="text" size="15" value=""/>
+        <input class="required" id="datepicker" name="data" type="text" size="21px" value=""/>
     </div>
 
     <div class="formbutton">
@@ -124,7 +124,7 @@
         html = "<div class='formfield'>" +
             "<label for=''>Produto:</label>" +
             "<input class='required' id='produto' name='produto' type='text' size='50'/>" +
-            "<label style='width: 80px' for=''>&nbsp;Quantidade:</label>" +
+            "<label style='width: 100px' for=''>&nbsp;&nbsp;Quantidade:</label>" +
             "<input class='required' id='qtde' name='qtde' type='text' size='5 value=''/>" +
             "<a id='btRemover' onClick='removerItem(this)' style='cursor: pointer'>" +
             "&nbsp;&nbsp;<img src='/img/symbol_remove.png' width='30' height='30' title='Remover Produto' />" +

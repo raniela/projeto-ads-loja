@@ -95,7 +95,7 @@ class VendaController extends Zend_Controller_Action
             //se for cadastro é só enviar o titulo
             /*$this->view->titulo = "Cadastro de Usuarios";
         }*/
-        $this->view->titulo = "Cadastro de Fornecedores";
+        $this->view->titulo = "Cadastro de Cliente";
         /*$sessao = new Zend_Session_Namespace();
         if (isset($sessao->dados)) {
             $this->view->usuario = $sessao->dados;
