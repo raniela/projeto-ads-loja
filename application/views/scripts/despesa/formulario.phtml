@@ -4,50 +4,55 @@
 
 <form id="formDespesa" action="/despesa/salvar" method="post" enctype="multipart/form-data">
     <div class="formfield">
-        <label for="">Tipo da Despesa:</label>
+        <label style="width: 140px" for="">Tipo da Despesa:</label>
         <input class="required" id="tipo-despesa" name="tipo-despesa" type="text" size="50" value=""/>
     </div>
 
 
     <div class="formfield">
-        <label for="">Descrição:</label>
+        <label style="width: 140px" for="">Descrição:</label>
         <input class="required" id="descricao" name="descricao" type="text" size="50" value=""/>
     </div>
 
     <div class="formfield">
-        <label for="">Valor Total:</label>
+        <label style="width: 140px" for="">Valor Total:</label>
         <input class="required" id="valor-total" name="valor-total" type="text" size="15" value=""/>
     </div>
 
+    <br/>
+    <h01>Parcela:</h01>
     <div class="formfield">
-        <h01>Parcela:</h01>
-        <div class="formfield">
-            <label style="width: 120px" for="">Valor da Parcela:</label>
-            <input class="required" id="valor" name="valor" type="text" size="15" value=""/>
-            <label style="width: 120px; margin-left: 15px" for="">Data Vencimento:</label>
-            <input class="required" id="datepicker" name="data" type="text" size="15" width="150px" value=""/>
-            <label style="width: 120px; margin-left: 15px" for="">Data Pagamento:</label>
-            <input class="required" id="date" name="data" type="text" size="15" width="150px"  value=""/>
-            <label style="width: 140px; margin-left: 15px" for="">Valor do pagamento:</label>
-            <input class="required" id="valor-pag" name="valor-pag" type="text" size="15" value=""/>
-            <label style="width: 150px; margin-left: 15px" for="">Forma de Pagamento:</label>
-            <select name="forma">
-                <option selected value="Selecione">Selecione</option>
-                <option value="dinheiro">Dinheiro</option>
-                <option value="cartao">Cartão</option>
-                <option value="cheque">Cheque</option>
-                <option value="banco">Banco</option>
-            </select>
-        </div>
+        <label style="width: 140px" for="">Valor da Parcela:</label>
+        <input class="required" id="valor" name="valor" type="text" size="15" value=""/>
     </div>
-    <div id="teste">
+    <div class="formfield">
+        <label style="width: 140px" for="">Data Vencimento:</label>
+        <input class="required" id="datepicker" name="data" type="text" size="15" width="150px" value=""/>
+        <label style="width: 150px; margin-left: 15px" for="">Data Pagamento:</label>
+        <input class="required" id="date" name="data" type="text" size="15" width="150px"  value=""/>
+    </div>
+    <div class="formfield">
+        <label style="width: 140px" for="">Valor do pagamento:</label>
+        <input class="required" id="valor-pag" name="valor-pag" type="text" size="15" value=""/>
+        <label style="width: 150px; margin-left: 15px" for="">Forma de Pagamento:</label>
+        <select style="width: 149px" name="forma">
+            <option selected value="Selecione">Selecione</option>
+            <option value="dinheiro">Dinheiro</option>
+            <option value="cartao">Cartão</option>
+            <option value="cheque">Cheque</option>
+            <option value="banco">Banco</option>
+        </select>
+    </div>
+</div>
+
+<div id="teste">
 
 
-    </div>
-    <div class="formbutton">
-        <input id="btEnviar" type="submit" value="Enviar" />
-        <button type="button" id="btVoltarDespesa">Voltar</button> 
-    </div>
+</div>
+<div class="formbutton">
+    <input id="btEnviar" type="submit" value="Enviar" />
+    <button type="button" id="btVoltarDespesa">Voltar</button> 
+</div>
 </form>
 
 <div id="sucessoDespesa">
