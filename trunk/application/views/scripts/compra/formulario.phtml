@@ -5,7 +5,7 @@
 <form id="formCompra" action="/compra/salvar" method="post" enctype="multipart/form-data">
     <div class="formfield">
         <label for="">Nº Nota Fiscal:</label>
-        <input class="required" id="num-nota" name="num-nota" type="text" size="50" value=""/>
+        <input class="required" id="num-nota" name="num-nota" type="text" size="30" value=""/>
     </div>
 
     <div class="formfield">
@@ -16,7 +16,7 @@
     <div id="mercadoria" class="formfield">
         <label for="">Mercadoria:</label>
         <input class="required" id="mercadoria" name="mercadoria" type="text" size="50" value=""/>
-        <label style="width: 80px" for="">&nbsp;Quantidade:</label>
+        <label style="width: 90px" for="">&nbsp;Quantidade:</label>
         <input class="required" id="qtde" name="qtde" type="text" size="5" value=""/>
         <a id="btAdicionar" style="cursor: pointer">
             &nbsp;&nbsp;&nbsp;<img src="/img/add_256.png" width="20" height="20" title="Adicionar Mercadoria" />
@@ -24,10 +24,10 @@
     </div>
 
     <div id="teste">
-        
-        
+
+
     </div>
-    
+
     <div class="formfield">
         <label for="">Descrição:</label>
         <input class="required" id="descricao" name="descricao" type="text" size="30" value=""/>
@@ -35,9 +35,9 @@
 
     <div class="formfield">
         <label for="">Data:</label>
-        <input class="required" id="data" name="data" type="text" size="15" value=""/>
+        <input class="required" id="data" name="data" type="text" size="30" value=""/>
     </div>
-    
+
     <div class="formfield">
         <label for="">Fornecedor:</label>
         <input class="required" id="fornecedor" name="fornecedor" type="text" size="30" value=""/>
@@ -115,9 +115,9 @@
         html = "<div class='formfield'>" +
             "<label for=''>Mercadoria:</label>" +
             "<input class='required' id='mercadoria' name='mercadoria' type='text' size='50'/>" +
-            "<label style='width: 80px' for=''>&nbsp;Quantidade:</label>" +
+            "<label style='width: 90px' for=''>&nbsp;Quantidade:</label>" +
             "<input class='required' id='qtde' name='qtde' type='text' size='5 value=''/>" +
-            "<a id='btRemover' style='cursor: pointer'>" +
+            "<a id='btRemover' onClick='removerItem(this)' style='cursor: pointer'>" +
             "&nbsp;&nbsp;<img src='/img/symbol_remove.png' width='30' height='30' title='Remover Mercadoria' />" +
             "</a>" +
             "</div>";
@@ -127,4 +127,9 @@
         });
         
     });
+    
+    function removerItem(obj) {
+        $(obj).parent().remove();
+        //alert("a");
+    }
 </script>
