@@ -20,26 +20,26 @@
     
     <div class="formfield">
         <label style="width: 225px" for="">Quantidade em estoque:</label>
-        <input class="required teste" id="qtde-estoq" name="qtde-estoq" type="text" size="30" value=""/>
+        <input class="required teste" id="qtde-estoq" name="qtde-estoq" type="text" size="15" value=""/>
     </div>
     
     <div class="formfield">
         <label style="width: 225px" for="">Quantidade mínima em estoque:</label>
-        <input class="required teste" id="qtde-min-estoq" name="qtde-min-estoq" type="text" size="30" value=""/>
+        <input class="required teste" id="qtde-min-estoq" name="qtde-min-estoq" type="text" size="15" value=""/>
     </div>
     
     <div class="formfield">
         <label style="width: 225px" for="">Preço venda unitário:</label>
-        <input class="required teste" id="preco" name="preco" type="text" size="30" value=""/>
+        <input class="required teste" id="preco" name="preco" type="text" size="15" value=""/>
     </div>
     
     <div class="formbutton">
         <input id="btEnviar" type="submit" value="Enviar" />
-        <button type="button" id="btVoltarCompra">Voltar</button> 
+        <button type="button" id="btVoltarMercadoria">Voltar</button> 
     </div>
 </form>
 
-<div id="sucessoCompra">
+<div id="sucessoMercadoria">
     <p>Sucesso</p>
 </div>
 
@@ -48,7 +48,7 @@
 
     $(function(){
 
-        $( "#sucessoCompra" ).dialog({
+        $( "#sucessoMercadoria" ).dialog({
             autoOpen: false
         });
         
@@ -56,15 +56,15 @@
         
         //$('#form').populate(dataForm);
         
-        $('#formCompra').validate({
+        $('#formMercadoria').validate({
             submitHandler: function(form){
                 jQuery(form).ajaxSubmit({
                     dataType:  'json', 
                     success: function(r){
                         if(r.tipo == 'sucesso'){                    
-                            $('#sucessoCompra p').html(r.msg);
-                            $('#sucessoCompra').dialog("open");
-                            $( "#sucessoCompra" ).dialog({
+                            $('#sucessoMercadoria p').html(r.msg);
+                            $('#sucessoMercadoria').dialog("open");
+                            $( "#sucessoMercadoria" ).dialog({
                                 modal: true,
                                 buttons: {
                                     Ok: function() {
@@ -77,9 +77,9 @@
                             //$('#divMsg').html(r.msg)
                             //window.location = r.url;
                         } else {
-                            $('#sucessoCompra p').html(r.msg);
-                            $('#sucessoCompra').dialog("open");
-                            $( "#sucessoCompra" ).dialog({
+                            $('#sucessoMercadoria p').html(r.msg);
+                            $('#sucessoMercadoria').dialog("open");
+                            $( "#sucessoMercadoria" ).dialog({
                                 modal: true,
                                 buttons: {
                                     Ok: function() {
@@ -96,8 +96,8 @@
             }
         });
         
-        $('#btVoltarCompra').click(function(){
-            $('#ui-tabs-8').load('/compra/index/menu/1');
+        $('#btVoltarMercadoria').click(function(){
+            $('#ui-tabs-8').load('/mercadoria/index/menu/1');
         })
         
     });

@@ -24,7 +24,7 @@ class TipoController extends Zend_Controller_Action
             $this->getHelper('layout')->disableLayout();
         }
 
-        $this->view->titlePage = "Listagem de Tipos de Mercadorias";
+        $this->view->titlePage = "Listagem de Tipos de Mercadoria";
         
         $dadosAutoComplete = array();
         $tiposAC = array();
