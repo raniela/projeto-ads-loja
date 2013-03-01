@@ -29,7 +29,7 @@
 
 <?php echo $this->paginationControl($this->paginator, 'Sliding', 'my_pagination_control.phtml'); ?>
 
-<div id="dcUsuario">
+<div id="dcFornecedor">
     <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse fornecedor?</p>
 </div>
 
@@ -54,7 +54,7 @@
             autoOpen: false
         });
                 
-        $("#dcUsuario").dialog({
+        $("#dcFornecedor").dialog({
             resizable: false,
             height:250,
             width:500,
@@ -75,7 +75,7 @@
                                 }
                             });
                                 
-                            $('#divResUsuario').load('/fornecedor/grid/nome/' + $('#nomeUsu').val());
+                            $('#divResFornecedor').load('/fornecedor/grid/nome/' + $('#nomeUsu').val());
                                 
                         } else {
                             $('#fornecedorErro').html(retorno.msg);
@@ -87,14 +87,14 @@
                                     }
                                 }
                             });
-                            $('#divResUsuario').load('/fornecedor/grid/nome/' + $('#nomeUsu').val());
+                            $('#divResFornecedor').load('/fornecedor/grid/nome/' + $('#nomeUsu').val());
                         }                    
                     }, 'json');
                     $( this ).dialog("close");
                     
                 },
                 Cancel: function() {
-                    $('#divResUsuario').load('/fornecedor/grid/nome/' + $('#nomeUsu').val());
+                    $('#divResFornecedor').load('/fornecedor/grid/nome/' + $('#nomeUsu').val());
                     $( this ).dialog( "close" );
                         
                 }
@@ -106,20 +106,20 @@
         $('.pagination a').click(function(){
            
             var href = $(this).attr('href');
-            $('#divResUsuario').load(href);
+            $('#divResFornecedor').load(href);
             return false;
         });
         
         $('.linkEditar').click(function(){
             var url = $(this).attr('href');
-            $('#ui-tabs-3').load(url);
+            $('#ui-tabs-4').load(url);
             return false;
         });
         
         $('.btExcluir').click(function(){
             
             url = $(this).attr('href');
-            $("#dcUsuario").dialog("open");
+            $("#dcFornecedor").dialog("open");
             
             return false;
         });
