@@ -3,8 +3,8 @@
 <div>
     <form action="" method="post">
         <div class="formfield">
-            <label for="email">E-mail</label>
-            <input type="text" name="email" id="email" maxlength="255"/>
+            <label for="login">E-mail</label>
+            <input type="text" name="login" id="login" maxlength="255"/>
         </div>
         <div class="formfield">
             <label for="senha">Senha:</label>
@@ -21,9 +21,9 @@
     $(function(){
       
         $('#btEnviar').click(function(){
-            if($('#email').val() == ""){
-                alert('Informe um email');
-                $('#email').focus();
+            if($('#login').val() == ""){
+                alert('Informe um login');
+                $('#login').focus();
                 return false;
             }
             
