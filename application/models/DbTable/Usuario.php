@@ -7,9 +7,9 @@ class Application_Model_DbTable_Usuario extends Zend_Db_Table_Abstract{
     
     public function verificaDb($id = null, $dados){
         
-        $email = $dados['email'];
+        $login = $dados['login'];
         
-        $where = "email LIKE '{$email}'";
+        $where = "login LIKE '{$login}'";
         
         if($id){
             $where .= " AND id_usuario <> $id";

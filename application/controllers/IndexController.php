@@ -14,16 +14,16 @@ class IndexController extends Zend_Controller_Action
 
             $db = Zend_Db_Table::getDefaultAdapter();
 
-            $email = $this->getRequest()->getPost('email');
+            $login = $this->getRequest()->getPost('login');
             $senha = $this->getRequest()->getPost('senha');
 
             /* usa a classe Zend_Auth_Adapter_DbTable na autenticação */
             $authAdapterDbTable = new Zend_Auth_Adapter_DbTable($db);
 
             $authAdapterDbTable->setTableName('usuario') //nome da tabela usada para autenticar
-                    ->setIdentityColumn('email') // nome da coluna de login
+                    ->setIdentityColumn('login') // nome da coluna de login
                     ->setCredentialColumn('senha') // nome da coluna de senha
-                    ->setIdentity($email) // valor para testar o login
+                    ->setIdentity($login) // valor para testar o login
                     ->setCredential($senha); // valor para testar a senha
 
             /* autentica usuário */
