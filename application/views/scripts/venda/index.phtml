@@ -38,6 +38,7 @@
         <button id="btBuscarVenda" type="button">Buscar</button>
         <button id="btNovaVenda" type="button" value="/venda/formulario">Novo</button> 
     </div>
+    <?php echo $this->String("2011-03-11")->reverseDate();?>
 </form>
 
 <br />
@@ -87,6 +88,7 @@
     
         $('#divResVenda').load('/venda/grid/');
         $('#btBuscarVenda').click(function(){
+            
             nome = urlencodeGet($('#nomeCliente').val());
             data_inicial = urlencodeGet($('#dataInicial').val());
             data_final = urlencodeGet($('#dataFinal').val());

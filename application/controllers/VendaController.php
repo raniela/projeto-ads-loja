@@ -56,9 +56,7 @@ class VendaController extends Zend_Controller_Action
         
         $params['data_final'] = $this->_helper->util->urldecodeGet($this->_getParam('data_final'));
         $params['data_final'] = $this->_helper->util->reverseDate($params['data_final']);
-        
-        print_r($params);
-        die();
+                
         /*$nome = $this->_getParam('nome');
         
         $select =$this->usuarioDbTable->select();
