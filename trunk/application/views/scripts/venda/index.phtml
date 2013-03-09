@@ -37,16 +37,13 @@
     <div class="formbutton">
         <button id="btBuscarVenda" type="button">Buscar</button>
         <button id="btNovaVenda" type="button" value="/venda/formulario">Novo</button> 
-    </div>
-    <?php echo $this->String("2011-03-11")->reverseDate();?>
+    </div>    
 </form>
 
 <br />
 
 <!-- grid para exibir os dados -->
 <div id="divResVenda">
-
-
 
 </div>
 
@@ -55,7 +52,6 @@
 <br />
 
 <script>
-
     var nomeClienteAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoCompleteCliente); ?>;         
     
     $(document).ready(function(){
@@ -64,7 +60,9 @@
             $('#ui-tabs-1').load(url);
             return false;
         });
-    
+        
+        $('#dataInicial').mask("99/99/9999");
+        $('#dataFinal').mask("99/99/9999");
         $("#dataInicial").datepicker({dateFormat:'dd/mm/yy'});     
         $("#dataFinal").datepicker({dateFormat:'dd/mm/yy'});
         /*$("#nomeCliente").autocomplete(nomeClienteAutoComplete, {

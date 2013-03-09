@@ -3,21 +3,45 @@
         <th>Data</th>
         <th>Cliente</th>
         <th>Valor total</th>
+        <th>Forma Pagamento</th>
+        <th>Tipo Pagamento</th>
         <th>Ações</th>
     </tr>
 
     <tr class="alt" >
-        <?php foreach ($this->paginator as $k => $compra): ?>
+        <?php foreach ($this->paginator as $k => $venda): ?>
         <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
-            <td><?php echo $compra['data'] ?></td>
-            <td><?php echo $compra['cliente'] ?></td>
-            <td><?php echo $compra['valor'] ?></td>
-
+            <td><?php echo $this->String($venda['data_venda'])->reverseDate(); ?></td>
+            <td><?php echo $venda['nome'] ?></td>
+            <td><?php echo $this->String($venda['valor_total_venda'])->floatToMoney(); ?></td>
             <td>
-                <a class="linkEditar" href="/compra/formulario/id/<?php echo $compra['id_compra'] ?>">
+                <?php 
+                    if($venda['tipo_pagamento'] == "V") {
+                        echo "A VISTA";
+                    }
+                    if($venda['tipo_pagamento'] == "P") {
+                        echo "A PRAZO";
+                    }                                      
+                ?>
+            </td>
+            <td>
+                <?php 
+                    if($venda['forma_pagamento'] == "D") {
+                        echo "DINHEIRO";
+                    } 
+                    if($venda['forma_pagamento'] == "CC") {
+                        echo "CARTÃO DE CRÉDITO";
+                    }
+                    if($venda['forma_pagamento'] == "CD") {
+                        echo "CARTÃO DE DÉBITO";
+                    }                                        
+                ?>
+            </td>
+            <td>
+                <a class="linkEditar" href="/venda/formulario/id_venda/<?php echo $venda['id_venda'] ?>">
                     <img src="/img/edit-icon.gif" title="Editar registro" />
                 </a>
-                <a class="btExcluir" href="/compra/excluir/id/<?php echo $compra['id_compra'] ?>">
+                <a class="btExcluir" href="/venda/excluir/id_venda/<?php echo $venda['id_venda'] ?>">
                     <img src="/img/delete-icon.gif" title="Excluir Registro" />
                 </a>
             </td>
@@ -28,16 +52,16 @@
 
 <?php echo $this->paginationControl($this->paginator, 'Sliding', 'my_pagination_control.phtml'); ?>
 
-<div id="dcCompra">
-    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse compra?</p>
+<div id="dcVenda">
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir essa Venda?</p>
 </div>
 
-<div id="compraErro">
-    <p>Erro</p>    
+<div id="vendaErro">
+    <p></p>    
 </div>
 
-<div id="compraSucesso">
-    <p>Sucesso</p>    
+<div id="vendaSucesso">
+    <p></p>    
 </div>
 
 <script>
@@ -53,7 +77,7 @@
             autoOpen: false
         });
                 
-        $("#dcCompra").dialog({
+        $("#dcVenda").dialog({
             resizable: false,
             height:250,
             width:500,
@@ -64,36 +88,35 @@
                 "Ok": function() {
                     $.get(url, null, function(retorno){
                         if(retorno.tipo == 'sucesso'){
-                            $('#compraSucesso').html(retorno.msg);
-                            $('#compraSucesso').dialog("open");
-                            $('#compraSucesso').dialog({
+                            $('#vendaSucesso').html(retorno.msg);                            
+                            $('#vendaSucesso').dialog({
+                                modal: true,
                                 buttons: {
-                                    Ok: function() {
-                                        $( this ).dialog( "close" );
+                                    "Ok": function() {
+                                        $(this).dialog("close");
                                     }
                                 }
-                            });
-                                
-                            $('#divResVenda').load('/compra/grid/nome/' + $('#nomeVenda').val());
-                                
+                            }); 
+                            $('#vendaSucesso').dialog("open");
+                            $('#divResVenda').load('/venda/grid/');                                
                         } else {
-                            $('#compraErro').html(retorno.msg);
-                            $('#compraErro').dialog("open");
-                            $('#compraErro').dialog({
-                                buttons: {
-                                    Ok: function() {
-                                        $( this ).dialog( "close" );
+                            $('#vendaErro').html(retorno.msg);                            
+                            $('#vendaErro').dialog({
+                                modal: true,
+                                buttons: {                                    
+                                    "Ok": function() {
+                                        $(this).dialog("close");
                                     }
                                 }
                             });
-                            $('#divResVenda').load('/compra/grid/nome/' + $('#nomeVenda').val());
+                            $('#vendaErro').dialog("open");
+                            $('#divResVenda').load('/venda/grid/');
                         }                    
                     }, 'json');
-                    $( this ).dialog("close");
-                    
+                    $(this).dialog("close");                   
                 },
                 Cancel: function() {
-                    $('#divResVenda').load('/compra/grid/nome/' + $('#nomeVenda').val());
+                    $('#divResVenda').load('/venda/grid/');
                     $( this ).dialog( "close" );
                         
                 }
@@ -102,8 +125,7 @@
                 
         });
                 
-        $('.pagination a').click(function(){
-           
+        $('.pagination a').click(function(){           
             var href = $(this).attr('href');
             $('#divResVenda').load(href);
             return false;
@@ -111,15 +133,13 @@
         
         $('.linkEditar').click(function(){
             var url = $(this).attr('href');
-            $('#ui-tabs-2').load(url);
+            $('#ui-tabs-1').load(url);
             return false;
         });
         
-        $('.btExcluir').click(function(){
-            
+        $('.btExcluir').click(function(){            
             url = $(this).attr('href');
-            $("#dcVenda").dialog("open");
-            
+            $("#dcVenda").dialog("open");            
             return false;
         });
         

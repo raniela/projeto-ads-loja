@@ -2,10 +2,11 @@
 
 <!-- formulário -->
 
-<form id="formVenda" action="/venda/salvar" method="post" enctype="multipart/form-data">
+<form id="formVenda" action="/venda/salvar/id_venda/<?=$this->venda['id_venda']?>" method="post" enctype="multipart/form-data">
     <div class="formfield">
         <label for="">Cliente:</label>
-        <input class="required" id="cliente" name="cliente" type="text" size="69" value=""/>
+        <input class="required" id="venda-id_cliente" name="venda[id_cliente]" type="hidden" size="69" value=""/>
+        <input class="required" id="venda-nome" name="venda[nome]" type="text" size="69" value=""/>
     </div>
 
     <div id="produto" class="formfield">
@@ -25,31 +26,29 @@
     
     <div class="formfield">
         <label for="">Tipo de Pagamento:</label>
-        <select style="width: 200px" name="tipo" class="required">
-            <option selected value="">Selecione</option>
-            <option value="vista">A Vista</option>
-            <option value="prazo">A Prazo</option>
-        </select>
+        <?php echo $this->formSelect('venda[tipo_pagamento]', $this->venda['tipo_pagamento'], array('class' => 'required'), array(''=>'SELECIONE','V'=>'A VISTA', 'P' => 'A PRAZO')); ?>
+        
     </div>
 
     <div class="formfield">
         <label for="">Forma de Pagamento:</label>
-        <select style="width: 200px" name="forma" class="required">
-            <option selected value="">Selecione</option>
-            <option value="dinheiro">Dinheiro</option>
-            <option value="credito">Cartão de Crédito</option>
-            <option value="debito">Cartão de Débito</option>
-        </select>
+        <?php echo $this->formSelect('venda[forma_pagamento]', $this->venda['forma_pagamento'], array('class' => 'required'), array(''=>'SELECIONE', 'D'=>'DINHEIRO', 'CC' => 'CARTÃO DE CRÉDITO', 'CD' => 'CARTÃO DE DÉBITO')); ?>
+        
     </div>
 
     <div class="formfield">
         <label for="">Desconto:</label>
-        <input id="desconto" name="desconto" type="text" size="21px" value=""/>
+        <input id="venda-valor_desconto" class="money" name="venda[valor_desconto]" type="text" size="21px" value=""/>
+    </div>
+    
+    <div class="formfield">
+        <label for="">Valor Total:</label>
+        <input id="venda-valor_total_venda" class="required money" name="venda[valor_total_venda]" type="text" size="21px" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">Data:</label>
-        <input class="required" id="datepicker" name="data" type="text" size="21px" value=""/>
+        <input class="required" id="venda-data_venda" name="venda[data_venda]" type="text" size="21px" value=""/>
     </div>
 
     <div class="formbutton">
@@ -64,12 +63,20 @@
 
 
 <script>
-
-    $(function(){
+    var dataForm = <?php echo Zend_Json::encode(array('venda' => $this->venda)) ?>;
+    $(function(){                
+        $('#formVenda').populate(dataForm);
         
-        $("#datepicker").datepicker({dateFormat:'dd/mm/yy'});
+        $('.money').maskMoney({
+            allowZero:true,
+            decimal:",", 
+            thousands:".", 
+            defaultZero:false
+        });
+        $('#venda-data_venda').mask("99/99/9999");
+        $('#venda-data_venda').datepicker({dateFormat:'dd/mm/yy'});
         
-        $( "#sucessoVenda" ).dialog({
+        $('#sucessoVenda').dialog({
             autoOpen: false
         });
         

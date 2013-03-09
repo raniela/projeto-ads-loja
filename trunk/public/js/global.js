@@ -3,9 +3,11 @@ $(function(){
     $('.converteLetraMaiscula').keyup(function(){
         $(this).val($(this).val().toUpperCase());
     });
-        
     
-})
+    
+
+    
+});
 
 
 jQuery.validator.addMethod("soLetras", function(value, element) {
@@ -16,6 +18,18 @@ jQuery.validator.addMethod("soLetras", function(value, element) {
 jQuery.validator.addMethod("soNum", function(value, element) {
     return this.optional(element) || soNum(value);
 }, "Campo deve conter apenas numeros");
+
+function iniciarMascaras() {
+    $('.money').unmaskMoney();            
+    $('.money').maskMoney({
+        allowZero:true,
+        decimal:",", 
+        thousands:".", 
+        defaultZero:false
+    });
+    
+    $('.numeric').numeric();        
+}
 
 function str_replace (search, replace, subject, count) {
     var i = 0,
