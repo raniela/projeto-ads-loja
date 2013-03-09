@@ -12,6 +12,7 @@ class VendaController extends Zend_Controller_Action
     public function init()
     {
         //$this->usuarioDbTable = new Application_Model_DbTable_Usuario();
+        $this->clienteDbTable = new Application_Model_DbTable_Cliente();
         $this->flashMessenger = $this->_helper->getHelper('FlashMessenger');
         $this->view->msg = $this->flashMessenger->getMessages();
         $this->logger = Zend_Registry::get('logger');
@@ -26,9 +27,9 @@ class VendaController extends Zend_Controller_Action
 
         $this->view->titlePage = "Listagem de Vendas";
         
-        $dadosAutoComplete = array();
+        $dadosAutoCompleteCliente = $this->clienteDbTable->getDataAutoCompleteCliente();
         
-        $vendasAC = array();
+        /*$vendasAC = array();
         
         $vendasAC[0]['cliente'] = "Nome Cliente";
         $vendasAC[1]['cliente'] = "Cliente Exemplo";
@@ -37,18 +38,27 @@ class VendaController extends Zend_Controller_Action
             
             $dadosAutoComplete[] = $venda['cliente'];
             
-        }
+        }*/
         
-        $this->view->dadosAutoComplete = $dadosAutoComplete;
-        
-        
+        $this->view->dadosAutoCompleteCliente = $dadosAutoCompleteCliente;                
     }
 
     public function gridAction()
     {
 
         $this->getHelper('layout')->disableLayout();
-
+        $params['nome'] = $this->_helper->util->urldecodeGet($this->_getParam('nome'));
+        $params['tipo_pagamento'] = $this->_getParam('tipo_pagamento');
+        $params['forma_pagamento'] = $this->_getParam('forma_pagamento');
+        
+        $params['data_inicial'] = $this->_helper->util->urldecodeGet($this->_getParam('data_inicial'));
+        $params['data_inicial'] = $this->_helper->util->reverseDate($params['data_inicial']);
+        
+        $params['data_final'] = $this->_helper->util->urldecodeGet($this->_getParam('data_final'));
+        $params['data_final'] = $this->_helper->util->reverseDate($params['data_final']);
+        
+        print_r($params);
+        die();
         /*$nome = $this->_getParam('nome');
         
         $select =$this->usuarioDbTable->select();

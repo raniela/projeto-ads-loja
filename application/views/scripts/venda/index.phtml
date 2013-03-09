@@ -1,9 +1,39 @@
 <h1><?php echo $this->titlePage; ?></h1>
 <form action="" method=get">
     <div class="formfield">
-        <label for="">Nome:</label>
-        <input id="nomeVenda" name="nomeVenda" type="text">
+        <label for="nomeCliente">Nome do Cliente:</label>
+        <input id="nomeCliente" name="nomeCliente" type="text">
     </div>
+    
+    <div class="formfield">
+        <label for="dataInicial">Data Inicial:</label>
+        <input id="dataInicial" name="dataInicial" type="text">               
+    </div>
+    
+    <div class="formfield">
+        <label for="dataFinal">Data Final:</label>
+        <input id="dataFinal" name="dataFinal" type="text">             
+    </div>
+    
+    <div class="formfield">
+        <label for="">Tipo de Pagamento:</label>
+        <select style="width: 200px" id="tipo_pagamento" name="tipo_pagamento">
+            <option selected value="">Selecione</option>
+            <option value="V">A Vista</option>
+            <option value="P">A Prazo</option>
+        </select>
+    </div>
+
+    <div class="formfield">
+        <label for="">Forma de Pagamento:</label>
+        <select style="width: 200px" id="forma_pagamento" name="forma_pagamento" >
+            <option selected value="">Selecione</option>
+            <option value="D">Dinheiro</option>
+            <option value="CC">Cartão de Crédito</option>
+            <option value="CD">Cartão de Débito</option>
+        </select>
+    </div>
+    
     <div class="formbutton">
         <button id="btBuscarVenda" type="button">Buscar</button>
         <button id="btNovaVenda" type="button" value="/venda/formulario">Novo</button> 
@@ -25,26 +55,46 @@
 
 <script>
 
-    var vendaAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
-
-    $(function(){
+    var nomeClienteAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoCompleteCliente); ?>;         
     
+    $(document).ready(function(){
         $('#btNovaVenda').click(function(){
             var url = $(this).attr('value');
             $('#ui-tabs-1').load(url);
             return false;
         });
     
-    
-        $( "#nomeVenda" ).autocomplete({
-            source: vendaAutoComplete
-        });
-    
-        $('#divResVenda').load('/venda/grid/nome/' + $('#nomeVenda').val());
-        $('#btBuscarVenda').click(function(){
+        $("#dataInicial").datepicker({dateFormat:'dd/mm/yy'});     
+        $("#dataFinal").datepicker({dateFormat:'dd/mm/yy'});
+        /*$("#nomeCliente").autocomplete(nomeClienteAutoComplete, {
+            autoFill:true,	                
+            formatItem: function(item) {
+                return item.a;
+            },
+            formatMatch: function(item){
+                return item.a;
+            },
+            formatResult:function(item){
+                return item.a;
+            }
+        });*/
         
-        $('#divResVenda').load('/venda/grid/nome/' + $('#nomeVenda').val());
+        $( "#nomeCliente" ).autocomplete({
+            source: nomeClienteAutoComplete
         });
-    }); 
     
+   
+    
+        $('#divResVenda').load('/venda/grid/');
+        $('#btBuscarVenda').click(function(){
+            nome = urlencodeGet($('#nomeCliente').val());
+            data_inicial = urlencodeGet($('#dataInicial').val());
+            data_final = urlencodeGet($('#dataFinal').val());
+            tipo_pagamento = $('#tipo_pagamento').val();
+            forma_pagamento = $('#forma_pagamento').val();                       
+            
+            $('#divResVenda').load('/venda/grid/nome/' + nome + '/data_inicial/' + data_inicial + '/data_final/' + data_final + '/forma_pagamento/' + forma_pagamento + '/tipo_pagamento/' + tipo_pagamento);
+        });
+        
+    });                
 </script>
