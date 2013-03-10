@@ -21,7 +21,7 @@
             <option selected value="">Selecione</option>
             <option value="V">A Vista</option>
             <option value="P">A Prazo</option>
-        </select>
+        </select>                
     </div>
 
     <div class="formfield">
@@ -52,14 +52,14 @@
 <br />
 
 <script>
-    var nomeClienteAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoCompleteCliente); ?>;         
+    var nomeClienteAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoCompleteCliente); ?>;             
     
     $(document).ready(function(){
         $('#btNovaVenda').click(function(){
             var url = $(this).attr('value');
             $('#ui-tabs-1').load(url);
             return false;
-        });
+        });               
         
         $('#dataInicial').mask("99/99/9999");
         $('#dataFinal').mask("99/99/9999");
@@ -80,9 +80,7 @@
         
         $( "#nomeCliente" ).autocomplete({
             source: nomeClienteAutoComplete
-        });
-    
-   
+        });                   
     
         $('#divResVenda').load('/venda/grid/');
         $('#btBuscarVenda').click(function(){
