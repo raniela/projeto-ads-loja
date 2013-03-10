@@ -39,4 +39,28 @@ class Application_Model_DbTable_Cliente extends Zend_Db_Table_Abstract
         
         return $array;
     }
+    
+    public function getDataAutoCompleteClienteFormulario() {               
+        $query = "SELECT DISTINCT id_cliente,nome,documento FROM " . $this->_name;
+
+        $data = $this->getDefaultAdapter()->fetchAll($query);
+
+        $str = "[";
+        foreach ($data as $val) {
+
+            $id_cliente = $val['id_cliente'];
+            $nome = $val['nome'];
+            $documento = $val['documento'];
+            
+            if ($str != '[')
+                $str .=',';
+
+            $nome = str_replace("'", "\'", $nome);
+            $value = $nome . " - CPF/CNPJ: ".$documento;
+            /** enviar o mínimo possível de código pra view para não ficar lerda */
+            $str .= "{id: '$id_cliente', value: '$value'}";
+        }
+        $str .= "]";
+        return $str;       
+    }
 }

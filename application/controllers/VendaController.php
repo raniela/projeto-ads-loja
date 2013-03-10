@@ -59,6 +59,9 @@ class VendaController extends Zend_Controller_Action
     {
         $this->getHelper('layout')->disableLayout();
         
+        /** Traz os cados do cliente para utilizar no autocomplete */
+        $this->view->dataAutoCompleteCliente = $this->clienteDbTable->getDataAutoCompleteClienteFormulario();
+        
         //se já tem id é edição, tem que mandar os dados desse id pra view
         if ($this->_getParam('id_venda')) {
             /**
@@ -95,7 +98,7 @@ class VendaController extends Zend_Controller_Action
         
         $venda = $this->getRequest()->getPost('venda');
         
-        $venda['id_cliente'] = '1';   
+        //$venda['id_cliente'] = '1';   
         $venda['data_venda'] = $this->_helper->util->reverseDate($venda['data_venda']);
         $venda['valor_total_venda'] = $this->_helper->util->moneyToFloat($venda['valor_total_venda']); 
         $venda['valor_desconto'] = $this->_helper->util->moneyToFloat($venda['valor_desconto']); 

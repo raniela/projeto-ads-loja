@@ -5,8 +5,11 @@
 <form id="formVenda" action="/venda/salvar/id_venda/<?=$this->venda['id_venda']?>" method="post" enctype="multipart/form-data">
     <div class="formfield">
         <label for="">Cliente:</label>
-        <input class="required" id="venda-id_cliente" name="venda[id_cliente]" type="hidden" size="69" value=""/>
-        <input class="required" id="venda-nome" name="venda[nome]" type="text" size="69" value=""/>
+        <input class="required" id="venda-id_cliente" name="venda[id_cliente]" type="hidden" value=""/>
+        <input class="required" id="venda-nome" name="venda[nome]" type="text" size="44" value=""/>
+        
+        <label for="" style="width: 50px;">&nbsp;&nbsp;Data:</label>
+        <input class="required" id="venda-data_venda" name="venda[data_venda]" type="text" size="21px" value=""/>
     </div>
 
     <div id="produto" class="formfield">
@@ -19,37 +22,29 @@
         </a>
     </div>
 
-    <div id="teste">
+    <div id="teste">                
+    </div>
+    
+    <div class="formfield">
+        <label for="">Desconto:</label>
+        <input id="venda-valor_desconto" class="money" name="venda[valor_desconto]" type="text" size="21px" value=""/>
         
-        
+        <label for="">&nbsp;&nbsp;Valor Total:</label>
+        <input id="venda-valor_total_venda" class="required money" name="venda[valor_total_venda]" type="text" size="21px" value=""/>
+    </div>
+    
+
+    <div class="formfield">
+        <label for="">Forma de Pagamento:</label>
+        <?php echo $this->formSelect('venda[forma_pagamento]', $this->venda['forma_pagamento'], array('class' => 'required'), array(''=>'SELECIONE', 'D'=>'DINHEIRO', 'CC' => 'CARTÃO DE CRÉDITO', 'CD' => 'CARTÃO DE DÉBITO')); ?>        
     </div>
     
     <div class="formfield">
         <label for="">Tipo de Pagamento:</label>
-        <?php echo $this->formSelect('venda[tipo_pagamento]', $this->venda['tipo_pagamento'], array('class' => 'required'), array(''=>'SELECIONE','V'=>'A VISTA', 'P' => 'A PRAZO')); ?>
-        
+        <?php echo $this->formSelect('venda[tipo_pagamento]', $this->venda['tipo_pagamento'], array('class' => 'required'), array(''=>'SELECIONE','V'=>'A VISTA', 'P' => 'A PRAZO')); ?>        
     </div>
 
-    <div class="formfield">
-        <label for="">Forma de Pagamento:</label>
-        <?php echo $this->formSelect('venda[forma_pagamento]', $this->venda['forma_pagamento'], array('class' => 'required'), array(''=>'SELECIONE', 'D'=>'DINHEIRO', 'CC' => 'CARTÃO DE CRÉDITO', 'CD' => 'CARTÃO DE DÉBITO')); ?>
-        
-    </div>
-
-    <div class="formfield">
-        <label for="">Desconto:</label>
-        <input id="venda-valor_desconto" class="money" name="venda[valor_desconto]" type="text" size="21px" value=""/>
-    </div>
-    
-    <div class="formfield">
-        <label for="">Valor Total:</label>
-        <input id="venda-valor_total_venda" class="required money" name="venda[valor_total_venda]" type="text" size="21px" value=""/>
-    </div>
-
-    <div class="formfield">
-        <label for="">Data:</label>
-        <input class="required" id="venda-data_venda" name="venda[data_venda]" type="text" size="21px" value=""/>
-    </div>
+           
 
     <div class="formbutton">
         <input id="btEnviar" type="submit" value="Enviar" />
@@ -63,7 +58,9 @@
 
 
 <script>
-    var dataForm = <?php echo Zend_Json::encode(array('venda' => $this->venda)) ?>;
+    var dataForm = <?php echo Zend_Json::encode(array('venda' => $this->venda)); ?>;
+    var dataAutoCompleteCliente = <?php echo $this->dataAutoCompleteCliente; ?>;
+        
     $(function(){                
         $('#formVenda').populate(dataForm);
         
@@ -80,7 +77,53 @@
             autoOpen: false
         });
         
-        //$('#form').populate(dataForm);
+        
+        $.expr[':'].textEquals = function (a, i, m) {
+        return $(a).text().match("^" + escape_regexp(m[3]) + "$");
+    };
+        $("#venda-nome").autocomplete({
+            source: dataAutoCompleteCliente,
+            autoFill:true,	
+            mustMatch:true,           
+            formatItem: function(row, ui, total) {
+                return ui.item.value;
+            }, 
+            formatResult: function(row, ui) { 
+                return ui.item.value;
+            },
+            formatMatch: function(row, ui){
+                return ui.item.value;
+            },
+            change: function (event, ui) {
+                if (!ui.item) {
+                 $(this).val('');
+                }
+            },
+            select: function(e, ui) {                                  
+                if(ui.item.id == '') {
+                    $('#venda-id_cliente').val('');
+                    $("#venda-nome").val('');
+                } else {
+                    $('#venda-id_cliente').val(ui.item.id);
+                    result = ui.item.value.split(" - ");
+                    //alert(result[0]);
+                    $(this).val(result[0]);
+                    
+                }
+                return false;
+            }            
+       });
+        
+//        $('input#venda-nome').result(function(event, data, formatted) {
+//            if(!data) {
+//               $('#venda-id_cliente').val('');
+//               $("#venda-nome").val('');
+//           } else {
+//               $('#venda-id_cliente').val(data.id);
+//           }
+//           alert(data.id);
+//           });
+        
         
         $('#formVenda').validate({
             submitHandler: function(form){
@@ -144,8 +187,13 @@
                                
     });
     
+    function escape_regexp(text) {
+        return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    }
+    
     function removerItem(obj) {
         $(obj).parent().remove();
         //alert("a");
     }
+    
 </script>
