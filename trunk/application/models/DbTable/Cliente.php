@@ -5,6 +5,10 @@ class Application_Model_DbTable_Cliente extends Zend_Db_Table_Abstract
     protected $_name = 'cliente';
     protected $_primary = 'id_cliente';
     
+    /**
+     * 
+     * @return type
+     */
     public function getDataAutoCompleteCliente() {
         
 
@@ -40,6 +44,10 @@ class Application_Model_DbTable_Cliente extends Zend_Db_Table_Abstract
         return $array;
     }
     
+    /**
+     *  
+     * @return string
+     */
     public function getDataAutoCompleteClienteFormulario() {               
         $query = "SELECT DISTINCT id_cliente,nome,documento FROM " . $this->_name;
 
