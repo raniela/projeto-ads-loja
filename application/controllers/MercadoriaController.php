@@ -11,10 +11,11 @@ class MercadoriaController extends Zend_Controller_Action
 
     public function init()
     {
-        //$this->usuarioDbTable = new Application_Model_DbTable_Usuario();
+        $this->mercadoriaDbTable = new Application_Model_DbTable_Mercadoria();
         $this->flashMessenger = $this->_helper->getHelper('FlashMessenger');
         $this->view->msg = $this->flashMessenger->getMessages();
         $this->logger = Zend_Registry::get('logger');
+        
     }
 
     public function indexAction()
@@ -183,6 +184,21 @@ class MercadoriaController extends Zend_Controller_Action
             );
 
             echo Zend_Json::encode($json);
+        }
+    }
+    
+    public function pesquisarMercadoriaAction() {
+        try {
+            $this->getHelper('layout')->disableLayout();
+            
+            $params = $this->_getAllParams();
+            $params = $this->_helper->util->urldecodeGet($params);                        
+                                                                                
+            $this->view->dataGrid = $this->mercadoriaDbTable->getDataGrid($params);
+                                    
+        } catch (Exception $E) {
+            
+            die('ERRO|Ocorreu um erro ao tentar executar a operação. Tente novamente. Caso persista, contate o administrador do sistema.');
         }
     }
 

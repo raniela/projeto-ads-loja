@@ -1,0 +1,61 @@
+<table>
+    <tr>
+        <th>Descrição</th>
+        <th>Qtd. Estoque</th>
+        <th>Preço Unitário</th>        
+        <th>Ações</th>
+    </tr>
+    <?php foreach ($this->dataGrid as $k => $mercadoria): ?>
+        <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
+            <td><?php echo $mercadoria['descricao'] ?></td>
+            <td><?php echo $mercadoria['qtde_estoque'] ?></td>
+            <td><?php echo $this->String($mercadoria['preco_venda_unitario'])->floatToMoney(); ?></td>
+            <td>
+                <?php 
+                    if($mercadoria['qtde_estoque'] > 0) {
+                ?>
+                    <div class="formbutton">                        
+                        <button class="selecionar-mercadoria" type="button" 
+                                descricao="<?=$mercadoria['descricao']?>"
+                                qtde_estoque="<?=$mercadoria['qtde_estoque']?>"
+                                preco_venda_unitario="<?=$mercadoria['preco_venda_unitario']?>"
+                                id_mercadoria="<?=$mercadoria['id_mercadoria']?>" >SELECIONAR</button> 
+                    </div>
+                <?php
+                    } else {
+                        echo "SEM ESTOQUE";
+                    }                                                         
+                ?>
+            </td>
+            
+        </tr>    
+    <?php endforeach; ?>    
+</table>    
+
+<?php if (count($this->dataGrid) > 0): ?>
+    <script>
+        $(document).ready(function(){
+            $('.selecionar-mercadoria').click(function(){
+                /** captura os campos do funcionario para a chamada de callBack*/
+                                                
+                id_mercadoria = $(this).attr('id_mercadoria');
+                descricao =       $(this).attr('descricao');
+                preco_venda_unitario = $(this).attr('preco_venda_unitario');
+                qtde_estoque = $(this).attr('qtde_estoque');
+                                                            
+//                dataMercadoria =   jQuery.parseJSON('{' 
+//                    + '"id_mercadoria":"' + id_mercadoria+ '"' 
+//                    + ',"descricao":"' + descricao+ '"'
+//                    + ',"preco_venda_unitario":"' + preco_venda_unitario + '"'
+//                    + ',"qtde_estoque":"' + qtde_estoque + '"'
+//                    + '}');
+
+                /** a funcao de callBack é escrita no phtml que está chamando essa modal, ou seja, 
+                        apenas chamo uma função que espero existir na pagina onde está renderizada essa modal */
+                callBackPesquisarMercadoria(id_mercadoria, descricao, preco_venda_unitario, qtde_estoque, 1);
+                closeModalPesquisaMercadoria();
+                return false;	
+            });                                            
+        });
+    </script>
+<?php endif; ?>

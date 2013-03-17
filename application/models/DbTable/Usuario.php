@@ -32,7 +32,7 @@ class Application_Model_DbTable_Usuario extends Zend_Db_Table_Abstract{
         $select->from(array('u' => $this->_name));                
         
         //ordenacao
-        $select->order('login DESC');
+        $select->order('login');
        
         //filtros do formulario
         if(!empty($params['login'])) {
