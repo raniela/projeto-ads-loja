@@ -12,7 +12,7 @@
         <input class="required" id="venda-data_venda" name="venda[data_venda]" type="text" size="21px" value=""/>
     </div>
 
-    <div id="produto" class="formfield">
+<!--    <div id="produto" class="formfield">
         <label for="">Produto:</label>
         <input class="required" id="produto" name="produto" type="text" size="50" value=""/>
         <label style="width: 100px" for="">&nbsp;&nbsp;Quantidade:</label>
@@ -20,10 +20,33 @@
         <a id="btAdicionar" style="cursor: pointer">
             &nbsp;&nbsp;&nbsp;<img src="/img/add_256.png" width="20" height="20" title="Adicionar Produto" />
         </a>
-    </div>
-
+    </div>-->
+       
     <div id="teste">                
     </div>
+    
+    <div id="produtos" class="formfield">
+        <fieldset>
+            <legend>Mercadorias</legend>
+            
+        <div class="formbutton">
+            <button type="button" id="btModalMercadoria">Buscar</button>             
+        </div>
+            
+        <table id="tblMercadorias">
+            <tr>
+                <th >Descrição</th>
+                <th >Quantidade</th>
+                <th >Valor Unitário</th>                    
+                <th >Ações</th>
+            </tr>
+        </table>
+        </fieldset>
+    </div>
+    
+    <?php    
+    echo $this->render('partials/modal-pesquisa-mercadoria.phtml');
+    ?>
     
     <div class="formfield">
         <label for="">Desconto:</label>
@@ -43,9 +66,7 @@
         <label for="">Tipo de Pagamento:</label>
         <?php echo $this->formSelect('venda[tipo_pagamento]', $this->venda['tipo_pagamento'], array('class' => 'required'), array(''=>'SELECIONE','V'=>'A VISTA', 'P' => 'A PRAZO')); ?>        
     </div>
-
            
-
     <div class="formbutton">
         <input id="btEnviar" type="submit" value="Enviar" />
         <button type="button" id="btVoltarVenda">Voltar</button> 
@@ -63,13 +84,14 @@
         
     $(function(){                
         $('#formVenda').populate(dataForm);
-        
+                
         $('.money').maskMoney({
             allowZero:true,
             decimal:",", 
             thousands:".", 
             defaultZero:false
         });
+                
         $('#venda-data_venda').mask("99/99/9999");
         $('#venda-data_venda').datepicker({dateFormat:'dd/mm/yy'});
         
@@ -131,8 +153,7 @@
                     dataType:  'json', 
                     success: function(r){
                         if(r.tipo == 'sucesso'){                    
-                            $('#sucessoVenda p').html(r.msg);
-                            $('#sucessoVenda').dialog("open");
+                            $('#sucessoVenda p').html(r.msg);                            
                             $( "#sucessoVenda" ).dialog({
                                 modal: true,
                                 buttons: {
@@ -142,12 +163,11 @@
                                     }
                                 }
                             });
-                            
+                            $('#sucessoVenda').dialog("open");
                             //$('#divMsg').html(r.msg)
                             //window.location = r.url;
                         } else {
-                            $('#sucessoVenda p').html(r.msg);
-                            $('#sucessoVenda').dialog("open");
+                            $('#sucessoVenda p').html(r.msg);                            
                             $( "#sucessoVenda" ).dialog({
                                 modal: true,
                                 buttons: {
@@ -158,6 +178,7 @@
                                 }
                                 
                             });
+                            $('#sucessoVenda').dialog("open");
                         }
           
                     } 
@@ -167,7 +188,12 @@
         
         $('#btVoltarVenda').click(function(){
             $('#ui-tabs-1').load('/venda/index/menu/1');
-        })
+        });
+        
+        
+        $('#btModalMercadoria').click(function(){            
+            openModalPesquisaMercadoria();
+        });
         
         var html;
         
@@ -194,6 +220,125 @@
     function removerItem(obj) {
         $(obj).parent().remove();
         //alert("a");
+    }
+    
+    function removeMercadoria(obj) {
+        $('#sucessoVenda p').html('Deseja realmente remover essa Mercadoria da listagem?');                            
+        $( "#sucessoVenda" ).dialog({
+            modal: true,
+            buttons: {
+                "Não": function() {
+                    $(this).dialog("close");                                        
+                },
+                "Sim": function() {
+                    $(obj).parent().parent().remove();
+                    atualizarTotal();
+                    $(this).dialog("close");
+                }
+            }
+        });
+        $('#sucessoVenda').dialog("open"); 
+        
+        
+    }
+    
+    /** funcao que trata o retorno da selecao de uma mercadoria na modal */
+    function callBackPesquisarMercadoria(id_mercadoria, descricao, preco_venda_unitario, qtde_estoque, quantidade){                      
+        preco = floatToMoney(preco_venda_unitario);
+        
+        if($('#tr_mercadoria_'+id_mercadoria).length > 0){
+            $('#sucessoVenda p').html('As Mercadorias que já estão na lista não serão adicionadas novamente!');                            
+            $( "#sucessoVenda" ).dialog({
+                modal: true,
+                buttons: {
+                    Ok: function() {
+                        $(this).dialog("close");                        
+                    }
+                }
+            });
+            $('#sucessoVenda').dialog("open");
+        } else {
+            htmlMercadoria = '<tr id="tr_mercadoria_'+id_mercadoria+'">'
+                        
+                + '<td style="text-align: left">'
+                + '<label>'+descricao+'</label>'
+                + '<input type="hidden" name="item-venda['+id_mercadoria+'][id_mercadoria]" value="'+id_mercadoria+'"/>'
+                + '<input type="hidden" id="qtde_estoque_'+id_mercadoria+'" value="'+qtde_estoque+'"/>'
+                + '</td>'
+                                  
+                + '<td>'
+                + '<label style="width: 100px" for="">Qtde.:</label>' 
+                + '<input id_mercadoria="'+id_mercadoria+'" class="required numeric quantidade" onchange="atualizarTotal();verificaEstoque('+id_mercadoria+');" id="item-venda-'+id_mercadoria+'-quantidade" name="item-venda['+id_mercadoria+'][quantidade]" value="'+quantidade+'" type="text" size="5"/>'
+                + '<label style="width: 100px" for="">&nbsp;&nbsp;Estoque: '+qtde_estoque+'</label>'
+                + '</td>'
+                                   
+                + '<td>'
+                + '<label style="width: 100px" for="">R$:</label>'
+                + '<input class="required" onchange="atualizarTotal()" id="item-venda-'+id_mercadoria+'-valor_unitario" name="item-venda['+id_mercadoria+'][valor_unitario]" value="'+preco+'" type="text" size="21"/>'
+                + '</td>'                                   
+                                   
+                + '<td>'
+                + "<a id='btRemover' onClick='removeMercadoria(this)' style='cursor: pointer'>" 
+                + "&nbsp;&nbsp;<img src='/img/symbol_remove.png' width='30' height='30' title='Remover Mercadoria' />" 
+                + "</a>"   
+                + '</td>'
+                                  
+                + '</tr>';
+                       
+            $("#tblMercadorias tr:last").after(htmlMercadoria);
+            
+            /** Força novamento o inicio das máscaras */
+            $('.numeric').numeric();            
+            $('#item-venda-'+id_mercadoria+'-valor_unitario').maskMoney({
+                allowZero:true,
+                decimal:",", 
+                thousands:".", 
+                defaultZero:false
+            });
+            
+            atualizarTotal();
+        }
+    }
+    
+    function verificaEstoque(id_mercadoria) {
+        $('#item-venda-'+id_mercadoria+'-quantidade').removeClass('fieldInvalid');
+        
+        quantidade = $('#item-venda-'+id_mercadoria+'-quantidade').val();
+        quantidade = parseInt(quantidade, 10);
+        estoque = $('#qtde_estoque_'+id_mercadoria).val();
+        estoque = parseInt(estoque, 10);
+        
+        if(quantidade > estoque) {
+            $('#sucessoVenda p').html('Não existe essa quantidade em Estoque, verifique!');                            
+            $( "#sucessoVenda" ).dialog({
+                modal: true,
+                buttons: {
+                    Ok: function() {
+                        $(this).dialog("close");                        
+                    }
+                }
+            });
+            $('#sucessoVenda').dialog("open");
+            $('#item-venda-'+id_mercadoria+'-quantidade').addClass('fieldInvalid');            
+        }
+    }
+    
+    function atualizarTotal() {
+        valorTotal = 0.0;
+        
+        $('.quantidade').each(function() {
+            id_mercadoria = $(this).attr('id_mercadoria');
+            
+            quantidade = $('#item-venda-'+id_mercadoria+'-quantidade').val();
+            quantidade = parseInt(quantidade, 10);
+            
+            valor_unitario = moneyToFloat($('#item-venda-'+id_mercadoria+'-valor_unitario').val());
+            
+            valorTotal = valorTotal + (quantidade * valor_unitario);
+        });
+        
+        valorTotal = floatToMoney(valorTotal);
+        $('#venda-valor_total_venda').val(valorTotal);
     }
     
 </script>

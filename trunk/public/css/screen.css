@@ -44,6 +44,10 @@ a {
     color: #2779aa;
 }
 
+.fieldInvalid {
+    background-color:#ffb2b2!important;
+    border:2px solid #d74848!important
+}
 
 /* MENU */
 #logged {

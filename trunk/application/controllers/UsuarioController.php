@@ -10,8 +10,7 @@ class UsuarioController extends Zend_Controller_Action
     private $flashMessenger;
 
     public function init()
-    {
-        //$this->usuarioDbTable = new Application_Model_DbTable_Usuario();
+    {        
         $this->flashMessenger = $this->_helper->getHelper('FlashMessenger');
         $this->view->msg = $this->flashMessenger->getMessages();
         $this->logger = Zend_Registry::get('logger');
@@ -48,7 +47,7 @@ class UsuarioController extends Zend_Controller_Action
         $params['login'] = $this->_helper->util->urldecodeGet($this->_getParam('login'));
         $params['tipo_usuario'] = $this->_getParam('tipo_usuario');
                 
-        $usuarios = $this->usuarioDbTable->getDataGrid($params);        
+        $usuarios = $this->_helper->util->utf8Encode($this->usuarioDbTable->getDataGrid($params));        
         
         $paginator = Zend_Paginator::factory($usuarios);
         $paginator->setCurrentPageNumber($this->_getParam('page'));
