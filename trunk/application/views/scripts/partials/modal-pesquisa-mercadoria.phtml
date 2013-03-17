@@ -8,7 +8,7 @@
         <div>               
                     
         <div class="formbutton">        
-            <button type="button" id="btnLocalizarMercadoria" title="Localizar">Localizar</button>
+            <button type="button" id="btnLocalizarMercadoria" onclick="localizarMercadoria()" title="Localizar">Localizar</button>
         </div>            
     </fieldset>
     
@@ -46,36 +46,35 @@
         configModalPesquisaMercadoria();
         $("#dialog-pesquisa-mercadoria").dialog("open");
     }
+    function localizarMercadoria() {
+        descricao = urlencodeGet($.trim($('#selecionar-mercadoria-descricao').val()));                      
+                        
+        if($.trim(descricao).length > 2){
+
+            $(this).attr('disabled',true);
+            url = '/mercadoria/pesquisar-mercadoria/descricao/'+descricao;
+            $('#div-grid-pesquisar-mercadoria').load(url, function(data){
+                $('#btnLocalizarMercadoria').attr('disabled',false);                    					
+            });
+        } else {
+            $('#avisoPesquisa p').html('Insira no mínimo 3 caracteres para realizar a busca!');                
+            $('#avisoPesquisa').dialog({
+                modal: true,
+                buttons: {
+                    Ok: function() {
+                        $(this).dialog("close");                            
+                    }
+                }
+            });                                
+            $('#avisoPesquisa').dialog("open");
+        }
+    }
     
     $(document).ready(function(){
         $('#avisoPesquisa').dialog({
             autoOpen: false
         });
-        
-        $('#btnLocalizarMercadoria').click(function(){
-            descricao = urlencodeGet($.trim($('#selecionar-mercadoria-descricao').val()));                      
-                        
-            if($.trim(descricao).length > 2){
-                
-                $(this).attr('disabled',true);
-                url = '/mercadoria/pesquisar-mercadoria/descricao/'+descricao;
-                $('#div-grid-pesquisar-mercadoria').load(url, function(data){
-                    $('#btnLocalizarMercadoria').attr('disabled',false);                    					
-                });
-            } else {
-                $('#avisoPesquisa p').html('Insira no mínimo 3 caracteres para realizar a busca!');                
-                $('#avisoPesquisa').dialog({
-                    modal: true,
-                    buttons: {
-                        Ok: function() {
-                            $(this).dialog("close");                            
-                        }
-                    }
-                });                                
-                $('#avisoPesquisa').dialog("open");
-            }
-        });	
-
+               
         //para todos os inputs da modal de selcionar o funcionario, caso pressionado o enter deve ativar a pesquisa
         $('#dialog-pesquisa-mercadoria input').keypress(function(event){
             if(event.which == 13){				
