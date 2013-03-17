@@ -121,7 +121,7 @@ class VendaController extends Zend_Controller_Action
         } catch (Exception $exc) {
             $json = array(
                 'tipo' => 'erro',
-                'msg' => "Erro errado!",
+                'msg' => "Ocorreu um erro ao tentar executar a operacao, contate o administrador!",
             );
 
             $this->logger->err($exc->getMessage());

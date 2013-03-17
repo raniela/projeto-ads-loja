@@ -1,9 +1,14 @@
 <h1><?php echo $this->titlePage; ?></h1>
 <form action="" method=get">
     <div class="formfield">
-        <label for="">Nome:</label>
+        <label for="">Login:</label>
         <input id="nomeUsu" name="nomeUsu" type="text">
     </div>
+    <div class="formfield">        
+        <label for="">Tipo:</label>
+        <?php echo $this->formSelect('tipoUsuario', '', array('class' => 'required'), array(''=>'SELECIONE', 'A'=>'ADMINISTRADOR', 'C' => 'COMUN')); ?>                
+    </div>
+    
     <div class="formbutton">
         <button id="btBuscarUsu" type="button">Buscar</button>
         <button id="btNovoUsu" type="button" value="/usuario/formulario">Novo</button> 
@@ -25,23 +30,22 @@
 
     var usuarioAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
 
-    $(function(){
-    
+    $(function(){    
         $('#btNovoUsu').click(function(){
             var url = $(this).attr('value');
             $('#ui-tabs-3').load(url);
             return false;
         });
-    
-    
+        
         $( "#nomeUsu" ).autocomplete({
             source: usuarioAutoComplete
         });
     
-        $('#divResUsuario').load('/usuario/grid/nome/' + $('#nomeUsu').val());
+        $('#divResUsuario').load('/usuario/grid/');
         $('#btBuscarUsu').click(function(){
-        
-            $('#divResUsuario').load('/usuario/grid/nome/' + $('#nomeUsu').val());
+            login = urlencodeGet($('#nomeUsu').val());
+            tipo_usuario = $('#tipoUsuario').val();
+            $('#divResUsuario').load('/usuario/grid/login/' + login + '/tipo_usuario/' + tipo_usuario);
         });
     }); 
     

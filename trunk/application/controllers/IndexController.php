@@ -97,8 +97,8 @@ class IndexController extends Zend_Controller_Action
     public function tabsAction()
     {
         
-        $this->view->dir = $this->_getParam('dir', 0);
-              
+        $this->view->dir = $this->_getParam('dir',0);
+        
     }
 
 }

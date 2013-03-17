@@ -1,21 +1,31 @@
 <table>
     <tr>
-        <th>Nome</th>
-        <th>E-email</th>
+        <th>Login</th>
+        <th>Senha</th>
+        <th>Tipo</th>
         <th>Ações</th>
     </tr>
 
     <tr class="alt" >
         <?php foreach ($this->paginator as $k => $usuarios): ?>
         <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
-            <td><?php echo $usuarios['nome'] ?></td>
-            <td><?php echo $usuarios['email'] ?></td>
-
+            <td><?php echo $usuarios['login'] ?></td>
+            <td><?php echo $usuarios['senha'] ?></td>
             <td>
-                <a class="linkEditar" href="/usuario/formulario/id/<?php echo $usuario['id_usuario'] ?>">
+                <?php 
+                    if($usuarios['tipo_usuario'] == "C") {
+                        echo "COMUM";
+                    }
+                    if($usuarios['tipo_usuario'] == "A") {
+                        echo "ADMINISTRADOR";
+                    }                                      
+                ?>
+            </td>
+            <td>
+                <a class="linkEditar" href="/usuario/formulario/id_usuario/<?php echo $usuarios['id_usuario'] ?>">
                     <img src="/img/edit-icon.gif" title="Editar registro" />
                 </a>
-                <a class="btExcluir" href="/usuario/excluir/id/<?php echo $usuario['id_usuario'] ?>">
+                <a class="btExcluir" href="/usuario/excluir/id_usuario/<?php echo $usuarios['id_usuario'] ?>">
                     <img src="/img/delete-icon.gif" title="Excluir Registro" />
                 </a>
             </td>
@@ -31,11 +41,11 @@
 </div>
 
 <div id="usuarioErro">
-    <p>Erro</p>    
+    <p></p>    
 </div>
 
 <div id="usuarioSucesso">
-    <p>Sucesso</p>    
+    <p></p>    
 </div>
 
 <script>
@@ -62,36 +72,35 @@
                 "Ok": function() {
                     $.get(url, null, function(retorno){
                         if(retorno.tipo == 'sucesso'){
-                            $('#usuarioSucesso').html(retorno.msg);
-                            $('#usuarioSucesso').dialog("open");
+                            $('#usuarioSucesso').html(retorno.msg);                            
                             $('#usuarioSucesso').dialog({
                                 buttons: {
-                                    Ok: function() {
+                                    "Ok": function() {
                                         $( this ).dialog( "close" );
                                     }
                                 }
                             });
-                                
-                            $('#divResUsuario').load('/usuario/grid/nome/' + $('#nomeUsu').val());
+                            $('#usuarioSucesso').dialog("open");    
+                            $('#divResUsuario').load('/usuario/grid/');
                                 
                         } else {
-                            $('#usuarioErro').html(retorno.msg);
-                            $('#usuarioErro').dialog("open");
+                            $('#usuarioErro').html(retorno.msg);                            
                             $('#usuarioErro').dialog({
                                 buttons: {
-                                    Ok: function() {
+                                    "Ok": function() {
                                         $( this ).dialog( "close" );
                                     }
                                 }
                             });
-                            $('#divResUsuario').load('/usuario/grid/nome/' + $('#nomeUsu').val());
+                            $('#usuarioErro').dialog("open");
+                            $('#divResUsuario').load('/usuario/grid/');
                         }                    
                     }, 'json');
                     $( this ).dialog("close");
                     
                 },
                 Cancel: function() {
-                    $('#divResUsuario').load('/usuario/grid/nome/' + $('#nomeUsu').val());
+                    $('#divResUsuario').load('/usuario/grid/');
                     $( this ).dialog( "close" );
                         
                 }

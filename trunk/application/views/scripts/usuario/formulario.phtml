@@ -2,32 +2,24 @@
 
 <!-- formulário -->
 
-<form id="formUsu" action="/usuario/salvar" method="post" enctype="multipart/form-data">
+<form id="formUsu" action="/usuario/salvar/id_usuario/<?=$this->usuario['id_usuario']?>" method="post" enctype="multipart/form-data">
     <div class="formfield">
         <label for="">Nome:</label>
-        <input class="required" id="nome" name="nome" type="text" size="50" value=""/>
-    </div>
-    <!--<div class="formfield">
-        <label for="">E-mail:</label>
-        <input class="required email" id="email" name="email" type="text"  size="50" value="" />
-    </div>-->
+        <input class="required" id="usuario-login" name="usuario[login]" type="text" size="50" value=""/>
+    </div>    
 
-    <div class="formfield">
+    <div class="formfield">        
         <label for="">Tipo:</label>
-        <select style="width: 193px" name="tipo" class="required">
-            <option selected value="">Selecione</option>
-            <option value="comum">Comum</option>
-            <option value="admin">Administrador</option>
-        </select>
+        <?php echo $this->formSelect('usuario[tipo_usuario]', $this->usuario['tipo_usuario'], array('class' => 'required'), array(''=>'SELECIONE', 'A'=>'ADMINISTRADOR', 'C' => 'COMUN')); ?>                
     </div>
 
     <div class="formfield">
         <label for="">Senha:</label>
-        <input  class="required" id="senha" name="senha" type="password" value=""/>
+        <input  class="required" id="usuario-senha" name="usuario[senha]" type="password" value=""/>
     </div>
     <div class="formfield">
         <label for="">Confirmar Senha:</label>
-        <input  class="required" equalTo="#senha" id="senha2" name="" type="password" value=""/>
+        <input  class="required" equalTo="#usuario-senha" id="senha2" name="" type="password" value=""/>
     </div>
     <div class="formbutton">
         <input id="btEnviar" type="submit" value="Enviar" />
@@ -41,15 +33,18 @@
 
 
 <script>
-
-    $(function(){
-        
+    var dataForm = <?php echo Zend_Json::encode(array('usuario' => $this->usuario)); ?>;
+    
+    $(function() {        
         $( "#sucessoUsu" ).dialog({
             autoOpen: false
         });
-        
-        //$('#form').populate(dataForm);
-        
+       
+        $('#formUsu').populate(dataForm);
+        <?php if(!empty($this->usuario['senha'])) { ?>
+              $('#senha2').val('<?=$this->usuario['senha']?>');  
+        <?php } ?>
+            
         $('#formUsu').validate({
             submitHandler: function(form){
                 jQuery(form).ajaxSubmit({
@@ -91,7 +86,7 @@
         });
         
         $('#btVoltarUsuario').click(function(){
-            $('#ui-tabs-3').load('/usuario/index/menu/1');
+            $('#ui-tabs-3').load('/usuario/index/menu/3');
         })
         
         
