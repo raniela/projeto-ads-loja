@@ -82,7 +82,7 @@
     var dataForm = <?php echo Zend_Json::encode(array('venda' => $this->venda)); ?>;
     var dataAutoCompleteCliente = <?php echo $this->dataAutoCompleteCliente; ?>;
         
-    $(function(){                
+    $(document).ready(function(){                
         $('#formVenda').populate(dataForm);
                 
         $('.money').maskMoney({
