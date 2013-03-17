@@ -332,7 +332,8 @@
             quantidade = $('#item-venda-'+id_mercadoria+'-quantidade').val();
             quantidade = parseInt(quantidade, 10);
             
-            valor_unitario = moneyToFloat($('#item-venda-'+id_mercadoria+'-valor_unitario').val());
+            preco = $('#item-venda-'+id_mercadoria+'-valor_unitario').val();
+            valor_unitario = moneyToFloat(preco);
             
             valorTotal = valorTotal + (quantidade * valor_unitario);
         });
