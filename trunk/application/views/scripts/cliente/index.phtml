@@ -2,8 +2,17 @@
 <form action="" method=get">
     <div class="formfield">
         <label for="">Nome:</label>
-        <input id="nomeCliente" name="nomeCliente" type="text">
+        <input id="nomeCli" name="nomeCli" type="text">
     </div>
+    <div class="formfield">
+        <label for="">CPF:</label>
+        <input id="cpfCli" name="cpfCli" type="text">
+    </div>
+    <div class="formfield">
+        <label for="">RG:</label>
+        <input id="rgCli" name="rgCli" type="text">
+    </div>
+    
     <div class="formbutton">
         <button id="btBuscarCliente" type="button">Buscar</button>
         <button id="btNovoCliente" type="button" value="/cliente/formulario">Novo</button> 
@@ -26,7 +35,9 @@
     var clienteAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
 
     $(function(){
-    
+       
+       $("#cpfCli").mask("999.999.999-99");
+       
         $('#btNovoCliente').click(function(){
             var url = $(this).attr('value');
             $('#ui-tabs-2').load(url);
@@ -34,14 +45,14 @@
         });
     
     
-        $( "#nomeCliente" ).autocomplete({
+        $( "#nomeCli" ).autocomplete({
             source: clienteAutoComplete
         });
     
-        $('#divResCliente').load('/cliente/grid/nome/' + $('#nomeCliente').val());
+        $('#divResCliente').load('/cliente/grid/nome/' + $('#nomeCli').val() + '/cpf/' + $('#cpfCli').val() + '/rg/' + $('#rgCli').val());
         $('#btBuscarCliente').click(function(){
         
-            $('#divResCliente').load('/cliente/grid/nome/' + $('#nomeCliente').val());
+            $('#divResCliente').load('/cliente/grid/nome/' + $('#nomeCli').val() + '/cpf/' + $('#cpfCli').val() + '/rg/' + $('#rgCli').val());
         });
     }); 
     

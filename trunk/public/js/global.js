@@ -9,6 +9,10 @@ $(function(){
     
 });
 
+function CapitalizeAll(elemId){
+    var txt = $('#' + elemId).val();
+    $('#' + elemId).val(txt.toUpperCase());
+};
 
 jQuery.validator.addMethod("soLetras", function(value, element) {
     return this.optional(element) || soLetras(value);

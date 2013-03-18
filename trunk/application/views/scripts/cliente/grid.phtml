@@ -2,6 +2,8 @@
     <tr>
         <th>Nome</th>
         <th>E-email</th>
+        <th>CPF</th>
+        <th>Cidade/Estado</th>
         <th>Ações</th>
     </tr>
 
@@ -10,12 +12,14 @@
         <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
             <td><?php echo $clientes['nome'] ?></td>
             <td><?php echo $clientes['email'] ?></td>
+            <td><?php echo $clientes['documento'] ?></td>
+            <td><?php echo $clientes['cidade'] ?>/<?php echo $clientes['estado']?></td>
 
             <td>
-                <a class="linkEditar" href="/cliente/formulario/id/<?php echo $cliente['id_cliente'] ?>">
+                <a class="linkEditar" href="/cliente/formulario/id/<?php echo $clientes['id_cliente'] ?>">
                     <img src="/img/edit-icon.gif" title="Editar registro" />
                 </a>
-                <a class="btExcluir" href="/cliente/excluir/id/<?php echo $cliente['id_cliente'] ?>">
+                <a class="btExcluir" href="/cliente/excluir/id/<?php echo $clientes['id_cliente'] ?>">
                     <img src="/img/delete-icon.gif" title="Excluir Registro" />
                 </a>
             </td>
