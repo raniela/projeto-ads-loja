@@ -1,172 +1,149 @@
 <?php
 
-class ClienteController extends Zend_Controller_Action
-{
+class ClienteController extends Zend_Controller_Action {
+
     /**
      *
      * @var Application_Model_DbTable_Usuario 
      */
-    //private $usuarioDbTable;
     private $flashMessenger;
 
-    public function init()
-    {
-        //$this->usuarioDbTable = new Application_Model_DbTable_Usuario();
+    public function init() {
+        $this->clienteDbTable = new Application_Model_DbTable_Cliente();
         $this->flashMessenger = $this->_helper->getHelper('FlashMessenger');
         $this->view->msg = $this->flashMessenger->getMessages();
         $this->logger = Zend_Registry::get('logger');
     }
 
-    public function indexAction()
-    {
-        
-        if($this->_getParam('menu')){
+    public function indexAction() {
+
+        if ($this->_getParam('menu')) {
             $this->getHelper('layout')->disableLayout();
         }
 
+        //envia o titulo da pagina para a view
         $this->view->titlePage = "Listagem de Clientes";
-        
+
         $dadosAutoComplete = array();
-        $clientesAC = array();
-        //$clientes = $this->usuarioDbTable->fetchAll(null, 'nome')->toArray();
-        
-        $clientesAC[0]['nome'] = "Teste";
-        $clientesAC[1]['nome'] = "Nome";
-        
-        foreach ($clientesAC as $cliente){
-            
+
+        //busca todos os clientes e guarda num array
+        $clientes = $this->clienteDbTable->fetchAll(null, 'nome')->toArray();
+
+        //pega o nome de todos os clientes do array
+        foreach ($clientes as $cliente) {
+
             $dadosAutoComplete[] = $cliente['nome'];
-            
         }
-        
+
+        //envia para a view um array com o nome dos clientes para funcionar o auto complete
         $this->view->dadosAutoComplete = $dadosAutoComplete;
-        
     }
 
-    public function gridAction()
-    {
+    public function gridAction() {
 
         $this->getHelper('layout')->disableLayout();
 
-        /*$nome = $this->_getParam('nome');
-        
-        $select =$this->usuarioDbTable->select();
-        if (!empty($nome)) {            
+        $nome = $this->_getParam('nome');
+        $cpf = $this->_getParam('cpf');
+        $rg = $this->_getParam('rg');
+
+        $select = $this->clienteDbTable->select();
+        if (!empty($nome)) {
             $select->where("nome LIKE ?", "%$nome%");
         }
-        $select->order('nome');
-        
-        $clientes = $select->query()->fetchAll();*/
+        if (!empty($cpf)) {
+            $select->where("documento LIKE ?", "$cpf");
+        }
+        if (!empty($rg)) {
+            $select->where("rg LIKE ?", "$rg");
+        }
 
-        $clientes = array();
-        
-        $clientes[0]['nome'] = "Teste";
-        $clientes[0]['email'] = "teste@teste.com";
-        
-        $clientes[1]['nome'] = "Nome";
-        $clientes[1]['email'] = "email@email.com";
-        
+        $select->order('nome');
+
+        $clientes = $select->query()->fetchAll();
+
         $paginator = Zend_Paginator::factory($clientes);
         $paginator->setCurrentPageNumber($this->_getParam('page'));
         $paginator->setDefaultItemCountPerPage(5);
         $this->view->paginator = $paginator;
     }
 
-    public function formularioAction()
-    {
+    public function formularioAction() {
         $this->getHelper('layout')->disableLayout();
-        
+
         //se já tem id é edição, tem que mandar os dados desse id pra view
-        /*if ($this->_getParam('id')) {
+        if ($this->_getParam('id')) {
             /**
              * Edição do registro
              */
-            /*$this->view->titulo = "Edição de Usuario";
+            $this->view->titulo = "Edição de Usuario";
             $id = $this->_getParam('id');
-            $usuario = $this->usuarioDbTable->fetchRow("id_usuario = {$id}")->toArray();
-            $this->view->usuario = $usuario;*/
-        /*} else {
+            $cliente = $this->clienteDbTable->fetchRow("id_cliente = {$id}")->toArray();
+            $this->view->cliente = $cliente;
+        } else {
             /**
              * Cadastro do registro
              */
             //se for cadastro é só enviar o titulo
-            /*$this->view->titulo = "Cadastro de Clientes";
-        }*/
+            $this->view->titulo = "Cadastro de Clientes";
+        }
         $this->view->titulo = "Cadastro de Clientes";
-        /*$sessao = new Zend_Session_Namespace();
-        if (isset($sessao->dados)) {
-            $this->view->usuario = $sessao->dados;
-            unset($sessao->dados);
-        }*/
+        /* $sessao = new Zend_Session_Namespace();
+          if (isset($sessao->dados)) {
+          $this->view->usuario = $sessao->dados;
+          unset($sessao->dados);
+          } */
     }
 
-    public function salvarAction()
-    {
+    public function salvarAction() {
         $this->getHelper('viewRenderer')->setNoRender();
         $this->getHelper('layout')->disableLayout();
 
-        /*$dados = $this->getRequest()->getPost('u');
+        /* if ($this->usuarioDbTable->verificaDb($id, $dados) == false) {
+          $this->_helper->json->sendJson(array(
+          'tipo' => 'erro',
+          'msg' => 'Usuário já existente'
+          ));
+          } */
 
-        $id = null;
-        if ($this->_getParam('id')) {
-            $id = $this->_getParam('id');
-        }*/
+        try {
 
-       /*if ($this->usuarioDbTable->verificaDb($id, $dados) == false) {
-            $this->_helper->json->sendJson(array(
-                'tipo' => 'erro',
-                'msg' => 'Usuário já existente'
-            ));
-        }*/
-
-        /*try {
-
-            $data = $this->getRequest()->getPost('u');
-
+            $data = $this->getRequest()->getPost('c');
 
             if ($this->_getParam('id')) {
                 $id = $this->_getParam('id');
-                $this->usuarioDbTable->update($data, "id_usuario = {$id}");
+                $this->clienteDbTable->update($data, "id_cliente = {$id}");
             } else {
-                $this->usuarioDbTable->insert($data);
+                $this->clienteDbTable->insert($data);
             }
 
-            $this->flashMessenger->addMessage('Salvo com sucesso!');
-            $json = array(
+            //$this->flashMessenger->addMessage('Salvo com sucesso!');
+            $this->_helper->json->sendJson(array(
                 'tipo' => 'sucesso',
                 'msg' => 'Salvo com sucesso!',
                 'url' => '/index/tabs/dir/2/'
-            );
+            ));
         } catch (Exception $exc) {
-            $json = array(
+            $this->_helper->json->sendJson(array(
                 'tipo' => 'erro',
-                'msg' => "Erro errado!",
-            );
+                'msg' => "Erro!",
+            ));
 
             $this->logger->err($exc->getMessage());
-        }*/
-        
-        
-        $this->flashMessenger->addMessage('Salvo com sucesso!');
-            $json = array(
-                'tipo' => 'sucesso',
-                'msg' => 'Salvo com sucesso!',
-                'url' => '/index/tabs/dir/2/'
-            );
-        
-        echo Zend_Json::encode($json);
+        }
+
+        //echo Zend_Json::encode($json);
     }
 
-    public function excluirAction()
-    {
+    public function excluirAction() {
 
         $this->getHelper('viewRenderer')->setNoRender();
         $this->getHelper('layout')->disableLayout();
 
         try {
             $id = $this->getRequest()->getParam('id');
-            $usuarioDbTable = new Application_Model_DbTable_Usuario();
-            $usuarioDbTable->delete("id_usuario = $id");
+            $clienteDbTable = new Application_Model_DbTable_Cliente();
+            $clienteDbTable->delete("id_cliente = $id");
 
             $json = array(
                 'tipo' => 'sucesso',
