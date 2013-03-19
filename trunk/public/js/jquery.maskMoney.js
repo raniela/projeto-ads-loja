@@ -1,1 +1,363 @@
-(function(a){a.fn.maskMoney=function(b){b=a.extend({symbol:"US$",decimal:".",precision:2,thousands:",",allowZero:false,allowNegative:false,showSymbol:false,symbolStay:false,defaultZero:true},b);return this.each(function(){function m(a){if(b.allowNegative){var c=a.val();if(a.val()!=""&&a.val().charAt(0)=="-"){return a.val().replace("-","")}else{return"-"+a.val()}}else{return a.val()}}function l(a){if(b.showSymbol){if(a.substr(0,b.symbol.length)!=b.symbol)return b.symbol+a}return a}function k(){var a=parseFloat("0")/Math.pow(10,b.precision);return a.toFixed(b.precision).replace(new RegExp("\\.","g"),b.decimal)}function j(a){a=a.replace(b.symbol,"");var c="0123456789";var d=a.length;var e="",f="",g="";if(d!=0&&a.charAt(0)=="-"){a=a.replace("-","");if(b.allowNegative){g="-"}}if(d==0){if(!b.defaultZero)return f;f="0.00"}for(var h=0;h<d;h++){if(a.charAt(h)!="0"&&a.charAt(h)!=b.decimal)break}for(;h<d;h++){if(c.indexOf(a.charAt(h))!=-1)e+=a.charAt(h)}var i=parseFloat(e);i=isNaN(i)?0:i/Math.pow(10,b.precision);f=i.toFixed(b.precision);h=b.precision==0?0:1;var j,k=(f=f.split("."))[h].substr(0,b.precision);for(j=(f=f[0]).length;(j-=3)>=1;){f=f.substr(0,j)+b.thousands+f.substr(j)}return b.precision>0?l(g+f+b.decimal+k+Array(b.precision+1-k.length).join(0)):l(g+f)}function i(a,b){var d=c.val().length;c.val(j(a.value));var e=c.val().length;b=b-(d-e);c.setCursorPosition(b)}function h(a){if(a.preventDefault){a.preventDefault()}else{a.returnValue=false}}function g(e){if(a.browser.msie){d(e)}if(c.val()==l(k())){if(!b.allowZero)c.val("")}else{if(!b.symbolStay)c.val(c.val().replace(b.symbol,""));else if(b.symbolStay&&c.val()==b.symbol)c.val("")}}function f(a){if(c.val()==""&&b.defaultZero){c.val(l(k()))}else{c.val(l(c.val()))}if(this.createTextRange){var d=this.createTextRange();d.collapse(false);d.select()}}function e(a){a=a||window.event;var b=a.charCode||a.keyCode||a.which; if(b==undefined)return false;var d=c.get(0);var e=c.getInputSelection(d);var f=e.start;var g=e.end;if(b==8){h(a);if(f==g){d.value=d.value.substring(0,f-1)+d.value.substring(g,d.value.length);f=f-1}else{d.value=d.value.substring(0,f)+d.value.substring(g,d.value.length)}i(d,f);return false}else if(b==9){return true}else if(b==46||b==63272){h(a);if(d.selectionStart==d.selectionEnd){d.value=d.value.substring(0,f)+d.value.substring(g+1,d.value.length)}else{d.value=d.value.substring(0,f)+d.value.substring(g,d.value.length)}i(d,f);return false}else{return true}}function d(a){a=a||window.event;var b=a.charCode||a.keyCode||a.which;if(b==undefined)return false;if(b<48||b>57){if(b==45){c.val(m(c));return false}if(b==43){c.val(c.val().replace("-",""));return false}else if(b==13){return true}else{h(a);return true}}else if(c.val().length==c.attr("maxlength")){return false}else{h(a);var d=String.fromCharCode(b);var e=c.get(0);var f=c.getInputSelection(e);var g=f.start;var j=f.end;e.value=e.value.substring(0,g)+d+e.value.substring(j,e.value.length);i(e,g+1);return false}}var c=a(this);c.bind("keypress",d);c.bind("keydown",e);c.bind("blur",g);c.bind("focus",f);c.one("unmaskMoney",function(){c.unbind("focus",f);c.unbind("blur",g);c.unbind("keydown",e);c.unbind("keypress",d);if(a.browser.msie){this.onpaste=null}else if(a.browser.mozilla){this.removeEventListener("input",g,false)}})})};a.fn.unmaskMoney=function(){return this.trigger("unmaskMoney")};a.fn.setCursorPosition=function(a){this.each(function(b,c){if(c.setSelectionRange){c.focus();c.setSelectionRange(a,a)}else if(c.createTextRange){var d=c.createTextRange();d.collapse(true);d.moveEnd("character",a);d.moveStart("character",a);d.select()}});return this};a.fn.getInputSelection=function(a){var b=0,c=0,d,e,f,g,h;if(typeof a.selectionStart=="number"&&typeof a.selectionEnd=="number"){b=a.selectionStart;c=a.selectionEnd}else{e=document.selection.createRange();if(e&&e.parentElement()==a){g=a.value.length;d=a.value.replace(/\r\n/g,"\n");f=a.createTextRange();f.moveToBookmark(e.getBookmark());h=a.createTextRange();h.collapse(false);if(f.compareEndPoints("StartToEnd",h)>-1){b=c=g}else{b=-f.moveStart("character",-g);b+=d.slice(0,b).split("\n").length-1;if(f.compareEndPoints("EndToEnd",h)>-1){c=g}else{c=-f.moveEnd("character",-g);c+=d.slice(0,c).split("\n").length-1}}}}return{start:b,end:c}}})(jQuery)
+/*
+* maskMoney plugin for jQuery
+* http://plentz.github.com/jquery-maskmoney/
+* version: 2.1.1
+* Licensed under the MIT license
+*/
+;(function($) {
+if(!$.browser){
+$.browser = {};
+$.browser.mozilla = /mozilla/.test(navigator.userAgent.toLowerCase()) && !/webkit/.test(navigator.userAgent.toLowerCase());
+$.browser.webkit = /webkit/.test(navigator.userAgent.toLowerCase());
+$.browser.opera = /opera/.test(navigator.userAgent.toLowerCase());
+$.browser.msie = /msie/.test(navigator.userAgent.toLowerCase());
+}
+
+var methods = {
+destroy : function(){
+var input = $(this);
+input.unbind('.maskMoney');
+
+if ($.browser.msie) {
+this.onpaste = null;
+}
+return this;
+},
+
+mask : function(){
+return this.trigger('mask');
+},
+
+init : function(settings) {
+settings = $.extend({
+symbol: '',
+symbolStay: false,
+thousands: ',',
+decimal: '.',
+precision: 2,
+defaultZero: true,
+allowZero: false,
+allowNegative: false
+}, settings);
+
+return this.each(function() {
+var input = $(this);
+var dirty = false;
+
+function markAsDirty() {
+dirty = true;
+}
+
+function clearDirt(){
+dirty = false;
+}
+
+function keypressEvent(e) {
+e = e || window.event;
+var k = e.which || e.charCode || e.keyCode;
+if (k == undefined) return false; //needed to handle an IE "special" event
+if (k < 48 || k > 57) { // any key except the numbers 0-9
+if (k == 45) { // -(minus) key
+markAsDirty();
+input.val(changeSign(input));
+return false;
+} else if (k == 43) { // +(plus) key
+markAsDirty();
+input.val(input.val().replace('-',''));
+return false;
+} else if (k == 13 || k == 9) { // enter key or tab key
+if(dirty){
+clearDirt();
+$(this).change();
+}
+return true;
+} else if ($.browser.mozilla && (k == 37 || k == 39) && e.charCode == 0) {
+// needed for left arrow key or right arrow key with firefox
+// the charCode part is to avoid allowing '%'(e.charCode 0, e.keyCode 37)
+return true;
+} else { // any other key with keycode less than 48 and greater than 57
+preventDefault(e);
+return true;
+}
+} else if (input.val().length >= input.attr('maxlength')) {
+return false;
+} else {
+preventDefault(e);
+
+var key = String.fromCharCode(k);
+var x = input.get(0);
+var selection = getInputSelection(x);
+var startPos = selection.start;
+var endPos = selection.end;
+x.value = x.value.substring(0, startPos) + key + x.value.substring(endPos, x.value.length);
+maskAndPosition(x, startPos + 1);
+markAsDirty();
+return false;
+}
+}
+
+function keydownEvent(e) {
+e = e||window.event;
+var k = e.which || e.charCode || e.keyCode;
+if (k == undefined) return false; //needed to handle an IE "special" event
+
+var x = input.get(0);
+var selection = getInputSelection(x);
+var startPos = selection.start;
+var endPos = selection.end;
+
+if (k==8) { // backspace key
+preventDefault(e);
+
+if(startPos == endPos){
+// Remove single character
+x.value = x.value.substring(0, startPos - 1) + x.value.substring(endPos, x.value.length);
+startPos = startPos - 1;
+} else {
+// Remove multiple characters
+x.value = x.value.substring(0, startPos) + x.value.substring(endPos, x.value.length);
+}
+maskAndPosition(x, startPos);
+markAsDirty();
+return false;
+} else if (k==9) { // tab key
+if(dirty) {
+$(this).change();
+clearDirt();
+}
+return true;
+} else if ( k==46 || k==63272 ) { // delete key (with special case for safari)
+preventDefault(e);
+if(x.selectionStart == x.selectionEnd){
+// Remove single character
+x.value = x.value.substring(0, startPos) + x.value.substring(endPos + 1, x.value.length);
+} else {
+//Remove multiple characters
+x.value = x.value.substring(0, startPos) + x.value.substring(endPos, x.value.length);
+}
+maskAndPosition(x, startPos);
+markAsDirty();
+return false;
+} else { // any other key
+return true;
+}
+}
+
+function focusEvent(e) {
+var mask = getDefaultMask();
+if (input.val() == mask) {
+input.val('');
+} else if (input.val()=='' && settings.defaultZero) {
+input.val(setSymbol(mask));
+} else {
+input.val(setSymbol(input.val()));
+}
+if (this.createTextRange) {
+var textRange = this.createTextRange();
+textRange.collapse(false); // set the cursor at the end of the input
+textRange.select();
+}
+}
+
+function blurEvent(e) {
+if ($.browser.msie) {
+keypressEvent(e);
+}
+
+if (input.val() == '' || input.val() == setSymbol(getDefaultMask()) || input.val() == settings.symbol) {
+if(!settings.allowZero){
+input.val('');
+} else if (!settings.symbolStay){
+input.val(getDefaultMask());
+} else {
+input.val(setSymbol(getDefaultMask()));
+}
+} else {
+if (!settings.symbolStay){
+input.val(input.val().replace(settings.symbol,''));
+} else if (settings.symbolStay && input.val() == settings.symbol){
+input.val(setSymbol(getDefaultMask()));
+}
+}
+}
+
+function preventDefault(e) {
+if (e.preventDefault) { //standard browsers
+e.preventDefault();
+} else { // old internet explorer
+e.returnValue = false
+}
+}
+
+function maskAndPosition(x, startPos) {
+var originalLen = input.val().length;
+input.val(maskValue(x.value));
+var newLen = input.val().length;
+startPos = startPos - (originalLen - newLen);
+setCursorPosition(input, startPos);
+}
+
+function mask(){
+var value = input.val();
+input.val(maskValue(value));
+}
+
+function maskValue(v) {
+v = v.replace(settings.symbol, '');
+
+var strCheck = '0123456789';
+var len = v.length;
+var a = '', t = '', neg='';
+
+if(len != 0 && v.charAt(0)=='-'){
+v = v.replace('-','');
+if(settings.allowNegative){
+neg = '-';
+}
+}
+
+if (len==0) {
+if (!settings.defaultZero) return t;
+t = '0.00';
+}
+
+for (var i = 0; i<len; i++) {
+if ((v.charAt(i)!='0') && (v.charAt(i)!=settings.decimal)) break;
+}
+
+for (; i < len; i++) {
+if (strCheck.indexOf(v.charAt(i))!=-1) a+= v.charAt(i);
+}
+var n = parseFloat(a);
+
+n = isNaN(n) ? 0 : n/Math.pow(10,settings.precision);
+t = n.toFixed(settings.precision);
+
+i = settings.precision == 0 ? 0 : 1;
+var p, d = (t=t.split('.'))[i].substr(0,settings.precision);
+for (p = (t=t[0]).length; (p-=3)>=1;) {
+t = t.substr(0,p)+settings.thousands+t.substr(p);
+}
+
+return (settings.precision>0)
+? setSymbol(neg+t+settings.decimal+d+Array((settings.precision+1)-d.length).join(0))
+: setSymbol(neg+t);
+}
+
+function getDefaultMask() {
+var n = parseFloat('0')/Math.pow(10,settings.precision);
+return (n.toFixed(settings.precision)).replace(new RegExp('\\.','g'),settings.decimal);
+}
+
+function setSymbol(value){
+if (settings.symbol != ''){
+var operator = '';
+if(value.length != 0 && value.charAt(0) == '-'){
+value = value.replace('-', '');
+operator = '-';
+}
+
+if(value.substr(0, settings.symbol.length) != settings.symbol){
+value = operator + settings.symbol + value;
+}
+}
+return value;
+}
+
+function changeSign(i){
+if (settings.allowNegative) {
+var vic = i.val();
+if (i.val()!='' && i.val().charAt(0)=='-'){
+return i.val().replace('-','');
+} else{
+return '-'+i.val();
+}
+} else {
+return i.val();
+}
+}
+
+function setCursorPosition(input, pos) {
+// I'm not sure if we need to jqueryfy input
+$(input).each(function(index, elem) {
+if (elem.setSelectionRange) {
+elem.focus();
+elem.setSelectionRange(pos, pos);
+} else if (elem.createTextRange) {
+var range = elem.createTextRange();
+range.collapse(true);
+range.moveEnd('character', pos);
+range.moveStart('character', pos);
+range.select();
+}
+});
+return this;
+};
+
+function getInputSelection(el) {
+var start = 0, end = 0, normalizedValue, range, textInputRange, len, endRange;
+
+if (typeof el.selectionStart == "number" && typeof el.selectionEnd == "number") {
+start = el.selectionStart;
+end = el.selectionEnd;
+} else {
+range = document.selection.createRange();
+
+if (range && range.parentElement() == el) {
+len = el.value.length;
+normalizedValue = el.value.replace(/\r\n/g, "\n");
+
+// Create a working TextRange that lives only in the input
+textInputRange = el.createTextRange();
+textInputRange.moveToBookmark(range.getBookmark());
+
+// Check if the start and end of the selection are at the very end
+// of the input, since moveStart/moveEnd doesn't return what we want
+// in those cases
+endRange = el.createTextRange();
+endRange.collapse(false);
+
+if (textInputRange.compareEndPoints("StartToEnd", endRange) > -1) {
+start = end = len;
+} else {
+start = -textInputRange.moveStart("character", -len);
+start += normalizedValue.slice(0, start).split("\n").length - 1;
+
+if (textInputRange.compareEndPoints("EndToEnd", endRange) > -1) {
+end = len;
+} else {
+end = -textInputRange.moveEnd("character", -len);
+end += normalizedValue.slice(0, end).split("\n").length - 1;
+}
+}
+}
+}
+
+return {
+start: start,
+end: end
+};
+} // getInputSelection
+
+if (!input.attr("readonly")){
+input.unbind('.maskMoney');
+input.bind('keypress.maskMoney', keypressEvent);
+input.bind('keydown.maskMoney', keydownEvent);
+input.bind('blur.maskMoney', blurEvent);
+input.bind('focus.maskMoney', focusEvent);
+input.bind('mask.maskMoney', mask);
+}
+})
+}
+}
+
+$.fn.maskMoney = function(method) {
+if ( methods[method] ) {
+return methods[method].apply( this, Array.prototype.slice.call( arguments, 1 ));
+} else if ( typeof method === 'object' || ! method ) {
+return methods.init.apply( this, arguments );
+} else {
+$.error( 'Method ' + method + ' does not exist on jQuery.maskMoney' );
+}
+};
+})(jQuery);
