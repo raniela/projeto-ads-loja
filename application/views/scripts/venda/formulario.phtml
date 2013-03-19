@@ -92,7 +92,7 @@
             defaultZero:false
         });
                 
-        $('#venda-data_venda').mask("99/99/9999");
+        //$('#venda-data_venda').mask("99/99/9999");
         $('#venda-data_venda').datepicker({dateFormat:'dd/mm/yy'});
         
         $('#sucessoVenda').dialog({
@@ -274,7 +274,7 @@
                                    
                 + '<td>'
                 + '<label style="width: 100px" for="">R$:</label>'
-                + '<input class="required" onchange="atualizarTotal()" id="item-venda-'+id_mercadoria+'-valor_unitario" name="item-venda['+id_mercadoria+'][valor_unitario]" value="'+preco+'" type="text" size="21"/>'
+                + '<input class="required" onblur="atualizarTotal()" id="item-venda-'+id_mercadoria+'-valor_unitario" name="item-venda['+id_mercadoria+'][valor_unitario]" value="'+preco+'" type="text" size="21"/>'
                 + '</td>'                                   
                                    
                 + '<td>'
