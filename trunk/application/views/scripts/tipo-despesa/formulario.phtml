@@ -1,12 +1,16 @@
+<!--RECEBE o título da controller TipoDespesa -->
 <h1><?php echo $this->titulo; ?></h1>
 
 <!-- formulário -->
-
+<!--aqui indica qual o metodo da controller ele vai utilizar que no caso é o salvar -->
 <form id="formTipoDespesa" action="/tipo-despesa/salvar" method="post" enctype="multipart/form-data">
     
     <div class="formfield">
         <label for="">Descrição:</label>
-        <input class="required" id="descricao" name="descricao" type="text" size="30" value=""/>
+        <!-- A class required é utilizada para que o input não seja salvo com valor nulo o value é o valor que vc manda na view -->
+        <input class="required" id="descricao" name="descricao" type="text" size="30" value="<?php echo $this->tipoDespesa['descricao']; ?>"/>
+        <!-- esse input esta com o type hidden para que o usuario não possa ver o id -->
+        <input class="" id="id_tipodespesa" name="id_tipodespesa" type="hidden" value="<?php echo $this->tipoDespesa['id_tipodespesa']; ?>"/>
     </div>
 
     <div class="formbutton">
@@ -24,22 +28,28 @@
 
     $(function(){
 
+        //deixa o dialog sem abrir
+        //que no caso seria as msg de erro e sucesso 
         $( "#sucessoTipoDespesa" ).dialog({
             autoOpen: false
-        });
-        
-        $("#data").datepicker({dateFormat:'dd/mm/yy'});
+        });       
+       
         
         //$('#form').populate(dataForm);
-        
+        //onde faz o trabalho de validar 
+        //o #formTipoDespesa ele pega pelo id do form
         $('#formTipoDespesa').validate({
             submitHandler: function(form){
                 jQuery(form).ajaxSubmit({
                     dataType:  'json', 
                     success: function(r){
-                        if(r.tipo == 'sucesso'){                    
+                        //aqui ele compara o json retornado pelo metodo salvar
+                        if(r.tipo == 'sucesso'){
+                            //escreve a msg 
                             $('#sucessoTipoDespesa p').html(r.msg);
+                            //habilita o dialog
                             $('#sucessoTipoDespesa').dialog("open");
+                            //trata o dialog
                             $( "#sucessoTipoDespesa" ).dialog({
                                 modal: true,
                                 buttons: {
@@ -53,6 +63,7 @@
                             //$('#divMsg').html(r.msg)
                             //window.location = r.url;
                         } else {
+                            //aqui é o mesmo caso do if acima só que ele mostra a outra mensagem
                             $('#sucessoTipoDespesa p').html(r.msg);
                             $('#sucessoTipoDespesa').dialog("open");
                             $( "#sucessoTipoDespesa" ).dialog({

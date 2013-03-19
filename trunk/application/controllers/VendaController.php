@@ -69,12 +69,18 @@ class VendaController extends Zend_Controller_Action
              */
             $this->view->titulo = "Edição de Venda";
             $id = $this->_getParam('id_venda');
+            //busca todos os campos da venda 
             $venda = $this->vendaDbTable->getDataGrid(array('id_venda' => $id));
             
-            
+            //aqui ele manda pra view 
             $this->view->venda = $venda[0];
+            //aqui ele esta editando a data_venda através de uma helper para padrao brasileiro e mandando pra view
             $this->view->venda['data_venda'] = $this->_helper->util->reverseDate($this->view->venda['data_venda']);
+            
+            //aqui ele está editando valor_total_venda com uma helper para money
             $this->view->venda['valor_total_venda'] = $this->_helper->util->floatToMoney($this->view->venda['valor_total_venda']);
+            
+            //aqui ele está editando valor_total_venda com uma helper para money
             $this->view->venda['valor_desconto'] = $this->_helper->util->floatToMoney($this->view->venda['valor_desconto']);
         } else {
             /**

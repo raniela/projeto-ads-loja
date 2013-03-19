@@ -7,12 +7,12 @@
     <tr class="alt" >
         <?php foreach ($this->paginator as $k => $tiposDespesa): ?>
         <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
-            <td><?php echo $tiposDespesa['nome'] ?></td>
+            <td><?php echo $tiposDespesa['descricao'] ?></td>
             <td>
-                <a class="linkEditar" href="/tipo-despesa/formulario/id/<?php echo $tiposDespesa['id_tipoDespesa'] ?>">
+                <a class="linkEditar" href="/tipo-despesa/formulario/id/<?php echo $tiposDespesa['id_tipodespesa'] ?>">
                     <img src="/img/edit-icon.gif" title="Editar registro" />
                 </a>
-                <a class="btExcluir" href="/tipo-despesa/excluir/id/<?php echo $tiposDespesa['id_tipoDespesa'] ?>">
+                <a class="btExcluir" href="/tipo-despesa/excluir/id/<?php echo $tiposDespesa['id_tipodespesa'] ?>">
                     <img src="/img/delete-icon.gif" title="Excluir Registro" />
                 </a>
             </td>
