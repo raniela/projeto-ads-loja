@@ -28,7 +28,7 @@ class TipoDespesaController extends Zend_Controller_Action {
         //chama o metodo que busca todos os tiposDespesas do bd
         $tipoDespesaAC = $tipoDespesaDbTable->fetchAll(null, 'descricao')->toArray();
 
-        //passa a descrição do tipo de despesa para um array q será utilizado no autocompletar da view
+        //passa a descrição do tipo de despesa para um array q será utilizado no autocompletar da view esse for foi feito só para dar exemplo de como funciona em um array
         foreach ($tipoDespesaAC as $tipo) {
             $dadosAutoComplete[] = $tipo['descricao'];
         }
@@ -42,7 +42,7 @@ class TipoDespesaController extends Zend_Controller_Action {
 
         //instancia a classe da model tipoDespesa 
         $tipoDespesaDbTable = new Application_Model_DbTable_TipoDespesa();
-
+        //die($this->_getParam('nomeTipoDespesa'));
         //pega o nome ou qualquer coisa que o usuario digitar para buscar
         $descricao = $this->_getParam('nome');
 

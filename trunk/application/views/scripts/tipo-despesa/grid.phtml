@@ -1,36 +1,44 @@
 <table>
+    <!-- onde fica os nomes -->
     <tr>
         <th>Descrição</th>
         <th>Ações</th>
     </tr>
 
     <tr class="alt" >
-        <?php foreach ($this->paginator as $k => $tiposDespesa): ?>
+        <!-- recebe os dados da view  -->
+       <?php foreach ($this->paginator as $k => $tiposDespesa): ?>
+        <!-- faz uma gambiarra para ficar cada linha do grid de uma cor -->
         <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
+            <!-- mostra na tela a descrição -->
             <td><?php echo $tiposDespesa['descricao'] ?></td>
             <td>
+                <!-- Esse é o editar do grid ele leva o usuario ao formuario com o id da linha -->
                 <a class="linkEditar" href="/tipo-despesa/formulario/id/<?php echo $tiposDespesa['id_tipodespesa'] ?>">
                     <img src="/img/edit-icon.gif" title="Editar registro" />
                 </a>
+                <!-- esse é o botão que exclui ele faz com que chame o metodo excluir da controller ele leva o id da linha tbm -->
                 <a class="btExcluir" href="/tipo-despesa/excluir/id/<?php echo $tiposDespesa['id_tipodespesa'] ?>">
                     <img src="/img/delete-icon.gif" title="Excluir Registro" />
                 </a>
             </td>
-        </tr>    
+        </tr>  
+        <!-- Fim do for -->
     <?php endforeach; ?>
 
 </table>
-
+<!-- faz a paginação -->
 <?php echo $this->paginationControl($this->paginator, 'Sliding', 'my_pagination_control.phtml'); ?>
-
+<!-- Essa é a mensagem que o usuario recebe ao tentar excluir -->
 <div id="dcTipoDespesa">
     <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse tipoDespesa?</p>
 </div>
 
+<!-- Quando o usuario fizer algo e retornar mensagem no json a mensagem de erro vai substituir o <p> -->
 <div id="tipoDespesaErro">
     <p>Erro</p>    
 </div>
-
+<!-- Quando o usuario fizer algo e retornar mensagem no json a mensagem de Sucesso vai substituir o <p> -->
 <div id="tipoDespesaSucesso">
     <p>Sucesso</p>    
 </div>
@@ -39,28 +47,33 @@
     
     var url = "";
     $(function(){       
-                
+        //deixa o que seria o id da div #tipoDespesaSucesso escondido   
         $( "#tipoDespesaSucesso" ).dialog({
             autoOpen: false
         });
-        
+        //deixa o que seria o id da div #tipoDespesaErro escondido
         $( "#tipoDespesaErro" ).dialog({
             autoOpen: false
         });
-                
+        //deixa o que seria o id da div #dcTipoDespesa escondido        
         $("#dcTipoDespesa").dialog({
             resizable: false,
             height:250,
             width:500,
             modal: true,
             autoOpen: false,
-                
+            //se o usuario clicar em 'OK' ele vai submitar e excluir e seu retorno vai ser trabalhado em seguida   
             buttons: {
                 "Ok": function() {
                     $.get(url, null, function(retorno){
+                        //verifica o retorno se foi sucesso
                         if(retorno.tipo == 'sucesso'){
+                            //substitui a mensagem com a de retorno
                             $('#tipoDespesaSucesso').html(retorno.msg);
+                            
+                            //abria a dialog com a nova msg
                             $('#tipoDespesaSucesso').dialog("open");
+                            //fecha dialog qdo clicada
                             $('#tipoDespesaSucesso').dialog({
                                 buttons: {
                                     Ok: function() {
@@ -68,12 +81,15 @@
                                     }
                                 }
                             });
-                                
+                            //faz com que seja carregado por ajax a div    
                             $('#divResTipoDespesa').load('/tipo-despesa/grid/nome/' + $('#nomeTipoDespesa').val());
                                 
                         } else {
+                            //substitui a msg da div
                             $('#tipoDespesaErro').html(retorno.msg);
+                            //abre ao dialog
                             $('#tipoDespesaErro').dialog("open");
+                            //fecha dialog qdo clicada
                             $('#tipoDespesaErro').dialog({
                                 buttons: {
                                     Ok: function() {
@@ -81,6 +97,7 @@
                                     }
                                 }
                             });
+                            //faz com que seja carregado por ajax a div
                             $('#divResTipoDespesa').load('/tipo-despesa/grid/nome/' + $('#nomeTipoDespesa').val());
                         }                    
                     }, 'json');
@@ -96,7 +113,7 @@
             }
                 
         });
-                
+        //trata a paginação        
         $('.pagination a').click(function(){
            
             var href = $(this).attr('href');
