@@ -6,12 +6,12 @@ class FornecedorController extends Zend_Controller_Action
      *
      * @var Application_Model_DbTable_Usuario 
      */
-    //private $usuarioDbTable;
+    private $fornecedorDbTable;
     private $flashMessenger;
 
     public function init()
     {
-        //$this->usuarioDbTable = new Application_Model_DbTable_Usuario();
+        $this->fornecedorDbTable = new Application_Model_DbTable_Fornecedor();
         $this->flashMessenger = $this->_helper->getHelper('FlashMessenger');
         $this->view->msg = $this->flashMessenger->getMessages();
         $this->logger = Zend_Registry::get('logger');
@@ -26,15 +26,15 @@ class FornecedorController extends Zend_Controller_Action
 
         $this->view->titlePage = "Listagem de Fornecedores";
         
-        /*$dadosAutoComplete = array();
+        $dadosAutoComplete = array();
         
-        $fornecedores = $this->usuarioDbTable->fetchAll(null, 'nome')->toArray();
+       // $fornecedores = $this->usuarioDbTable->fetchAll(null, 'nome')->toArray();
         
         foreach ($fornecedores as $usuario){
             
-            $dadosAutoComplete[] = $usuario['nome'];
+            //$dadosAutoComplete[] = $usuario['nome'];
             
-        }*/
+        }
         
         //$this->view->dadosAutoComplete = $dadosAutoComplete;
         
