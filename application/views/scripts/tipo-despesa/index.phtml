@@ -1,4 +1,7 @@
+<!-- recebe o titulo da pagina da controller -->
 <h1><?php echo $this->titlePage; ?></h1>
+
+<!-- cria um fomulario para buscar a descrição  -->
 <form action="" method=get">
     <div class="formfield">
         <label for="">Nome:</label>
@@ -22,26 +25,27 @@
 <br />
 
 <script>
-
+    //recebe a variavel do autocomplete da controller um array 
     var tipoDespesaAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
 
     $(function(){
-    
+        //carrega o formulario para novo
         $('#btNovoTipoDespesa').click(function(){
             var url = $(this).attr('value');
             $('#ui-tabs-9').load(url);
             return false;
         });
     
-    
+        //faz com que funciione o autocomplete do buscar
         $( "#nomeTipoDespesa" ).autocomplete({
             source: tipoDespesaAutoComplete
         });
-    
+        //carrega a grid com tds tiposDespesa
         $('#divResTipoDespesa').load('/tipo-despesa/grid/nome/' + $('#nomeTipoDespesa').val());
-        $('#btBuscarTipoDespesa').click(function(){
-        
-            $('#divResTipoDespesa').load('/tipo-despesa/grid/nome/' + $('#nomeTipoDespesa').val());
+        //Se usuarrio buscar por alguma descrição especifica o grid será carregado com ela
+        $('#btBuscarTipoDespesa').click(function(){        
+            var link = encodeURI('/tipo-despesa/grid/nome/' + $('#nomeTipoDespesa').val());
+            $('#divResTipoDespesa').load(link);
         });
     }); 
     
