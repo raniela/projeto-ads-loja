@@ -1,7 +1,7 @@
 <h1><?php echo $this->titlePage; ?></h1>
 <form action="" method=get">
     <div class="formfield">
-        <label for="">Nome:</label>
+        <label for="">Razão Social:</label>
         <input id="nomeForn" name="nomeForn" type="text">
     </div>
     <div class="formbutton">
@@ -25,7 +25,7 @@
 
 <script>
 
-    var usuarioAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
+    var fornecedorAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoCompleteForn); ?>
 
     $(function(){
     
@@ -37,13 +37,13 @@
     
     
         $( "#nomeForn" ).autocomplete({
-            source: usuarioAutoComplete
+            source: fornecedorAutoComplete
         });
     
         $('#divResFornecedor').load('/fornecedor/grid/nome/' + $('#nomeForn').val());
         $('#btBuscarForn').click(function(){
-        
-            $('#divResFornecedor').load('/fornecedor/grid/nome/' + $('#nomeForn').val());
+            var link = encodeURI('/fornecedor/grid/nome/' + $('#nomeForn').val());
+            $('#divResFornecedor').load(link);
         });
     }); 
     
