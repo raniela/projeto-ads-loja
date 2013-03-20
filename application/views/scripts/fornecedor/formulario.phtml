@@ -1,95 +1,94 @@
 <h1><?php echo $this->titulo; ?></h1>
 
 <!-- formulário -->
-
-<form id="formUsu" action="/fornecedor/salvar" method="post" enctype="multipart/form-data">
+<form id="formFornecedor" action="/fornecedor/salvar/id/<?php echo $this->fornecedor['id_fornecedor'] ?>"" method="post" enctype="multipart/form-data">
     <div class="formfield">
         <label for="">Razão Social:</label>
-        <input class="required" id="razao" name="razao" type="text" size="50" value=""/>
+        <input class="required" id="razao_social" name="f[razao_social]" type="text" size="50" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">Nome Fantasia:</label>
-        <input class="required" id="nome" name="nome" type="text" size="50" value=""/>
+        <input class="required" id="nome_fantasia" name="f[nome_fantasia]" type="text" size="50" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">CNPJ:</label>
-        <input class="required" id="cnpj" name="cnpj" type="text" size="30" value=""/>
+        <input class="required" id="documento" name="f[documento]" type="text" size="30" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">Representante:</label>
-        <input class="required" id="representante" name="representante" type="text" size="30" value=""/>
+        <input class="required" id="representante_comercial" name="f[representante_comercial]" type="text" size="30" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">Telefone:</label>
-        <input class="required" id="telefone" name="telefone" type="text" size="30" value=""/>
+        <input class="required" id="telefone" name="f[telefone]" type="text" size="30" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">E-mail:</label>
-        <input class="required email" id="email" name="email" type="text"  size="30" value="" />
+        <input class="required email" id="email" name="f[email]" type="text"  size="30" value="" />
     </div>
 <br/>
   
         <h01>Endereço:</h01>
     <div class="formfield">
         <label for="">Rua:</label>
-        <input class="required" id="rua" name="rua" type="text"  size="33" value="" />
+        <input class="required" id="rua" name="f[rua]" type="text"  size="33" value="" />
         <label style="width: 40px" for="">&nbsp;&nbsp;Nº:</label>
-        <input class="required" id="numero" name="numero" type="text"  size="10" value="" />
+        <input class="required" id="numero" name="f[numero]" type="text"  size="10" value="" />
     </div>
 
     <div class="formfield">
         <label for="">Bairro:</label>
-        <input class="required" id="bairro" name="bairro" type="text"  size="20" value="" />
+        <input class="required" id="bairro" name="f[bairro]" type="text"  size="20" value="" />
         <label style="width: 66px" for="">&nbsp; Cidade:</label>
-        <input class="required" id="cidade" name="cidade" type="text"  size="20" value="" />
+        <input class="required" id="cidade" name="f[cidade]" type="text"  size="20" value="" />
     </div>
 
     <div class="formfield">
         <label for="">Estado:</label>
-        <input class="required" id="estado" name="estado" type="text"  size="20" value="" />
+        <input class="required" id="estado" name="f[estado]" type="text"  size="20" value="" />
         <label style="width: 66px" for="">&nbsp;&nbsp;CEP:</label>
-        <input class="required" id="cep" name="cep" type="text"  size="20" value="" />
+        <input class="required" id="cep" name="f[cep]" type="text"  size="20" value="" />
     </div>
 
     <div class="formbutton">
         <input id="btEnviar" type="submit" value="Enviar" />
-        <button type="button" id="btVoltarUsuario">Voltar</button> 
+        <button type="button" id="btVoltarFornecedor">Voltar</button> 
     </div>
 </form>
 
-<div id="sucessoUsu">
+<div id="sucessoFornForm">
     <p>Sucesso</p>
 </div>
 
 
 <script>
-
+ var dataFormularioFornecedor = <?php echo Zend_Json::encode(array('f' => $this->fornecedor)) ?>;
     $(function(){
         
-        $("#cnpj").mask("99.999.999/9999-99");
+        $("#documento").mask("99.999.999/9999-99");
         $("#telefone").mask("(99) 9999-9999");
         $("#cep").mask("99999-999");
         
-        $( "#sucessoUsu" ).dialog({
+        $( "#sucessoFornForm" ).dialog({
             autoOpen: false
         });
         
-        //$('#form').populate(dataForm);
+        $('#formFornecedor').populate(dataFormularioFornecedor);
         
-        $('#formUsu').validate({
+        $('#formFornecedor').validate({
             submitHandler: function(form){
                 jQuery(form).ajaxSubmit({
                     dataType:  'json', 
                     success: function(r){
                         if(r.tipo == 'sucesso'){                    
-                            $('#sucessoUsu p').html(r.msg);
-                            $('#sucessoUsu').dialog("open");
-                            $( "#sucessoUsu" ).dialog({
+                            $('#sucessoFornForm p').html(r.msg);
+                            $('#sucessoFornForm').dialog("open");
+                            $( "#sucessoFornForm" ).dialog({
                                 modal: true,
                                 buttons: {
                                     Ok: function() {
@@ -102,9 +101,9 @@
                             //$('#divMsg').html(r.msg)
                             //window.location = r.url;
                         } else {
-                            $('#sucessoUsu p').html(r.msg);
-                            $('#sucessoUsu').dialog("open");
-                            $( "#sucessoUsu" ).dialog({
+                            $('#sucessoFornForm p').html(r.msg);
+                            $('#sucessoFornForm').dialog("open");
+                            $( "#sucessoFornForm" ).dialog({
                                 modal: true,
                                 buttons: {
                                     Ok: function() {
@@ -121,7 +120,7 @@
             }
         });
         
-        $('#btVoltarUsuario').click(function(){
+        $('#btVoltarFornecedor').click(function(){
             $('#ui-tabs-4').load('/fornecedor/index/menu/1');
         })
         

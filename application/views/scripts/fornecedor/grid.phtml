@@ -10,8 +10,8 @@
     <tr class="alt" >
         <?php foreach ($this->paginator as $k => $fornecedor): ?>
         <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
-            <td><?php echo $fornecedor['razao-social'] ?></td>
-            <td><?php echo $fornecedor['cnpj'] ?></td>
+            <td><?php echo $fornecedor['razao_social'] ?></td>
+            <td><?php echo $fornecedor['documento'] ?></td>
             <td><?php echo $fornecedor['telefone'] ?></td>
             <td><?php echo $fornecedor['email'] ?></td>
             <td>
@@ -75,7 +75,7 @@
                                 }
                             });
                                 
-                            $('#divResFornecedor').load('/fornecedor/grid/nome/' + $('#nomeUsu').val());
+                            $('#divResFornecedor').load('/fornecedor/grid/nome/' + $('#nomeForn').val());
                                 
                         } else {
                             $('#fornecedorErro').html(retorno.msg);
@@ -87,14 +87,14 @@
                                     }
                                 }
                             });
-                            $('#divResFornecedor').load('/fornecedor/grid/nome/' + $('#nomeUsu').val());
+                            $('#divResFornecedor').load('/fornecedor/grid/nome/' + $('#nomeForn').val());
                         }                    
                     }, 'json');
                     $( this ).dialog("close");
                     
                 },
                 Cancel: function() {
-                    $('#divResFornecedor').load('/fornecedor/grid/nome/' + $('#nomeUsu').val());
+                    $('#divResFornecedor').load('/fornecedor/grid/nome/' + $('#nomeForn').val());
                     $( this ).dialog( "close" );
                         
                 }

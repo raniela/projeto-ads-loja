@@ -7,13 +7,11 @@ class FornecedorController extends Zend_Controller_Action
      * @var Application_Model_DbTable_Usuario 
      */
     private $fornecedorDbTable;
-    private $flashMessenger;
+    
 
     public function init()
     {
         $this->fornecedorDbTable = new Application_Model_DbTable_Fornecedor();
-        $this->flashMessenger = $this->_helper->getHelper('FlashMessenger');
-        $this->view->msg = $this->flashMessenger->getMessages();
         $this->logger = Zend_Registry::get('logger');
     }
 
@@ -23,53 +21,37 @@ class FornecedorController extends Zend_Controller_Action
         if($this->_getParam('menu')){
             $this->getHelper('layout')->disableLayout();
         }
-
-        $this->view->titlePage = "Listagem de Fornecedores";
         
+        $fornecedorAC = array();
         $dadosAutoComplete = array();
         
-       // $fornecedores = $this->usuarioDbTable->fetchAll(null, 'nome')->toArray();
-        
-        foreach ($fornecedores as $usuario){
-            
-            //$dadosAutoComplete[] = $usuario['nome'];
-            
+        $this->view->titlePage = "Listagem de Fornecedores";
+        $fornecedorAC = $this->fornecedorDbTable->fetchAll(null, 'razao_social')->toArray();
+        foreach ($fornecedorAC as $tipo) {
+            $dadosAutoComplete[] = $tipo['razao_social'];
         }
         
-        //$this->view->dadosAutoComplete = $dadosAutoComplete;
+        $this->view->dadosAutoCompleteForn = $dadosAutoComplete;
+        
+                
         
         
     }
 
     public function gridAction()
     {
-
         $this->getHelper('layout')->disableLayout();
 
-        /*$nome = $this->_getParam('nome');
+        $razaoSocial = $this->_getParam('nome');
         
-        $select =$this->usuarioDbTable->select();
-        if (!empty($nome)) {            
-            $select->where("nome LIKE ?", "%$nome%");
+        $select =$this->fornecedorDbTable->select();
+        if (!empty($razaoSocial)) {            
+            $select->where("razao_social LIKE ?", "%$razaoSocial%");
         }
-        $select->order('nome');
+        $select->order('razao_social');
         
-        $fornecedores = $select->query()->fetchAll();*/
+        $fornecedores = $select->query()->fetchAll();
 
-        $fornecedores = array();
-        
-        $fornecedores[0]['razao-social'] = "Teste";
-        $fornecedores[0]['cnpj'] = "33.607.718/0001-08";
-        $fornecedores[0]['telefone'] = "(11)1111-1111";
-        $fornecedores[0]['email'] = "teste@teste.com";
-        
-        
-        $fornecedores[1]['razao-social'] = "Empresa";
-        $fornecedores[1]['cnpj'] = "33.607.718/0001-08";
-        $fornecedores[1]['telefone'] = "(11)1111-1111";
-        $fornecedores[1]['email'] = "empresa@empresa.com";
-        
-        
         $paginator = Zend_Paginator::factory($fornecedores);
         $paginator->setCurrentPageNumber($this->_getParam('page'));
         $paginator->setDefaultItemCountPerPage(5);
@@ -80,62 +62,35 @@ class FornecedorController extends Zend_Controller_Action
     {
         $this->getHelper('layout')->disableLayout();
         
-        //se já tem id é edição, tem que mandar os dados desse id pra view
-        /*if ($this->_getParam('id')) {
-            /**
-             * Edição do registro
-             */
-            /*$this->view->titulo = "Edição de Usuario";
-            $id = $this->_getParam('id');
-            $usuario = $this->usuarioDbTable->fetchRow("id_usuario = {$id}")->toArray();
-            $this->view->usuario = $usuario;*/
-        /*} else {
-            /**
-             * Cadastro do registro
-             */
-            //se for cadastro é só enviar o titulo
-            /*$this->view->titulo = "Cadastro de Usuarios";
-        }*/
-        $this->view->titulo = "Cadastro de Fornecedores";
-        /*$sessao = new Zend_Session_Namespace();
-        if (isset($sessao->dados)) {
-            $this->view->usuario = $sessao->dados;
-            unset($sessao->dados);
-        }*/
+        if ($this->_getParam('id')) {
+            $titulo = "Edição de Fornecedor";
+            $this->view->fornecedor = $this->fornecedorDbTable->fetchRow("id_fornecedor = {$this->_getParam('id')}")->toArray();
+        } else {          
+            $titulo = "Cadastro de Fornecedor";
+        }
+        $this->view->titulo = $titulo;
     }
 
     public function salvarAction()
     {
         $this->getHelper('viewRenderer')->setNoRender();
         $this->getHelper('layout')->disableLayout();
-
-        /*$dados = $this->getRequest()->getPost('u');
-
-        $id = null;
-        if ($this->_getParam('id')) {
-            $id = $this->_getParam('id');
-        }*/
-
-       /*if ($this->usuarioDbTable->verificaDb($id, $dados) == false) {
+        //print_r($this->getRequest()->getPost('f'));die;
+        //vou fazer outra hora
+       if (1==0 )//$this->fornecedorDbTable->verificaCnpj() == false 
+       {
             $this->_helper->json->sendJson(array(
                 'tipo' => 'erro',
-                'msg' => 'Usuário já existente'
+                'msg' => 'Cnpj já existente'
             ));
-        }*/
-
-        /*try {
-
-            $data = $this->getRequest()->getPost('u');
-
-
-            if ($this->_getParam('id')) {
-                $id = $this->_getParam('id');
-                $this->usuarioDbTable->update($data, "id_usuario = {$id}");
+        }
+            
+        try {
+            if (($this->_getParam('id'))) {
+                $this->fornecedorDbTable->update($this->getRequest()->getPost('f'), "id_fornecedor = {$this->_getParam('id')}");
             } else {
-                $this->usuarioDbTable->insert($data);
-            }
-
-            $this->flashMessenger->addMessage('Salvo com sucesso!');
+                $this->fornecedorDbTable->insert($this->getRequest()->getPost('f'));
+            }            
             $json = array(
                 'tipo' => 'sucesso',
                 'msg' => 'Salvo com sucesso!',
@@ -144,20 +99,12 @@ class FornecedorController extends Zend_Controller_Action
         } catch (Exception $exc) {
             $json = array(
                 'tipo' => 'erro',
-                'msg' => "Erro errado!",
+                'msg' => "Erro errado!".$exc,
             );
 
-            $this->logger->err($exc->getMessage());
-        }*/
-        
-        
-        $this->flashMessenger->addMessage('Salvo com sucesso!');
-            $json = array(
-                'tipo' => 'sucesso',
-                'msg' => 'Salvo com sucesso!',
-                'url' => '/index/tabs/dir/4/'
-            );
-        
+            //$this->logger->err($exc->getMessage());
+        }
+          
         echo Zend_Json::encode($json);
     }
 
@@ -167,25 +114,20 @@ class FornecedorController extends Zend_Controller_Action
         $this->getHelper('viewRenderer')->setNoRender();
         $this->getHelper('layout')->disableLayout();
 
-        try {
-            $id = $this->getRequest()->getParam('id');
-            $usuarioDbTable = new Application_Model_DbTable_Usuario();
-            $usuarioDbTable->delete("id_usuario = $id");
+        try { 
+            $this->fornecedorDbTable->delete("id_fornecedor = '{$this->getRequest()->getParam('id')}'");
 
             $json = array(
                 'tipo' => 'sucesso',
                 'msg' => 'Registro excluído com sucesso!',
-            );
-
-            echo Zend_Json::encode($json);
+            );            
         } catch (Exception $exc) {
             $json = array(
                 'tipo' => 'erro',
                 'msg' => $exc->getMessage()
-            );
-
-            echo Zend_Json::encode($json);
+            );            
         }
+        echo Zend_Json::encode($json);
     }
 
 }

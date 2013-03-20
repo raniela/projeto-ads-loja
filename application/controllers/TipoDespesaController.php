@@ -103,13 +103,6 @@ class TipoDespesaController extends Zend_Controller_Action {
             $this->view->titulo = "Cadastro de Tipo de Despesas";
         }
 
-        //$this->view->titulo = "Cadastro de Tipo de Despesa";
-//        
-//        $sessao = new Zend_Session_Namespace();
-//        if (isset($sessao->dados)) {
-//            $this->view->usuario = $sessao->dados;
-//            unset($sessao->dados);
-//        }
     }
 
     public function salvarAction() {
