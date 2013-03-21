@@ -2,7 +2,7 @@
 
 <!-- formulário -->
 
-<form id="formCliente" action="/cliente/salvar/id/ <?php echo $this->cliente['id'] ?>" method="post" enctype="multipart/form-data">
+<form id="formCliente" action="/cliente/salvar/id/ <?php echo $this->cliente['id_cliente'] ?>" method="post" enctype="multipart/form-data">
     <div class="formfield">
         <label for="">Nome:</label>
         <input class="required" id="nome" name="c[nome]" type="text" size="65" value=""/>
@@ -10,9 +10,9 @@
 
     <div class="formfield">
         <label for="">CPF:</label>
-        <input class="required teste" id="documento" name="c[documento]" type="text" size="30" value=""/>
+        <input class="required teste validarCPF" id="documento" name="c[documento]" type="text" size="30" value=""/>
         <label style="width: 40px" for="">&nbsp; RG:</label>
-        <input class="required soNum" id="rg" name="c[rg]" type="text" size="28" value=""/>
+        <input class="required" id="rg" name="c[rg]" type="text" size="28" value=""/>
     </div>
 
     <div class="formfield">
@@ -118,8 +118,5 @@
         $('#btVoltarCliente').click(function(){
             $('#ui-tabs-2').load('/cliente/index/menu/1');
         })
-        
-        
-        
     });
 </script>
