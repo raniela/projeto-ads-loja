@@ -97,7 +97,7 @@ class UsuarioController extends Zend_Controller_Action
        if ($this->usuarioDbTable->verificaDb($id, $usuario) == false) {
             $this->_helper->json->sendJson(array(
                 'tipo' => 'erro',
-                'url' => '/index/tabs/dir/3/',
+                'url' => '/index/tabs/dir/2/',
                 'msg' => 'Usuário já existente com esse Login'
             ));
         }
@@ -114,7 +114,7 @@ class UsuarioController extends Zend_Controller_Action
             $json = array(
                 'tipo' => 'sucesso',
                 'msg' => 'Salvo com sucesso!',
-                'url' => '/index/tabs/dir/3/'
+                'url' => '/index/tabs/dir/2/'
             );
         } catch (Exception $exc) {
             $json = array(
@@ -130,7 +130,7 @@ class UsuarioController extends Zend_Controller_Action
             $json = array(
                 'tipo' => 'sucesso',
                 'msg' => 'Salvo com sucesso!',
-                'url' => '/index/tabs/dir/3/'
+                'url' => '/index/tabs/dir/2/'
             );
         
         echo Zend_Json::encode($json);

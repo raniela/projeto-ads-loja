@@ -121,7 +121,7 @@ class ClienteController extends Zend_Controller_Action {
             $this->_helper->json->sendJson(array(
                 'tipo' => 'sucesso',
                 'msg' => 'Salvo com sucesso!',
-                'url' => '/index/tabs/dir/2/'
+                'url' => '/index/tabs/dir/1/'
             ));
         } catch (Exception $exc) {
             $this->_helper->json->sendJson(array(

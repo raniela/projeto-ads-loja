@@ -154,7 +154,7 @@ class MercadoriaController extends Zend_Controller_Action
             $json = array(
                 'tipo' => 'sucesso',
                 'msg' => 'Salvo com sucesso!',
-                'url' => '/index/tabs/dir/8/'
+                'url' => '/index/tabs/dir/7/'
             );
         
         echo Zend_Json::encode($json);

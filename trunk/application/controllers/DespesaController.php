@@ -151,7 +151,7 @@ class DespesaController extends Zend_Controller_Action
             $json = array(
                 'tipo' => 'sucesso',
                 'msg' => 'Salvo com sucesso!',
-                'url' => '/index/tabs/dir/10/'
+                'url' => '/index/tabs/dir/9/'
             );
         
         echo Zend_Json::encode($json);

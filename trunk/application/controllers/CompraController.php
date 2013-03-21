@@ -137,7 +137,7 @@ class CompraController extends Zend_Controller_Action
             $json = array(
                 'tipo' => 'sucesso',
                 'msg' => 'Salvo com sucesso!',
-                'url' => '/index/tabs/dir/2/'
+                'url' => '/index/tabs/dir/4/'
             );
         } catch (Exception $exc) {
             $json = array(
@@ -153,7 +153,7 @@ class CompraController extends Zend_Controller_Action
             $json = array(
                 'tipo' => 'sucesso',
                 'msg' => 'Salvo com sucesso!',
-                'url' => '/index/tabs/dir/5/'
+                'url' => '/index/tabs/dir/4/'
             );
         
         echo Zend_Json::encode($json);

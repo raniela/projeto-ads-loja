@@ -122,7 +122,7 @@ class VendaController extends Zend_Controller_Action
             $json = array(
                 'tipo' => 'sucesso',
                 'msg' => 'Salvo com sucesso!',
-                'url' => '/index/tabs/dir/1/'
+                'url' => '/index/tabs/dir/0/'
             );
         } catch (Exception $exc) {
             $json = array(
