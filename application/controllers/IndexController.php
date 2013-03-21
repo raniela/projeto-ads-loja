@@ -91,12 +91,10 @@ class IndexController extends Zend_Controller_Action
         exit;
     }
 
-    //envio de e-mail html
-
-
+   
     public function tabsAction()
     {
-        
+        //Zend_Debug::dump($this->_getParam('dir'));die;
         $this->view->dir = $this->_getParam('dir',0);
         
     }

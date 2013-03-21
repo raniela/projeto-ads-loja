@@ -149,7 +149,7 @@ class TipoController extends Zend_Controller_Action
             $json = array(
                 'tipo' => 'sucesso',
                 'msg' => 'Salvo com sucesso!',
-                'url' => '/index/tabs/dir/7/'
+                'url' => '/index/tabs/dir/6/'
             );
         
         echo Zend_Json::encode($json);

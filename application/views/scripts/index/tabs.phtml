@@ -18,15 +18,20 @@
     
     var selecionartab = <?php echo $this->dir ?>;
    
-   
+    
     $(function() {
         
-        if(selecionartab){
-            $('#tabs').tabs({selected: selecionartab}); 
+        if((selecionartab)){
+            $('#tabs').tabs({               
+                active: selecionartab                
+            }); 
+                 
+        }else{
+             $('#tabs').tabs();
         }
         
             
-        $('#tabs').tabs();        
+               
         
     });
 </script>
