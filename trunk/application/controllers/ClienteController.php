@@ -52,10 +52,10 @@ class ClienteController extends Zend_Controller_Action {
             $select->where("nome LIKE ?", "%$nome%");
         }
         if (!empty($cpf)) {
-            $select->where("documento LIKE ?", "$cpf");
+            $select->where("documento LIKE ?", "%$cpf%");
         }
         if (!empty($rg)) {
-            $select->where("rg LIKE ?", "$rg");
+            $select->where("rg LIKE ?", "%$rg%");
         }
 
         $select->order('nome');
