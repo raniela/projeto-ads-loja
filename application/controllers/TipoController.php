@@ -3,181 +3,185 @@
 class TipoController extends Zend_Controller_Action
 {
     /**
-     *
-     * @var Application_Model_DbTable_Usuario 
+     * O metodo init é sempre executado antes de tudo toda vez que a controller é acessada
      */
-    //private $usuarioDbTable;
-    private $flashMessenger;
-
-    public function init()
-    {
-        //$this->usuarioDbTable = new Application_Model_DbTable_Usuario();
-        $this->flashMessenger = $this->_helper->getHelper('FlashMessenger');
-        $this->view->msg = $this->flashMessenger->getMessages();
-        $this->logger = Zend_Registry::get('logger');
+    public function init() {
+        
     }
 
-    public function indexAction()
-    {
-        
-        if($this->_getParam('menu')){
+    public function indexAction() {
+        //verifica se existe parametro menu para que no caso desabite o layout    
+        if ($this->_getParam('menu')) {
             $this->getHelper('layout')->disableLayout();
         }
 
+        //manda pra view o titulo
         $this->view->titlePage = "Listagem de Tipos de Mercadoria";
-        
+
+        //variaveis para autocomplete
         $dadosAutoComplete = array();
-        $tiposAC = array();
-        //$subtipos = $this->usuarioDbTable->fetchAll(null, 'nome')->toArray();
-        
-        $tiposAC[0]['nome'] = "Teste";
-        $tiposAC[1]['nome'] = "Nome";
-        
-        foreach ($tiposAC as $tipo){
-            
-            $dadosAutoComplete[] = $tipo['nome'];
-            
+        $tipoMercadoriaAC = array();
+
+        //instancia a classe da model tipoMercadoria
+        $tipoMercadoriaDbTable = new Application_Model_DbTable_Tipomercadoria();
+
+        //chama o metodo que busca todos os tiposMercadoria do bd
+        $tipoMercadoriaAC = $tipoMercadoriaDbTable->fetchAll(null, 'descricao')->toArray();
+        //Zend_Debug::dump($tipoMercadoriaAC);die;
+        //passa a descrição do tipo de despesa para um array q será utilizado no autocompletar da view esse for foi feito só para dar exemplo de como funciona em um array
+        foreach ($tipoMercadoriaAC as $tipo) {
+            $dadosAutoComplete[] = $tipo['descricao'];
         }
-        
+        //manda pra view tds as descriçoes do tipo de despesas
         $this->view->dadosAutoComplete = $dadosAutoComplete;
-        
     }
 
-    public function gridAction()
-    {
-
+    public function gridAction() {
+        //desabilita layout
         $this->getHelper('layout')->disableLayout();
 
-        /*$nome = $this->_getParam('nome');
-        
-        $select =$this->usuarioDbTable->select();
-        if (!empty($nome)) {            
-            $select->where("nome LIKE ?", "%$nome%");
-        }
-        $select->order('nome');
-        
-        $subtipos = $select->query()->fetchAll();*/
+        //instancia a classe da model tipoMercadoria
+        $tipoMercadoriaDbTable = new Application_Model_DbTable_TipoMercadoria();
+        //die($this->_getParam('nome'));
+        //pega o nome ou qualquer coisa que o usuario digitar para buscar
+        $descricao = $this->_getParam('nome');
 
-        $tipos = array();
+        //faz uma busca em tipo de Mercadoria para popular o grid
+        $select = $tipoMercadoriaDbTable->select();
+
+        //verificar se o usuario buscou por alguma descrição se sim ele utiliza de where para comparar
+        if (!empty($descricao)) {
+            $select->where("descricao LIKE ?", "%$descricao%");
+        }
+        //ordena por descrição
+        $select->order('descricao');
         
-        $tipos[0]['tipo'] = "Teste";
+        //a variavel recebe todos os tipos de depesas buscados
+        $tipoMercadoria = $select->query()->fetchAll();
         
-        $tipos[1]['tipo'] = "Nome";
+        // para saber o que vc está buscando é só tirar o comentario abaixo
+        //print_r($tipoMercadoria);die;
+
         
-        $paginator = Zend_Paginator::factory($tipos);
+        //faz a paginação propria do zend
+        $paginator = Zend_Paginator::factory($tipoMercadoria);
         $paginator->setCurrentPageNumber($this->_getParam('page'));
         $paginator->setDefaultItemCountPerPage(5);
         $this->view->paginator = $paginator;
     }
 
-    public function formularioAction()
-    {
+    public function formularioAction() {
         $this->getHelper('layout')->disableLayout();
-        
+
         //se já tem id é edição, tem que mandar os dados desse id pra view
-        /*if ($this->_getParam('id')) {
+        if ($this->_getParam('id')) {
             /**
              * Edição do registro
              */
-            /*$this->view->titulo = "Edição de Usuario";
+            //manda pra view o titulo
+            $this->view->titulo = "Edição de Tipo de Mercadoria";
+
+            //passa o valor do parametro id para a variavel id
             $id = $this->_getParam('id');
-            $usuario = $this->usuarioDbTable->fetchRow("id_usuario = {$id}")->toArray();
-            $this->view->usuario = $usuario;*/
-        /*} else {
+
+            //instancia a classe da model tipoMercadoria 
+            $tipoMercadoriaDbTable = new Application_Model_DbTable_Tipomercadoria();
+
+            //busca o tipo de mercadoria que corresponde ao id que passou como parametro
+            $tipoMercadoria = $tipoMercadoriaDbTable->fetchRow("id_tipomercadoria = {$id}")->toArray();
+
+            //envia para a view 
+            $this->view->tipoMercadoria = $tipoMercadoria;
+        } else {
             /**
              * Cadastro do registro
              */
             //se for cadastro é só enviar o titulo
-            /*$this->view->titulo = "Cadastro de Subtipos";
-        }*/
-        $this->view->titulo = "Cadastro de Tipos de Mercadoria";
-        /*$sessao = new Zend_Session_Namespace();
-        if (isset($sessao->dados)) {
-            $this->view->usuario = $sessao->dados;
-            unset($sessao->dados);
-        }*/
+            $this->view->titulo = "Cadastro de Tipo de Mercadoria";
+        }
+
     }
 
-    public function salvarAction()
-    {
+    public function salvarAction() {
+        //desabilita o layout
         $this->getHelper('viewRenderer')->setNoRender();
         $this->getHelper('layout')->disableLayout();
 
-        /*$dados = $this->getRequest()->getPost('u');
+        //esse trecho comentado é para verificar o que vem por post
+        //print_r($this->getRequest()->getPost());
+        //die;
+        //pega o que está vindo por post do formulario
+        $dados = $this->getRequest()->getPost();
 
-        $id = null;
-        if ($this->_getParam('id')) {
-            $id = $this->_getParam('id');
-        }*/
+        try {
 
-       /*if ($this->usuarioDbTable->verificaDb($id, $dados) == false) {
-            $this->_helper->json->sendJson(array(
-                'tipo' => 'erro',
-                'msg' => 'Usuário já existente'
-            ));
-        }*/
+            //instancia a classe da model tipoDespesa 
+            $tipoMercadoriaDbTable = new Application_Model_DbTable_Tipomercadoria();
 
-        /*try {
+            //verifica se o id existe
+            if (!empty($dados['id_tipomercadoria'])) {
+                //passa o valor do id tipo de despesa para a variavel id
+                $id = $dados['id_tipomercadoria'];
 
-            $data = $this->getRequest()->getPost('u');
-
-
-            if ($this->_getParam('id')) {
-                $id = $this->_getParam('id');
-                $this->usuarioDbTable->update($data, "id_usuario = {$id}");
+                //atualiza o tipo da dispesa que está vindo pelo post
+                $tipoMercadoriaDbTable->update($dados, "id_tipomercadoria = {$id}");
             } else {
-                $this->usuarioDbTable->insert($data);
+                //insere o tipo da despesa
+                $tipoMercadoriaDbTable->insert($dados);
             }
 
-            $this->flashMessenger->addMessage('Salvo com sucesso!');
-            $json = array(
-                'tipo' => 'sucesso',
-                'msg' => 'Salvo com sucesso!',
-                'url' => '/index/tabs/dir/2/'
-            );
-        } catch (Exception $exc) {
-            $json = array(
-                'tipo' => 'erro',
-                'msg' => "Erro errado!",
-            );
-
-            $this->logger->err($exc->getMessage());
-        }*/
-        
-        
-        $this->flashMessenger->addMessage('Salvo com sucesso!');
+            //retorna a mensagem de sucesso, o tipo da mensagem e a url para o usuario em javascript
             $json = array(
                 'tipo' => 'sucesso',
                 'msg' => 'Salvo com sucesso!',
                 'url' => '/index/tabs/dir/6/'
             );
-        
+        } catch (Exception $exc) {
+            //retorna a mensagem de erro para o usuario
+            $json = array(
+                'tipo' => 'erro',
+                'msg' => "Erro errado!",
+            );
+
+            //
+            //$this->logger->err($exc->getMessage());
+        }
+
+        //manda a mensagem de retorno que foi executada
         echo Zend_Json::encode($json);
     }
 
-    public function excluirAction()
-    {
-
+    public function excluirAction() {
+        //desabilita o layout
         $this->getHelper('viewRenderer')->setNoRender();
         $this->getHelper('layout')->disableLayout();
 
         try {
+            //pega o parametro id
             $id = $this->getRequest()->getParam('id');
-            $usuarioDbTable = new Application_Model_DbTable_Usuario();
-            $usuarioDbTable->delete("id_usuario = $id");
 
+            //instancia a classe da model tipomercadoria  
+            $tipoMercadoriaDbTable = new Application_Model_DbTable_TipoMercadoria();
+
+            //chama o metodo que exclui e utiliza o id como parametro de comparação
+            $tipoMercadoriaDbTable->delete("id_tipomercadoria = $id");
+
+            //mensagem que retorna no json para javascript
             $json = array(
                 'tipo' => 'sucesso',
                 'msg' => 'Registro excluído com sucesso!',
             );
 
+            //envia a mensagem para javascript
             echo Zend_Json::encode($json);
         } catch (Exception $exc) {
+            //mensagem que retorna no json para javascript que no caso é de erro 
             $json = array(
                 'tipo' => 'erro',
                 'msg' => $exc->getMessage()
             );
 
+            //envia a mensagem 
             echo Zend_Json::encode($json);
         }
     }

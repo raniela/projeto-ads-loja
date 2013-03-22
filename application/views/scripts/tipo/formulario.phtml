@@ -5,7 +5,9 @@
 <form id="formTipo" action="/tipo/salvar" method="post" enctype="multipart/form-data">
     <div class="formfield">
         <label for="">Descrição:</label>
-        <input class="required teste" id="descricao" name="descricao" type="text" size="50" value=""/>
+        <input class="required teste" id="descricao" name="descricao" type="text" size="50" value="<?php echo $this->tipoMercadoria['descricao']; ?>"/>
+        <input class="" id="id_tipomercadoria" name="id_tipomercadoria" type="hidden" value="<?php echo $this->tipoMercadoria['id_tipomercadoria']; ?>"/>
+    
     </div>
     <div class="formbutton">
         <input id="btEnviar" type="submit" value="Enviar" />
