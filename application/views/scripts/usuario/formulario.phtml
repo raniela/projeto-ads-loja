@@ -10,7 +10,7 @@
 
     <div class="formfield">        
         <label for="">Tipo:</label>
-        <?php echo $this->formSelect('usuario[tipo_usuario]', $this->usuario['tipo_usuario'], array('class' => 'required'), array(''=>'SELECIONE', 'A'=>'ADMINISTRADOR', 'C' => 'COMUN')); ?>                
+        <?php echo $this->formSelect('usuario[tipo_usuario]', $this->usuario['tipo_usuario'], array('class' => 'required'), array(''=>'SELECIONE', 'A'=>'ADMINISTRADOR', 'C' => 'COMUM')); ?>                
     </div>
 
     <div class="formfield">
@@ -51,8 +51,7 @@
                     dataType:  'json', 
                     success: function(r){
                         if(r.tipo == 'sucesso'){                    
-                            $('#sucessoUsu p').html(r.msg);
-                            $('#sucessoUsu').dialog("open");
+                            $('#sucessoUsu p').html(r.msg);                            
                             $( "#sucessoUsu" ).dialog({
                                 modal: true,
                                 buttons: {
@@ -62,22 +61,22 @@
                                     }
                                 }
                             });
-                            
+                            $('#sucessoUsu').dialog("open");
                             //$('#divMsg').html(r.msg)
                             //window.location = r.url;
                         } else {
-                            $('#sucessoUsu p').html(r.msg);
-                            $('#sucessoUsu').dialog("open");
+                            $('#sucessoUsu p').html(r.msg);                            
                             $( "#sucessoUsu" ).dialog({
                                 modal: true,
                                 buttons: {
                                     Ok: function() {
                                         $(this).dialog("close");
-                                        window.location = r.url;
+                                        //window.location = r.url;
                                     }
                                 }
                                 
                             });
+                            $('#sucessoUsu').dialog("open");
                         }
           
                     } 

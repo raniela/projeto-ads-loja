@@ -3,7 +3,7 @@
 class FornecedorController extends Zend_Controller_Action
 {
     /**
-     *
+     * Autor: 
      * @var Application_Model_DbTable_Usuario 
      */
     private $fornecedorDbTable;

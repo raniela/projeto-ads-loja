@@ -74,6 +74,7 @@
                         if(retorno.tipo == 'sucesso'){
                             $('#usuarioSucesso').html(retorno.msg);                            
                             $('#usuarioSucesso').dialog({
+                                modal: true,
                                 buttons: {
                                     "Ok": function() {
                                         $( this ).dialog( "close" );
@@ -87,6 +88,7 @@
                             $('#usuarioErro').html(retorno.msg);                            
                             $('#usuarioErro').dialog({
                                 buttons: {
+                                    modal: true,
                                     "Ok": function() {
                                         $( this ).dialog( "close" );
                                     }
