@@ -14,6 +14,9 @@ class VendaController extends Zend_Controller_Action
         //$this->usuarioDbTable = new Application_Model_DbTable_Usuario();
         $this->clienteDbTable = new Application_Model_DbTable_Cliente();
         $this->vendaDbTable = new Application_Model_DbTable_Venda();
+        $this->itemVendaDbTable = new Application_Model_DbTable_Itemvenda();
+        $this->mercadoriaDbTable = new Application_Model_DbTable_Mercadoria();
+        
         $this->flashMessenger = $this->_helper->getHelper('FlashMessenger');
         $this->view->msg = $this->flashMessenger->getMessages();
         $this->logger = Zend_Registry::get('logger');
@@ -62,6 +65,9 @@ class VendaController extends Zend_Controller_Action
         /** Traz os cados do cliente para utilizar no autocomplete */
         $this->view->dataAutoCompleteCliente = $this->clienteDbTable->getDataAutoCompleteClienteFormulario();
         
+        /** Possiveis itens que a venda possui */
+        $this->view->itensVenda = array();
+        
         //se já tem id é edição, tem que mandar os dados desse id pra view
         if ($this->_getParam('id_venda')) {
             /**
@@ -82,6 +88,8 @@ class VendaController extends Zend_Controller_Action
             
             //aqui ele está editando valor_total_venda com uma helper para money
             $this->view->venda['valor_desconto'] = $this->_helper->util->floatToMoney($this->view->venda['valor_desconto']);
+            
+            $this->view->itensVenda = $this->itemVendaDbTable->getItensVenda($this->view->venda['id_venda']);
         } else {
             /**
              * Cadastro do registro
@@ -100,24 +108,51 @@ class VendaController extends Zend_Controller_Action
     {
         $this->getHelper('viewRenderer')->setNoRender();
         $this->getHelper('layout')->disableLayout();
-        
-        
+                
         $venda = $this->getRequest()->getPost('venda');
+        $itens = $this->getRequest()->getPost('item-venda');
+        
         
         //$venda['id_cliente'] = '1';   
         $venda['data_venda'] = $this->_helper->util->reverseDate($venda['data_venda']);
         $venda['valor_total_venda'] = $this->_helper->util->moneyToFloat($venda['valor_total_venda']); 
         $venda['valor_desconto'] = $this->_helper->util->moneyToFloat($venda['valor_desconto']); 
         unset($venda['nome']);                                
-
+        
         try {           
             if ($this->_getParam('id_venda')) {
                 $id = $this->_getParam('id_venda');
                 $this->vendaDbTable->update($venda, "id_venda = {$id}");
             } else {
-                $this->vendaDbTable->insert($venda);
+                $id = $this->vendaDbTable->insert($venda);
             }
 
+            $item = array();
+            $item['id_venda'] = $id;
+            
+            //Deleta os itens anteriores para inserir os novos
+            $itensAntigos = $this->itemVendaDbTable->fetchAll("id_venda = {$id}")->toArray();
+            if(!empty($itensAntigos)) {
+                foreach($itensAntigos as $i) {
+                    $mercadoria = $this->mercadoriaDbTable->fetchRow("id_mercadoria = {$i['id_mercadoria']}")->toArray();
+                    $mercadoria['qtde_estoque'] += $i['quantidade'];
+                    $this->mercadoriaDbTable->update($mercadoria, "id_mercadoria = {$i['id_mercadoria']}");                
+                }
+            }
+            $this->itemVendaDbTable->delete("id_venda = $id");
+            
+            //Percorre os itens do formulario fazendo a inserção
+            foreach($itens as $i) {
+                $item['id_mercadoria'] = $i['id_mercadoria'];
+                $item['quantidade'] = $i['quantidade'];
+                $item['valor_unitario'] = $this->_helper->util->moneyToFloat($i['valor_unitario']);
+                $this->itemVendaDbTable->insert($item);
+                
+                $mercadoria = $this->mercadoriaDbTable->fetchRow("id_mercadoria = {$i['id_mercadoria']}")->toArray();
+                $mercadoria['qtde_estoque'] -= $i['quantidade'];
+                $this->mercadoriaDbTable->update($mercadoria, "id_mercadoria = {$i['id_mercadoria']}"); 
+            }
+            
             $this->flashMessenger->addMessage('Salvo com sucesso!');
             $json = array(
                 'tipo' => 'sucesso',
@@ -145,6 +180,17 @@ class VendaController extends Zend_Controller_Action
             $id = $this->getRequest()->getParam('id_venda');
             //$usuarioDbTable = new Application_Model_DbTable_Usuario();
             //$usuarioDbTable->delete("id_usuario = $id");
+                        
+            $itens = $this->itemVendaDbTable->fetchAll("id_venda = {$id}")->toArray();
+            if(!empty($itens)) {
+                foreach($itens as $i) {
+                    $mercadoria = $this->mercadoriaDbTable->fetchRow("id_mercadoria = {$i['id_mercadoria']}")->toArray();
+                    $mercadoria['qtde_estoque'] += $i['quantidade'];
+                    $this->mercadoriaDbTable->update($mercadoria, "id_mercadoria = {$i['id_mercadoria']}");                
+                }
+            }
+            $this->itemVendaDbTable->delete("id_venda = $id");
+                        
             $this->vendaDbTable->delete("id_venda = $id");
             
             $json = array(
