@@ -1,12 +1,10 @@
 <?php
 
-class IndexController extends Zend_Controller_Action
-{
+class IndexController extends Zend_Controller_Action {
 
-    public function indexAction()
-    {
+    public function indexAction() {
 
-       $this->view->titulo = "Login Loja";
+        $this->view->titulo = "Login Loja";
 
         if ($this->getRequest()->isPost()) {
 
@@ -32,8 +30,7 @@ class IndexController extends Zend_Controller_Action
             //die;
 
             /* verifica o codigo e lança uma exceção */
-            switch ($result->getCode())
-            { // testa o codigo
+            switch ($result->getCode()) { // testa o codigo
                 case Zend_Auth_Result::SUCCESS:
                     /* pega os dados do usuario */
                     $resultRow = $authAdapterDbTable->getResultRowObject();
@@ -60,15 +57,13 @@ class IndexController extends Zend_Controller_Action
         }
     }
 
-    public function sairAction()
-    {
+    public function sairAction() {
         $auth = Zend_Auth::getInstance();
         $auth->clearIdentity();
         $this->_redirect('/index');
     }
 
-    public function emailAction()
-    {
+    public function emailAction() {
 
         try {
             $config = array('auth' => 'login',
@@ -91,12 +86,9 @@ class IndexController extends Zend_Controller_Action
         exit;
     }
 
-   
-    public function tabsAction()
-    {
+    public function tabsAction() {
         //Zend_Debug::dump($this->_getParam('dir'));die;
-        $this->view->dir = $this->_getParam('dir',0);
-        
+        $this->view->dir = $this->_getParam('dir', 1);
     }
 
 }
