@@ -1,0 +1,18 @@
+<h01>Script gerado</h01>
+
+<a target="_blank" href="<?php echo $this->url?>">Download do Script</a>
+
+
+<script>
+
+    var url = <?php echo Zend_Json::encode($this->url); ?>
+
+    alert(url);
+    $(function(){
+
+        $("#btDownload").click(function(){
+            $('#ui-tabs-11').load('/manutencao/backup');
+        });
+       
+    });
+</script>
