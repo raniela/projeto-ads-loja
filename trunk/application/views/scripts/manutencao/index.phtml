@@ -1,1 +1,17 @@
 <h1><?php echo $this->titulo; ?></h1>
+
+<h01>Gerar backup do banco</h01>
+
+<div class="formbutton">
+    <button type="button" id="btGerarBackup">Gerar</button> 
+</div>
+
+<script>
+    $(function(){
+
+        $("#btGerarBackup").click(function(){
+            $('#ui-tabs-11').load('/manutencao/backup');
+        });
+       
+    });
+</script>
