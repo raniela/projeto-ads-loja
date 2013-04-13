@@ -19,7 +19,6 @@ class ManutencaoController extends Zend_Controller_Action {
     }
 
     public function backupAction() {
-
         //desabilita layout
         $this->getHelper('layout')->disableLayout();
 
@@ -29,14 +28,19 @@ class ManutencaoController extends Zend_Controller_Action {
         $dbUsername = "root";
         $dbPassword = "";
         $dbName = "loja";
-        $file = APPLICATION_PATH . '/data/backup/' . time() . '.sql';
-        $command = sprintf("
-            mysqldump -u %s --password=%s -d %s --skip-no-data > %s", escapeshellcmd($dbUsername), escapeshellcmd($dbPassword), escapeshellcmd($dbName), escapeshellcmd($file)
-        );
-        exec($command);
+        $file = $this->_helper->backup->backupTables("localhost", $dbUsername, $dbPassword, $dbName);
+        
+//        $nomeArquivo = time();
+//        $file = APPLICATION_PATH . '/../public/files/' . $nomeArquivo . '.sql';
+//        $command = sprintf("mysqldump -u %s --password=%s -d %s --skip-no-data > %s", 
+//                escapeshellcmd($dbUsername), 
+//                escapeshellcmd($dbPassword), 
+//                escapeshellcmd($dbName), 
+//                escapeshellcmd($file)
+//        );
+//        exec($command);
         
         $this->view->url = $file;
         
-    }
-
+    }       
 }
