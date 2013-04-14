@@ -5,53 +5,53 @@
 <form id="formCliente" action="/cliente/salvar/id/ <?php echo $this->cliente['id_cliente'] ?>" method="post" enctype="multipart/form-data">
     <div class="formfield">
         <label for="">Nome:</label>
-        <input class="required" id="nome" name="c[nome]" type="text" size="65" value=""/>
+        <input class="required" id="nome" name="c[nome]" type="text" size="65" maxlength="50" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">CPF:</label>
-        <input class="required teste validarCPF" id="documento" name="c[documento]" type="text" size="30" value=""/>
+        <input class="required teste validarCPF" id="documento" name="c[documento]" maxlength="14" type="text" size="30" value=""/>
         <label style="width: 40px" for="">&nbsp; RG:</label>
-        <input class="required" id="rg" name="c[rg]" type="text" size="28" value=""/>
+        <input class="required" id="rg" name="c[rg]" type="text" size="28" maxlength="15" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">Telefone Residencial:</label>
-        <input class="required" id="telefone_residencial" name="c[telefone_residencial]" type="text" size="30" value=""/>
+        <input class="required" id="telefone_residencial" name="c[telefone_residencial]" maxlength="14" type="text" size="30" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">Telefone Comercial:</label>
-        <input class="required" id="telefone_comercial" name="c[telefone_comercial]" type="text" size="30" value=""/>
+        <input class="required" id="telefone_comercial" name="c[telefone_comercial]" maxlength="14" type="text" size="30" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">E-mail:</label>
-        <input class="required email" id="email" name="c[email]" type="text"  size="30" value="" />
+        <input class="required email" id="email" name="c[email]" maxlength="30" type="text"  size="30" value="" />
     </div>
     <br/>
 
     <h01>Endereço:</h01>
     <div class="formfield">
         <label for="">Rua:</label>
-        <input class="required" id="rua" name="c[rua]" type="text"  size="40" value="" />
+        <input class="required" id="rua" name="c[rua]" type="text" maxlength="45" size="40" value="" />
         <label style="width: 40px" for="">&nbsp;&nbsp;Nº:</label>
-        <input class="required soNum" id="numero" name="c[numero]" type="text"  size="15" value="" />
+        <input class="required soNum" id="numero" name="c[numero]" maxlength="5" type="text"  size="15" value="" />
     </div>
 
 
     <div class="formfield">
         <label for="">Bairro:</label>
-        <input class="required" id="bairro" name="c[bairro]" type="text" size="27" value="" />
+        <input class="required" id="bairro" name="c[bairro]" maxlength="45" type="text" size="27" value="" />
         <label style="width: 66px" for="">&nbsp; Cidade:</label>
-        <input class="required" id="cidade" name="c[cidade]" type="text" size="25" value="" />
+        <input class="required" id="cidade" name="c[cidade]" maxlength="45" type="text" size="25" value="" />
     </div>
 
     <div class="formfield">
         <label for="">Estado:</label>
-        <input class="required maiuscula" id="estado" name="c[estado]" onchange="CapitalizeAll('estado'); return false;" type="text" maxlength="2" size="27" value="" />
+        <input class="required maiuscula" id="estado" maxlength="25" name="c[estado]" onchange="CapitalizeAll('estado'); return false;" type="text" maxlength="2" size="27" value="" />
         <label style="width: 66px" for="">&nbsp;&nbsp;CEP:</label>
-        <input class="required" id="cep" name="c[cep]" type="text" size="25" value="" />
+        <input class="required" id="cep" name="c[cep]" type="text" size="25" maxlength="9" value="" />
     </div>
     <div class="formbutton">
         <input id="btEnviar" type="submit" value="Enviar" />
