@@ -4,55 +4,55 @@
 <form id="formFornecedor" action="/fornecedor/salvar/id/<?php echo $this->fornecedor['id_fornecedor'] ?>"" method="post" enctype="multipart/form-data">
     <div class="formfield">
         <label for="">Razão Social:</label>
-        <input class="required" id="razao_social" name="f[razao_social]" type="text" size="50" value=""/>
+        <input class="required" id="razao_social" name="f[razao_social]" type="text" size="50" maxlength="45" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">Nome Fantasia:</label>
-        <input class="required" id="nome_fantasia" name="f[nome_fantasia]" type="text" size="50" value=""/>
+        <input class="required" id="nome_fantasia" name="f[nome_fantasia]" type="text" size="50" maxlength="45" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">CNPJ:</label>
-        <input class="required" id="documento" name="f[documento]" type="text" size="30" value=""/>
+        <input class="required" id="documento" name="f[documento]" type="text" size="30" maxlength="18" value=""/>
     </div>
 
     <div class="formfield">
-        <label for="">Representante:</label>
-        <input class="required" id="representante_comercial" name="f[representante_comercial]" type="text" size="30" value=""/>
+        <label for="">Nome Repr. Comerc.:</label>
+        <input class="required" id="representante_comercial" name="f[representante_comercial]" type="text" size="30" maxlength="45" value=""/>
     </div>
 
     <div class="formfield">
-        <label for="">Telefone:</label>
-        <input class="required" id="telefone" name="f[telefone]" type="text" size="30" value=""/>
+        <label for="">Tel. Repr. Comer.:</label>
+        <input class="required" id="telefone" name="f[telefone]" type="text" size="30" maxlength="14" value=""/>
     </div>
 
     <div class="formfield">
-        <label for="">E-mail:</label>
-        <input class="required email" id="email" name="f[email]" type="text"  size="30" value="" />
+        <label for="">E-mail Repr. Comerc.:</label>
+        <input class="required email" id="email" name="f[email]" type="text"  size="30" maxlength="30" value="" />
     </div>
 <br/>
   
-        <h01>Endereço:</h01>
+        <h01>Endereço do Representante Comercial:</h01>
     <div class="formfield">
         <label for="">Rua:</label>
-        <input class="required" id="rua" name="f[rua]" type="text"  size="33" value="" />
+        <input class="required" id="rua" name="f[rua]" type="text"  size="33" maxlength="45" value="" />
         <label style="width: 40px" for="">&nbsp;&nbsp;Nº:</label>
-        <input class="required" id="numero" name="f[numero]" type="text"  size="10" value="" />
+        <input class="required" id="numero" name="f[numero]" type="text" maxlength="5" size="10" value="" />
     </div>
 
     <div class="formfield">
         <label for="">Bairro:</label>
-        <input class="required" id="bairro" name="f[bairro]" type="text"  size="20" value="" />
+        <input class="required" id="bairro" name="f[bairro]" type="text"  size="20" maxlength="45" value="" />
         <label style="width: 66px" for="">&nbsp; Cidade:</label>
-        <input class="required" id="cidade" name="f[cidade]" type="text"  size="20" value="" />
+        <input class="required" id="cidade" name="f[cidade]" type="text"  size="20" maxlength="45" value="" />
     </div>
 
     <div class="formfield">
         <label for="">Estado:</label>
-        <input class="required" id="estado" name="f[estado]" type="text"  size="20" value="" />
+        <input class="required" id="estado" name="f[estado]" type="text"  size="20" maxlength="25" value="" />
         <label style="width: 66px" for="">&nbsp;&nbsp;CEP:</label>
-        <input class="required" id="cep" name="f[cep]" type="text"  size="20" value="" />
+        <input class="required" id="cep" name="f[cep]" type="text" maxlength="9" size="20" value="" />
     </div>
 
     <div class="formbutton">

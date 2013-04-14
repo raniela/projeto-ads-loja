@@ -16,6 +16,9 @@ class VendaController extends Zend_Controller_Action
         $this->vendaDbTable = new Application_Model_DbTable_Venda();
         $this->itemVendaDbTable = new Application_Model_DbTable_Itemvenda();
         $this->mercadoriaDbTable = new Application_Model_DbTable_Mercadoria();
+        $this->duplicataDbTable = new Application_Model_DbTable_Duplicata();
+        
+        $this->adpter = Zend_Db_Table_Abstract::getDefaultAdapter();
         
         $this->flashMessenger = $this->_helper->getHelper('FlashMessenger');
         $this->view->msg = $this->flashMessenger->getMessages();
@@ -111,14 +114,14 @@ class VendaController extends Zend_Controller_Action
                 
         $venda = $this->getRequest()->getPost('venda');
         $itens = $this->getRequest()->getPost('item-venda');
-        
-        
-        //$venda['id_cliente'] = '1';   
+                           
         $venda['data_venda'] = $this->_helper->util->reverseDate($venda['data_venda']);
         $venda['valor_total_venda'] = $this->_helper->util->moneyToFloat($venda['valor_total_venda']); 
         $venda['valor_desconto'] = $this->_helper->util->moneyToFloat($venda['valor_desconto']); 
         unset($venda['nome']);                                
         
+        /* inicia a transação */
+        $this->adpter->beginTransaction();
         try {           
             if ($this->_getParam('id_venda')) {
                 $id = $this->_getParam('id_venda');
@@ -153,6 +156,41 @@ class VendaController extends Zend_Controller_Action
                 $this->mercadoriaDbTable->update($mercadoria, "id_mercadoria = {$i['id_mercadoria']}"); 
             }
             
+            $this->duplicataDbTable->delete("id_venda = $id"); 
+            
+            //Salva as duplicatas do pagamento "a vista"
+            if($venda['tipo_pagamento'] == 'V') {
+                if($venda['forma_pagamento'] == 'D') {
+                    $duplicata['id_venda'] = $id;
+                    $duplicata['data_vencimento'] = $venda['data_venda'];
+                    $duplicata['data_pagamento'] = $venda['data_venda'];
+                    $duplicata['valor_total'] = $venda['valor_total_venda'];
+                    $duplicata['valor_pago'] = $venda['valor_total_venda'] - $venda['valor_desconto'];
+                    $this->duplicataDbTable->insert($duplicata);
+                }
+                
+                if($venda['forma_pagamento'] == 'CD') {
+                    $duplicata['id_venda'] = $id;
+                    $duplicata['data_vencimento'] = date('Y-m-d', strtotime($venda['data_venda'] . " +1 days"));
+                    $duplicata['data_pagamento'] = date('Y-m-d', strtotime($venda['data_venda'] . " +1 days"));
+                    $duplicata['valor_total'] = $venda['valor_total_venda'];
+                    $duplicata['valor_pago'] = 0.9733 * ($venda['valor_total_venda'] - $venda['valor_desconto']);
+                    $this->duplicataDbTable->insert($duplicata);
+                }
+                
+                if($venda['forma_pagamento'] == 'CC') {
+                    $duplicata['id_venda'] = $id;
+                    $duplicata['data_vencimento'] = date('Y-m-d', strtotime($venda['data_venda'] . " +30 days"));
+                    $duplicata['data_pagamento'] = date('Y-m-d', strtotime($venda['data_venda'] . " +30 days"));
+                    $duplicata['valor_total'] = $venda['valor_total_venda'];
+                    $duplicata['valor_pago'] = 0.965 * ($venda['valor_total_venda'] - $venda['valor_desconto']);
+                    $this->duplicataDbTable->insert($duplicata);
+                }
+            }                        
+            
+            /** commita */
+            $this->adpter->commit();
+            
             $this->flashMessenger->addMessage('Salvo com sucesso!');
             $json = array(
                 'tipo' => 'sucesso',
@@ -160,6 +198,9 @@ class VendaController extends Zend_Controller_Action
                 'url' => '/index/tabs/dir/0/'
             );
         } catch (Exception $exc) {
+            /** executa rollback */
+            $this->adpter->rollBack();
+            
             $json = array(
                 'tipo' => 'erro',
                 'msg' => "Ocorreu um erro ao tentar executar a operacao, contate o administrador!",
@@ -175,7 +216,9 @@ class VendaController extends Zend_Controller_Action
     {
         $this->getHelper('viewRenderer')->setNoRender();
         $this->getHelper('layout')->disableLayout();
-
+        
+        /* inicia a transação */
+        $this->adpter->beginTransaction();
         try {
             $id = $this->getRequest()->getParam('id_venda');
             //$usuarioDbTable = new Application_Model_DbTable_Usuario();
@@ -190,8 +233,12 @@ class VendaController extends Zend_Controller_Action
                 }
             }
             $this->itemVendaDbTable->delete("id_venda = $id");
-                        
+            $this->duplicataDbTable->delete("id_venda = $id");
+            
             $this->vendaDbTable->delete("id_venda = $id");
+            
+            /** commita */
+            $this->adpter->commit();
             
             $json = array(
                 'tipo' => 'sucesso',
@@ -200,6 +247,9 @@ class VendaController extends Zend_Controller_Action
 
             echo Zend_Json::encode($json);
         } catch (Exception $exc) {
+            /** executa rollback */
+            $this->adpter->rollBack();
+            
             $json = array(
                 'tipo' => 'erro',
                 'msg' => $exc->getMessage()

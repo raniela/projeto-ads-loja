@@ -4,8 +4,8 @@
 
 <form id="formUsu" action="/usuario/salvar/id_usuario/<?=$this->usuario['id_usuario']?>" method="post" enctype="multipart/form-data">
     <div class="formfield">
-        <label for="">Nome:</label>
-        <input class="required" id="usuario-login" name="usuario[login]" type="text" size="50" value=""/>
+        <label for="">Login:</label>
+        <input class="required" id="usuario-login" name="usuario[login]" type="text" size="50" maxlength="30" value=""/>
     </div>    
 
     <div class="formfield">        
@@ -15,11 +15,11 @@
 
     <div class="formfield">
         <label for="">Senha:</label>
-        <input  class="required" id="usuario-senha" name="usuario[senha]" type="password" value=""/>
+        <input  class="required" id="usuario-senha" name="usuario[senha]" type="password" maxlength="15" value=""/>
     </div>
     <div class="formfield">
         <label for="">Confirmar Senha:</label>
-        <input  class="required" equalTo="#usuario-senha" id="senha2" name="" type="password" value=""/>
+        <input  class="required" equalTo="#usuario-senha" id="senha2" name="" type="password" maxlength="15" value=""/>
     </div>
     <div class="formbutton">
         <input id="btEnviar" type="submit" value="Enviar" />

@@ -8,7 +8,7 @@
     <div class="formfield">
         <label for="">Descrição:</label>
         <!-- A class required é utilizada para que o input não seja salvo com valor nulo o value é o valor que vc manda na view -->
-        <input class="required" id="descricao" name="descricao" type="text" size="30" value="<?php echo $this->tipoDespesa['descricao']; ?>"/>
+        <input class="required" id="descricao" name="descricao" type="text" size="30" maxlength="45" value="<?php echo $this->tipoDespesa['descricao']; ?>"/>
         <!-- esse input esta com o type hidden para que o usuario não possa ver o id -->
         <input class="" id="id_tipodespesa" name="id_tipodespesa" type="hidden" value="<?php echo $this->tipoDespesa['id_tipodespesa']; ?>"/>
     </div>

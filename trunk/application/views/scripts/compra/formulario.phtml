@@ -5,12 +5,12 @@
 <form id="formCompra" action="/compra/salvar" method="post" enctype="multipart/form-data">
     <div class="formfield">
         <label for="">Nº Nota Fiscal:</label>
-        <input class="required" id="num-nota" name="num-nota" type="text" size="30" value=""/>
+        <input class="required" id="num-nota" name="num-nota" type="text" size="30" maxlength="20" value=""/>
     </div>
 
     <div class="formfield">
         <label for="">Valor Total:</label>
-        <input class="required teste" id="valor" name="valor" type="text" size="30" value=""/>
+        <input class="required teste" id="valor" name="valor" type="text" size="30" maxlength="11" value=""/>
     </div>
 
     <div id="mercadoria" class="formfield">
@@ -30,7 +30,7 @@
 
     <div class="formfield">
         <label for="">Descrição:</label>
-        <input class="required" id="descricao" name="descricao" type="text" size="30" value=""/>
+        <input class="required" id="descricao" name="descricao" type="text" size="30" maxlength="30" value=""/>
     </div>
 
     <div class="formfield">

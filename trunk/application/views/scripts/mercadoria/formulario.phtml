@@ -5,7 +5,7 @@
 <form id="formMercadoria" action="/mercadoria/salvar" method="post" enctype="multipart/form-data">
     <div class="formfield">
         <label style="width: 225px" for="">Descrição:</label>
-        <input class="required" id="descricao" name="descricao" type="text" size="50" value=""/>
+        <input class="required" id="descricao" name="descricao" type="text" maxlength="45" size="50" value=""/>
     </div>
 
     <div class="formfield">
@@ -20,17 +20,17 @@
     
     <div class="formfield">
         <label style="width: 225px" for="">Quantidade em estoque:</label>
-        <input class="required teste" id="qtde-estoq" name="qtde-estoq" type="text" size="15" value=""/>
+        <input class="required teste" id="qtde-estoq" name="qtde-estoq" type="text" size="15" maxlength="11" value=""/>
     </div>
     
     <div class="formfield">
         <label style="width: 225px" for="">Quantidade mínima em estoque:</label>
-        <input class="required teste" id="qtde-min-estoq" name="qtde-min-estoq" type="text" size="15" value=""/>
+        <input class="required teste" id="qtde-min-estoq" name="qtde-min-estoq" type="text" size="15" maxlength="11" value=""/>
     </div>
     
     <div class="formfield">
         <label style="width: 225px" for="">Preço venda unitário:</label>
-        <input class="required teste" id="preco" name="preco" type="text" size="15" value=""/>
+        <input class="required teste" id="preco" name="preco" type="text" size="15" maxlength="11" value=""/>
     </div>
     
     <div class="formbutton">
