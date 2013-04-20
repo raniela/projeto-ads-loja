@@ -15,6 +15,73 @@ function CapitalizeAll(elemId){
 };
 
 
+/** soma um mês na data. Data no formato Brasileiro */
+function somaMesData(data, qtdMes){
+    data = str_replace('-','/', data);
+    data = data.split('/');
+    dia = parseInt(data[0], 10);
+    mes = parseInt(data[1], 10);
+    ano = parseInt(data[2], 10);
+	
+    for(iM = 1; iM <= qtdMes; iM++){
+        mes++;
+        if(mes > 12){
+            ano = ano + 1;
+            mes = 1;
+        }
+    }
+	
+    nova_data = lpad(1, dia, '0') + '/' + lpad(1, mes, '0') + '/' + ano;
+    dia_novo = dia;
+    while(!isDate(reverseDate(nova_data)) && dia_novo > 28){
+        dia_novo = dia_novo -1;
+        nova_data = lpad(1, dia_novo, '0') + '/' + lpad(1, mes, '0') + '/' + ano;
+    }
+    return nova_data;
+}
+
+/** data no formato americano */
+function isDate(value){
+    /*var dateRegEx = new RegExp(/^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$|^(?:(?:(?:0?[13578]|1[02])(\/|-)31)|(?:(?:0?[1,3-9]|1[0-2])(\/|-)(?:29|30)))(\/|-)(?:[1-9]\d\d\d|\d[1-9]\d\d|\d\d[1-9]\d|\d\d\d[1-9])$|^(?:(?:0?[1-9]|1[0-2])(\/|-)(?:0?[1-9]|1\d|2[0-8]))(\/|-)(?:[1-9]\d\d\d|\d[1-9]\d\d|\d\d[1-9]\d|\d\d\d[1-9])$|^(0?2(\/|-)29)(\/|-)(?:(?:0[48]00|[13579][26]00|[2468][048]00)|(?:\d\d)?(?:0[48]|[2468][048]|[13579][26]))$/);
+    if (dateRegEx.test(value)) {
+    	if(value.substring(0,4) == '0000'){
+    		return false;
+    	}
+        return true;
+    }
+    return false;*/
+	
+	
+    var date=reverseDate(value);
+    var ardt=new Array;
+    var ExpReg=new RegExp("(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/[12][0-9]{3}");
+    ardt=date.split("/");
+    erro=false;
+    if ( date.search(ExpReg)==-1){
+        erro = true;
+    }
+    else if (((ardt[1]==4)||(ardt[1]==6)||(ardt[1]==9)||(ardt[1]==11))&&(ardt[0]>30))
+        erro = true;
+    else if ( ardt[1]==2) {
+        if ((ardt[0]>28)&&((ardt[2]%4)!=0))
+            erro = true;
+        if ((ardt[0]>29)&&((ardt[2]%4)==0))
+            erro = true;
+    }
+    if (erro) {		
+        return false;
+    }
+    return true;
+}
+
+/** formata com caracter v informado a esquerda ate que a string atinja o tamanho tam*/
+function lpad(tam, n, v){
+    while((n + '').length <= tam){
+        n = v + n;
+    }
+    return n;
+}
+
 function validarCPF(cpf) {
  
     cpf = cpf.replace(/[^\d]+/g,'');
