@@ -14,6 +14,14 @@ function CapitalizeAll(elemId){
     $('#' + elemId).val(txt.toUpperCase());
 };
 
+/** recebe a data em formato americano e transforma em um numerico */
+function dateToNumber(dt){
+    dt = dt.replace('-','');
+    dt = dt.replace('-','');
+    dt = dt.replace('/','');
+    dt = dt.replace('/','');
+    return parseInt(dt);
+}
 
 /** soma um mês na data. Data no formato Brasileiro */
 function somaMesData(data, qtdMes){
