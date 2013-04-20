@@ -118,8 +118,9 @@
         
         
         $.expr[':'].textEquals = function (a, i, m) {
-        return $(a).text().match("^" + escape_regexp(m[3]) + "$");
-    };
+            return $(a).text().match("^" + escape_regexp(m[3]) + "$");
+        };
+        
         $("#venda-nome").autocomplete({
             source: dataAutoCompleteCliente,
             autoFill:true,	
@@ -303,6 +304,26 @@
                          $('#sucessoVenda').dialog("open");
                          return;
                     }
+                    
+                    dataVenda = dateToNumber(reverseDate($('#venda-data_venda').val()));
+                    $('.dataVencimentoParcela').each(function (){
+                        dataParcela = dateToNumber(reverseDate($(this).val()));
+                        if(dataParcela < dataVenda) {
+                            salva = false;
+                        $(this).addClass('fieldInvalid');
+                        $('#sucessoVenda p').html('A data de Vencimento da Parcela não pode ser INFERIOR a Data da Venda!');                            
+                         $( "#sucessoVenda" ).dialog({
+                             modal: true,
+                             buttons: {
+                                 Ok: function() {
+                                     $(this).dialog("close");                        
+                                 }
+                             }
+                         });
+                         $('#sucessoVenda').dialog("open");
+                            return;
+                        }
+                    });
                 }
                 if(salva){
                     jQuery(form).ajaxSubmit({
@@ -369,9 +390,22 @@
 //        $('#btAdicionar').click(function(){
 //            $("#teste").append(html);
 //        });
-          <?php foreach($this->itensVenda as $item) { ?>
-              callBackPesquisarMercadoria(<?=$item['id_mercadoria']?>, '<?=$item['descricao']?>', <?=$item['valor_unitario']?>, <?=$item['qtde_estoque']?>, <?=$item['quantidade']?>);
-          <?php } ?>    
+
+        mostrarParcelas();
+        <?php foreach($this->itensVenda as $item) { ?>
+            callBackPesquisarMercadoria(<?=$item['id_mercadoria']?>, '<?=$item['descricao']?>', <?=$item['valor_unitario']?>, <?=$item['qtde_estoque']?>, <?=$item['quantidade']?>);
+        <?php } ?>  
+            
+        <?php foreach($this->duplicatas as $parcela) { ?>
+            adicionarParcela('<?=$this->String($parcela['data_vencimento'])->reverseDate()?>', '<?=$this->String($parcela['valor_total'])->floatToMoney()?>');
+            if($('#venda-forma_pagamento').val() == 'CC') {
+                $('#parcelas-'+numParcelas+'-data_vencimento').attr('readonly',true);
+                $('#parcelas-'+numParcelas+'-data_vencimento').datepicker("destroy");
+            } else {
+                $('#parcelas-'+numParcelas+'-data_vencimento').attr('readonly',false);
+                $('#parcelas-'+numParcelas+'-data_vencimento').datepicker({dateFormat:'dd/mm/yy'});
+            }
+        <?php } ?>    
     });
     
     function escape_regexp(text) {
@@ -411,6 +445,7 @@
                 "Sim": function() {
                     $(obj).parent().parent().remove();
                     atualizarTotal();
+                    $('.trParcela').remove();
                     $(this).dialog("close");
                 }
             }
@@ -424,7 +459,7 @@
         numParcelas++;
         htmlParcela = '<tr id="tr_parcela_'+numParcelas+'" class="trParcela">'                                  
             + '<td>'
-            + '<input class="required" id="parcelas-'+numParcelas+'-data_vencimento" name="parcelas['+numParcelas+'][data_vencimento]" value="'+data_vencimento+'" type="text" size="21"/>'
+            + '<input class="required dataVencimentoParcela" id="parcelas-'+numParcelas+'-data_vencimento" name="parcelas['+numParcelas+'][data_vencimento]" value="'+data_vencimento+'" type="text" size="21"/>'
             + '</td>'
 
             + '<td>'

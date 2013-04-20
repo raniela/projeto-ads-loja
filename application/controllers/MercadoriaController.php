@@ -187,14 +187,16 @@ class MercadoriaController extends Zend_Controller_Action
         }
     }
     
+    //Utilizada para buscar as mercadorias da tela de Venda
     public function pesquisarMercadoriaAction() {
         try {
             $this->getHelper('layout')->disableLayout();
             
             $params = $this->_getAllParams();
             $params = $this->_helper->util->urldecodeGet($params);                        
-                                                                                
-            $this->view->dataGrid = $this->mercadoriaDbTable->getDataGrid($params);
+            $params = $this->_helper->util->utf8Decode($params);                                                                        
+            //$this->view->dataGrid = $this->view->utf8($this->mercadoriaDbTable->getDataGrid($params))->encode();
+            $this->view->dataGrid = $this->_helper->util->utf8Encode($this->mercadoriaDbTable->getDataGrid($params));
                                     
         } catch (Exception $E) {
             

@@ -49,8 +49,7 @@
     function localizarMercadoria() {
         descricao = urlencodeGet($.trim($('#selecionar-mercadoria-descricao').val()));                      
                         
-        if($.trim(descricao).length > 2){
-
+        if($.trim(descricao).length > 2){            
             $(this).attr('disabled',true);
             url = '/mercadoria/pesquisar-mercadoria/descricao/'+descricao;
             $('#div-grid-pesquisar-mercadoria').load(url, function(data){

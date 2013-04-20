@@ -71,6 +71,9 @@ class VendaController extends Zend_Controller_Action
         /** Possiveis itens que a venda possui */
         $this->view->itensVenda = array();
         
+        /** Possiveis duplicatas que a venda possui */
+        $this->view->duplicatas = array();
+        
         //se já tem id é edição, tem que mandar os dados desse id pra view
         if ($this->_getParam('id_venda')) {
             /**
@@ -92,7 +95,12 @@ class VendaController extends Zend_Controller_Action
             //aqui ele está editando valor_total_venda com uma helper para money
             $this->view->venda['valor_desconto'] = $this->_helper->util->floatToMoney($this->view->venda['valor_desconto']);
             
-            $this->view->itensVenda = $this->itemVendaDbTable->getItensVenda($this->view->venda['id_venda']);
+            //Recupera os itens da venda
+            $this->view->itensVenda = $this->_helper->util->utf8Encode($this->itemVendaDbTable->getItensVenda($this->view->venda['id_venda']));
+            
+            if($this->view->venda['tipo_pagamento'] == 'P') {
+                 $this->view->duplicatas = $this->duplicataDbTable->fetchAll("id_venda = '{$this->view->venda['id_venda']}'")->toArray();
+            }
         } else {
             /**
              * Cadastro do registro
@@ -114,7 +122,8 @@ class VendaController extends Zend_Controller_Action
                 
         $venda = $this->getRequest()->getPost('venda');
         $itens = $this->getRequest()->getPost('item-venda');
-                           
+        $parcelas = $this->getRequest()->getPost('parcelas');
+        
         $venda['data_venda'] = $this->_helper->util->reverseDate($venda['data_venda']);
         $venda['valor_total_venda'] = $this->_helper->util->moneyToFloat($venda['valor_total_venda']); 
         $venda['valor_desconto'] = $this->_helper->util->moneyToFloat($venda['valor_desconto']); 
@@ -186,7 +195,30 @@ class VendaController extends Zend_Controller_Action
                     $duplicata['valor_pago'] = 0.965 * ($venda['valor_total_venda'] - $venda['valor_desconto']);
                     $this->duplicataDbTable->insert($duplicata);
                 }
-            }                        
+            } else {
+                if($venda['forma_pagamento'] == 'D') {
+                    $duplicata['id_venda'] = $id;
+                    
+                    foreach ($parcelas as $p) {
+                        $duplicata['data_vencimento'] = $this->_helper->util->reverseDate($p['data_vencimento']);
+                        $duplicata['valor_total'] = $this->_helper->util->moneyToFloat($p['valor_total']);
+                        $duplicata['valor_pago'] = null;
+                        $this->duplicataDbTable->insert($duplicata);
+                    }                    
+                }
+                
+                if($venda['forma_pagamento'] == 'CC') {
+                    $duplicata['id_venda'] = $id;
+                    
+                    foreach ($parcelas as $p) {
+                        $duplicata['data_vencimento'] = $this->_helper->util->reverseDate($p['data_vencimento']);
+                        $duplicata['data_pagamento'] = $this->_helper->util->reverseDate($p['data_vencimento']);
+                        $duplicata['valor_total'] =  $this->_helper->util->moneyToFloat($p['valor_total']);
+                        $duplicata['valor_pago'] = 0.965 * $this->_helper->util->moneyToFloat($p['valor_total']);
+                        $this->duplicataDbTable->insert($duplicata);
+                    }                    
+                }
+            }                       
             
             /** commita */
             $this->adpter->commit();
