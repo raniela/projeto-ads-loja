@@ -1,6 +1,11 @@
+
 <h1><?php echo $this->titulo; ?></h1>
 
-<!-- formulário testanduuuuuuuuu comite pra volta po dotinha -->
+<div style="float: right;">
+    <a id="newMercadoria" style="text-decoration: none;" class="" href=""><img width="14" height="14" title="Adicionar Mercadoria" src="/img/add_256.png"><h01>&nbsp;Nova Mercadoria</h01></a>
+
+    <a style="margin-left: 30px; text-decoration: none;" class="" href=""><img width="14" height="14" title="Adicionar Mercadoria" src="/img/add_256.png"><h01>&nbsp;Novo Fornecedor</h01></a>
+</div>
 
 <form id="formCompra" action="/compra/salvar" method="post" enctype="multipart/form-data">
     <div class="formfield">
@@ -53,13 +58,38 @@
     <p>Sucesso</p>
 </div>
 
+<div id="novaMercadoria">
+
+</div>
+
+
+
 
 <script>
 
     $(function(){
+        //modal para cadastro de nova mercadoria
+        $('#novaMercadoria').dialog({
+            autoOpen : false,
+            modal : true,
+            show : "fade",  
+            hide : "fade",
+            width : 650,
+            height : 300
+        
+        });
 
-        $( "#sucessoCompra" ).dialog({
+        $('#novaMercadoria').load('/mercadoria/formulario/');
+
+        $("#sucessoCompra").dialog({
             autoOpen: false
+        });
+        
+        $('#newMercadoria').click(function(){
+            $('#novaMercadoria').dialog("open");
+            $( "#novaMercadoria" ).dialog({
+                modal: true
+            });
         });
         
         $("#data").datepicker({dateFormat:'dd/mm/yy'});
