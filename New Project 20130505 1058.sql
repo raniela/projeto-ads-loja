@@ -36,10 +36,10 @@ CREATE TABLE `cliente` (
   `bairro` varchar(45) DEFAULT NULL,
   `cidade` varchar(45) DEFAULT NULL,
   `estado` varchar(25) DEFAULT NULL,
-  `cep` varchar(8) DEFAULT NULL,
-  `telefone_residencial` varchar(11) DEFAULT NULL,
-  `telefone_comercial` varchar(11) DEFAULT NULL,
-  `email` varchar(30) DEFAULT NULL,
+  `cep` varchar(9) DEFAULT NULL,
+  `telefone_residencial` varchar(14) DEFAULT NULL,
+  `telefone_comercial` varchar(14) DEFAULT NULL,
+  `email` varchar(30) NOT NULL,
   PRIMARY KEY (`id_cliente`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COMMENT='Tabela que armazena os dados do cliente.';
 
@@ -49,8 +49,8 @@ CREATE TABLE `cliente` (
 
 /*!40000 ALTER TABLE `cliente` DISABLE KEYS */;
 INSERT INTO `cliente` (`id_cliente`,`documento`,`nome`,`rg`,`rua`,`numero`,`bairro`,`cidade`,`estado`,`cep`,`telefone_residencial`,`telefone_comercial`,`email`) VALUES 
- (1,'39418088851','Cesar Augusto Vieira Giovani',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
- (2,'99999955512','Maria',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+ (1,'39418088851','Cesar Augusto Vieira Giovani',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,''),
+ (2,'382.172.068-99','Maria ssssssssssssssssssssssssssssssssssssssssssss','444444444','xxxxxxeeee','22','ss','ss','SP','23333-33','(22) 2222-2222','(22) 2222-2222','ssssss@bol.com.br');
 /*!40000 ALTER TABLE `cliente` ENABLE KEYS */;
 
 
@@ -110,20 +110,27 @@ DROP TABLE IF EXISTS `duplicata`;
 CREATE TABLE `duplicata` (
   `id_duplicata` int(11) NOT NULL AUTO_INCREMENT,
   `id_venda` int(11) NOT NULL,
-  `data_vencimento` datetime NOT NULL,
+  `data_vencimento` date NOT NULL,
   `data_pagamento` datetime DEFAULT NULL,
-  `valor_total` float NOT NULL,
-  `valor_pago` float DEFAULT '0',
+  `valor_total` float(15,2) NOT NULL,
+  `valor_pago` float(15,2) DEFAULT '0.00',
   PRIMARY KEY (`id_duplicata`),
   KEY `FOR_DUP_VEN` (`id_venda`),
   CONSTRAINT `FOR_DUP_VEN` FOREIGN KEY (`id_venda`) REFERENCES `venda` (`id_venda`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `duplicata`
 --
 
 /*!40000 ALTER TABLE `duplicata` DISABLE KEYS */;
+INSERT INTO `duplicata` (`id_duplicata`,`id_venda`,`data_vencimento`,`data_pagamento`,`valor_total`,`valor_pago`) VALUES 
+ (4,11,'2013-05-14','2013-05-14 00:00:00',30.99,28.95),
+ (10,13,'2013-05-20','2013-05-20 00:00:00',29.91,28.86),
+ (11,13,'2013-06-20','2013-06-20 00:00:00',29.91,28.86),
+ (15,14,'2013-05-20','2013-05-20 00:00:00',25.50,24.61),
+ (16,14,'2013-06-20','2013-06-20 00:00:00',25.50,24.61),
+ (17,14,'2013-07-20','2013-07-20 00:00:00',25.50,24.61);
 /*!40000 ALTER TABLE `duplicata` ENABLE KEYS */;
 
 
@@ -134,26 +141,29 @@ CREATE TABLE `duplicata` (
 DROP TABLE IF EXISTS `fornecedor`;
 CREATE TABLE `fornecedor` (
   `id_fornecedor` int(11) NOT NULL AUTO_INCREMENT,
-  `documento` varchar(14) NOT NULL,
+  `documento` varchar(18) NOT NULL,
   `razao_social` varchar(45) NOT NULL,
   `nome_fantasia` varchar(45) DEFAULT NULL,
   `representante_comercial` varchar(45) NOT NULL,
-  `telefone` varchar(11) NOT NULL,
+  `telefone` varchar(14) NOT NULL,
   `email` varchar(30) DEFAULT NULL,
   `rua` varchar(45) DEFAULT NULL,
   `numero` varchar(5) DEFAULT NULL,
   `bairro` varchar(45) DEFAULT NULL,
   `cidade` varchar(45) DEFAULT NULL,
   `estado` varchar(25) DEFAULT NULL,
-  `cep` varchar(8) DEFAULT NULL,
+  `cep` varchar(9) DEFAULT NULL,
   PRIMARY KEY (`id_fornecedor`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `fornecedor`
 --
 
 /*!40000 ALTER TABLE `fornecedor` DISABLE KEYS */;
+INSERT INTO `fornecedor` (`id_fornecedor`,`documento`,`razao_social`,`nome_fantasia`,`representante_comercial`,`telefone`,`email`,`rua`,`numero`,`bairro`,`cidade`,`estado`,`cep`) VALUES 
+ (1,'22.222.222/222','as ltda','as','eeee','(22) 2222-2','aa@uol.com','xzxx','22','sss','ss','pr','22222-22'),
+ (2,'33.333.333/333','dd','dd','ddd','(33) 3333-3','dddd@uol.com','sss','22','ss','3','s','22222-22');
 /*!40000 ALTER TABLE `fornecedor` ENABLE KEYS */;
 
 
@@ -199,13 +209,18 @@ CREATE TABLE `itemvenda` (
   KEY `FOR_ITEV_MER` (`id_mercadoria`),
   CONSTRAINT `FOR_ITEV_MER` FOREIGN KEY (`id_mercadoria`) REFERENCES `mercadoria` (`id_mercadoria`),
   CONSTRAINT `FOR_ITEV_VEN` FOREIGN KEY (`id_venda`) REFERENCES `venda` (`id_venda`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `itemvenda`
 --
 
 /*!40000 ALTER TABLE `itemvenda` DISABLE KEYS */;
+INSERT INTO `itemvenda` (`id_itemvenda`,`id_mercadoria`,`id_venda`,`quantidade`,`valor_unitario`) VALUES 
+ (7,6,11,1,30.99),
+ (12,6,13,2,30.99),
+ (15,7,14,1,45.5),
+ (16,6,14,1,30.99);
 /*!40000 ALTER TABLE `itemvenda` ENABLE KEYS */;
 
 
@@ -232,7 +247,7 @@ CREATE TABLE `mercadoria` (
 
 /*!40000 ALTER TABLE `mercadoria` DISABLE KEYS */;
 INSERT INTO `mercadoria` (`id_mercadoria`,`id_subtipomercadoria`,`descricao`,`qtde_estoque`,`qtde_minima_estoque`,`preco_venda_unitario`) VALUES 
- (6,1,'CAMISETA P MARCA X',10,3,30.99),
+ (6,1,'CAMISETA P MARCA X',7,3,30.99),
  (7,2,'BERMUNA G MARCA Y',15,5,45.5),
  (8,3,'CALÇA 45 MARCA Z',4,2,79.9),
  (9,4,'SHAPE MARCA AB',7,2,120),
@@ -303,13 +318,17 @@ CREATE TABLE `tipodespesa` (
   `id_tipodespesa` int(11) NOT NULL AUTO_INCREMENT,
   `descricao` varchar(45) NOT NULL,
   PRIMARY KEY (`id_tipodespesa`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `tipodespesa`
 --
 
 /*!40000 ALTER TABLE `tipodespesa` DISABLE KEYS */;
+INSERT INTO `tipodespesa` (`id_tipodespesa`,`descricao`) VALUES 
+ (1,'luz'),
+ (2,'agua'),
+ (3,'sssssssssssaaaaaaaaaaaaaaaaassssssssssssssss');
 /*!40000 ALTER TABLE `tipodespesa` ENABLE KEYS */;
 
 
@@ -322,7 +341,7 @@ CREATE TABLE `tipomercadoria` (
   `id_tipomercadoria` int(11) NOT NULL AUTO_INCREMENT,
   `descricao` varchar(45) NOT NULL,
   PRIMARY KEY (`id_tipomercadoria`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `tipomercadoria`
@@ -331,7 +350,9 @@ CREATE TABLE `tipomercadoria` (
 /*!40000 ALTER TABLE `tipomercadoria` DISABLE KEYS */;
 INSERT INTO `tipomercadoria` (`id_tipomercadoria`,`descricao`) VALUES 
  (1,'VESTUÁRIO'),
- (2,'MATERIAL ESPORTIVO');
+ (2,'MATERIAL ESPORTIVO'),
+ (3,'aaa'),
+ (4,'aaa');
 /*!40000 ALTER TABLE `tipomercadoria` ENABLE KEYS */;
 
 
@@ -345,21 +366,20 @@ CREATE TABLE `usuario` (
   `login` varchar(30) NOT NULL,
   `senha` varchar(15) NOT NULL,
   `tipo_usuario` varchar(1) NOT NULL,
+  `dt_ultimo_acesso` datetime NOT NULL,
   PRIMARY KEY (`id_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `usuario`
 --
 
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` (`id_usuario`,`login`,`senha`,`tipo_usuario`) VALUES 
- (1,'a','a','A'),
- (3,'r','r','A'),
- (4,'cesar','cesar','C'),
- (5,'cecec','ce','A'),
- (6,'cesar_admin','cesar12345','C'),
- (7,'luíz','a','A');
+INSERT INTO `usuario` (`id_usuario`,`login`,`senha`,`tipo_usuario`,`dt_ultimo_acesso`) VALUES 
+ (1,'a','a','A','2013-05-04 15:46:21'),
+ (4,'cesar','cesar','C','0000-00-00 00:00:00'),
+ (5,'cecec','ce','A','0000-00-00 00:00:00'),
+ (6,'cesar_admin','cesar12345','C','0000-00-00 00:00:00');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 
 
@@ -379,7 +399,7 @@ CREATE TABLE `venda` (
   PRIMARY KEY (`id_venda`),
   KEY `FOR_VEN_CLI` (`id_cliente`),
   CONSTRAINT `FOR_VEN_CLI` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `venda`
@@ -387,9 +407,13 @@ CREATE TABLE `venda` (
 
 /*!40000 ALTER TABLE `venda` DISABLE KEYS */;
 INSERT INTO `venda` (`id_venda`,`id_cliente`,`forma_pagamento`,`valor_total_venda`,`valor_desconto`,`data_venda`,`tipo_pagamento`) VALUES 
- (1,2,'D',11.11,1.12,'2013-03-16','V'),
- (2,2,'CC',145.78,12.22,'2013-03-17','V'),
- (3,1,'CC',12.33,4.56,'2013-03-18','P');
+ (7,2,'CC',12.39,3.43,'2013-03-21','V'),
+ (8,1,'D',309.9,59.4,'2013-03-28','V'),
+ (9,2,'D',12.22,0.12,'2013-03-23','V'),
+ (10,1,'D',30.99,10,'2013-04-07','V'),
+ (11,1,'CC',30.99,0.99,'2013-04-14','V'),
+ (13,1,'CC',61.98,0,'2013-04-20','P'),
+ (14,1,'CC',76.49,0,'2013-04-20','P');
 /*!40000 ALTER TABLE `venda` ENABLE KEYS */;
 
 

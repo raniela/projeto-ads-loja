@@ -34,9 +34,16 @@ class IndexController extends Zend_Controller_Action {
                 case Zend_Auth_Result::SUCCESS:
                     /* pega os dados do usuario */
                     $resultRow = $authAdapterDbTable->getResultRowObject();
+
                     /* salva o usuario na sessão */
                     $auth->getStorage()->write($resultRow);
 
+                    /* Salva a data do login como ultimo acesso */
+                    $this->usuarioDbTable = new Application_Model_DbTable_Usuario();
+                    $usuario['dt_ultimo_acesso'] = date('Y-m-d H:i:s');
+                    $this->usuarioDbTable->update($usuario, "id_usuario = {$resultRow->id_usuario}");
+                    
+                    /* Direciona o usuário para a página de abertura do sistema*/
                     $this->_redirect('/index/tabs');
                     $usuario = Zend_Auth::getInstance()->getIdentity();
 
@@ -45,13 +52,13 @@ class IndexController extends Zend_Controller_Action {
                       die; */
                     break;
                 case Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND:
-                    die("nome de usuario não existe");
+                    die("Nome de usuario não existe");
                     break;
                 case Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID:
-                    die("senha invalida");
+                    die("Senha invalida");
                     break;
                 default :
-                    die("sei lá");
+                    die("Um erro desconhecido ocorreu, entre em contato com a administração");
                     break;
             }
         }
