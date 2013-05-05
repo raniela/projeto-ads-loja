@@ -8,7 +8,8 @@
 
 <script>
     $(function(){
-
+        //Melhora aparência dos botões
+        $( "input[type=submit], button" ).button();
         $("#btGerarBackup").click(function(){
             $('#ui-tabs-11').load('/manutencao/backup');
         });

@@ -26,7 +26,8 @@
     var tipoAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
 
     $(function(){
-    
+        //Melhora aparência dos botões
+        $( "input[type=submit], button" ).button();
         $('#btNovoTipo').click(function(){
             var url = $(this).attr('value');
             $('#ui-tabs-7').load(url);

@@ -6,6 +6,9 @@
         <link type="text/css" href="/css/cupertino/jquery-ui-1.10.1.custom.css" rel="stylesheet" />
         <script type="text/javascript"  src="/js/jquery-1.9.1.js"></script>
         <script type="text/javascript"  src="/js/jquery-ui-1.10.1.custom.min.js"></script>
+        <script type="text/javascript"  src="/js/jquery.ui.core.js"></script>
+        <script type="text/javascript"  src="/js/jquery.ui.widget.js"></script>
+        <script type="text/javascript"  src="/js/jquery.ui.button.js"></script>
         
         <script type="text/javascript"  src="/js/jquery.form.js"></script>
         <script type="text/javascript"  src="/js/jquery.alphanumeric.js"></script>
@@ -53,7 +56,7 @@
                             ?>
                         <!--<button type="button" id="sair" onclick="location.href='/index/sair'">Sair</button>-->
 
-                            <a href="/index/sair">Sair</a>
+                        <a id="botao_sair" href="/index/sair">Sair</a>
                             
                         </div>
                     <?php endif; ?>
@@ -74,3 +77,9 @@
         </div>
     </body>
 </html>
+<script>
+    $(document).ready(function() {
+       //Melhora aparência dos botões
+       $("#botao_sair").button(); 
+    });
+</script>

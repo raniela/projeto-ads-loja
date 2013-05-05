@@ -26,7 +26,8 @@
     var despesaAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
 
     $(function(){
-    
+        //Melhora aparência dos botões
+        $( "input[type=submit], button" ).button();
         $('#btNovaDespesa').click(function(){
             var url = $(this).attr('value');
             $('#ui-tabs-10').load(url);

@@ -72,7 +72,8 @@
     var dataForm = <?php echo Zend_Json::encode(array('c' => $this->cliente)) ?>;
 
     $(function(){
-
+        //Melhora aparência dos botões
+        $( "input[type=submit], button" ).button();
         $("#telefone_residencial").mask("(99) 9999-9999");
         $("#documento").mask("999.999.999-99");
         $("#telefone_comercial").mask("(99) 9999-9999");

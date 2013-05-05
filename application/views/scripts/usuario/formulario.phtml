@@ -35,7 +35,9 @@
 <script>
     var dataForm = <?php echo Zend_Json::encode(array('usuario' => $this->usuario)); ?>;
     
-    $(function() {        
+    $(function() {
+        //Melhora aparência dos botões
+        $( "input[type=submit], button" ).button();        
         $( "#sucessoUsu" ).dialog({
             autoOpen: false
         });

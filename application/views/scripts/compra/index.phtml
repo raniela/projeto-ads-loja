@@ -26,7 +26,8 @@
     var compraAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
 
     $(function(){
-    
+        //Melhora aparência dos botões
+        $( "input[type=submit], button" ).button();
         $('#btNovaCompra').click(function(){
             var url = $(this).attr('value');
             $('#ui-tabs-5').load(url);

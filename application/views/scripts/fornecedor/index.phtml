@@ -28,7 +28,8 @@
     var fornecedorAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoCompleteForn); ?>
 
     $(function(){
-    
+        //Melhora aparência dos botões
+       $( "input[type=submit], button" ).button();
         $('#btNovoForn').click(function(){
             var url = $(this).attr('value');
             $('#ui-tabs-4').load(url);
