@@ -35,6 +35,8 @@
 <?php if (count($this->dataGrid) > 0): ?>
     <script>
         $(document).ready(function(){
+            //Melhora aparência dos botões
+            $( "input[type=submit], button" ).button();
             $('.selecionar-mercadoria').click(function(){
                 /** captura os campos do funcionario para a chamada de callBack*/
                                                 

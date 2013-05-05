@@ -30,7 +30,9 @@
 
     var usuarioAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
 
-    $(function(){    
+    $(function(){
+        //Melhora aparência dos botões
+        $( "input[type=submit], button" ).button();
         $('#btNovoUsu').click(function(){
             var url = $(this).attr('value');
             $('#ui-tabs-3').load(url);

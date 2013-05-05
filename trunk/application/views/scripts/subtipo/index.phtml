@@ -26,7 +26,8 @@
     var subtipoAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
 
     $(function(){
-    
+        //Melhora aparência dos botões
+        $( "input[type=submit], button" ).button();
         $('#btNovoSubtipo').click(function(){
             var url = $(this).attr('value');
             $('#ui-tabs-6').load(url);

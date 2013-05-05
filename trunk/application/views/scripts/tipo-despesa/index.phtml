@@ -29,6 +29,8 @@
     var tipoDespesaAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
 
     $(function(){
+        //Melhora aparência dos botões
+        $( "input[type=submit], button" ).button();
         //carrega o formulario para novo
         $('#btNovoTipoDespesa').click(function(){
             var url = $(this).attr('value');

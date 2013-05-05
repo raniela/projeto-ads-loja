@@ -54,7 +54,9 @@
 <script>
     var nomeClienteAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoCompleteCliente); ?>;             
     
-    $(document).ready(function(){
+    $(document).ready(function() {
+        //Melhora aparência dos botões
+        $( "input[type=submit], button" ).button();
         $('#btNovaVenda').click(function(){
             var url = $(this).attr('value');
             $('#ui-tabs-1').load(url);

@@ -35,7 +35,8 @@
     var clienteAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
 
     $(function(){
-       
+       //Melhora aparência dos botões
+       $( "input[type=submit], button" ).button();
        $("#cpfCli").mask("999.999.999-99");
        
         $('#btNovoCliente').click(function(){

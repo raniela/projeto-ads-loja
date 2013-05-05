@@ -99,7 +99,9 @@
     var dataForm = <?php echo Zend_Json::encode(array('venda' => $this->venda)); ?>;
     var dataAutoCompleteCliente = <?php echo $this->dataAutoCompleteCliente; ?>;
     var numParcelas = 0;    
-    $(document).ready(function(){                
+    $(document).ready(function(){
+        //Melhora aparência dos botões
+        $( "input[type=submit], button" ).button();
         $('#formVenda').populate(dataForm);
                 
         $('.money').maskMoney({

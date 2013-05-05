@@ -69,7 +69,8 @@
 <script>
  var dataFormularioFornecedor = <?php echo Zend_Json::encode(array('f' => $this->fornecedor)) ?>;
     $(function(){
-        
+        //Melhora aparência dos botões
+       $( "input[type=submit], button" ).button();
         $("#documento").mask("99.999.999/9999-99");
         $("#telefone").mask("(99) 9999-9999");
         $("#cep").mask("99999-999");
