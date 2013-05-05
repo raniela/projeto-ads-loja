@@ -36,15 +36,25 @@
                     if ($auth->hasIdentity()):
                         ?>
                         <div class="formfield">
+                            
                             <b>Logado como: </b> 
-
                             <?php
-                            $usuario = Zend_Auth::getInstance()->getIdentity();
-                            echo $usuario->login;
+                                $usuario = Zend_Auth::getInstance()->getIdentity();
+                                echo $usuario->login;
                             ?>
-                        
-                            <!--<button type="button" id="sair" onclick="location.href='/index/sair'">Sair</button>-->
+                            
+                            <b>Último Login: </b>
+                            <?php 
+                                $data_hora = $usuario->dt_ultimo_acesso;
+                                $arrayDtUltimoAcesso = explode(" ", $data_hora);
+                                echo $this->String($arrayDtUltimoAcesso[0])->reverseDate() . " " . $arrayDtUltimoAcesso[1];
+                                //date_default_timezone_set('America/Sao_Paulo');
+                                //echo date('Y-m-d h:i:s');
+                            ?>
+                        <!--<button type="button" id="sair" onclick="location.href='/index/sair'">Sair</button>-->
+
                             <a href="/index/sair">Sair</a>
+                            
                         </div>
                     <?php endif; ?>
                 </div>
