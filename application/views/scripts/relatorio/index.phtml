@@ -1,0 +1,20 @@
+<h1><?php echo $this->titulo; ?></h1>
+
+<h01>Relatório Teste</h01>
+
+<div class="formbutton">
+    <button type="button" id="btGerarRelatorioTeste">Gerar Relatório</button> 
+</div>
+
+<script>
+    $(function(){
+        //Melhora aparência dos botões
+        $( "input[type=submit], button" ).button();
+        $("#btGerarRelatorioTeste").click(function(){
+            window.open('/relatorio/teste');
+            //$('#ui-tabs-12').load('/relatorio/teste');
+            //alert('teste');
+        });
+       
+    });
+</script>

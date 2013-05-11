@@ -1,0 +1,197 @@
+<?php
+/** incia a captura do conteudo que sera renderizado como PDF */
+ob_start();
+?>
+
+<style type="text/css">            
+    .styleTD
+    {
+        font-size:10px; 
+        border-bottom:1px solid #000000; 
+        border-right:1px solid #000000; 
+        padding:2px; 
+        border-top:0px;
+    }
+    
+    .styleTDTitulo
+    {
+        font-size:10px; 
+        border-bottom:1px solid #000000; 
+        border-right:1px solid #000000; 
+        padding:2px; 
+        border-top:1px solid #000000;
+        background-color: #74b2e2;
+    }         
+</style>
+<page backtop="7mm" backbottom="7mm" backleft="7mm" backright="7mm" style="font-size: 10pt">
+    <page_header>
+        <table style="border: solid 1px #000000; border-top:0px; border-left:0px; border-right:0px; border-bottom: 0px; padding: 5px; width: 100%; text-align: center;">
+            <tr>           
+                <td style="width: 100%; font-size: 16px;">
+
+                    <b><?php echo strtoupper("SISTEMA LOJA") ?></b>
+                    <br/>
+                    <b style="font-size:14px;">
+                        <?php //echo strtoupper($this->dataUnidade['tx_logradouro']) ?>
+                        &nbsp;&nbsp;
+                        <?php //echo strtoupper($this->dataUnidade['tx_municipio'] . ' - ' . $this->dataUnidade['tx_sigla_uf']) ?>  
+                        &nbsp;&nbsp;
+                        <?php //echo $this->dataUnidade['tx_cep'] ?>
+                    </b>
+
+                    <br/>
+
+                    <b style="font-size:14px;">
+                        <?php
+                        /** monta a string de Fone/Fax */
+                        $foneFax = '';
+                        if (!empty($this->dataUnidade['tx_telefone'])) {
+                            $foneFax = $this->dataUnidade['tx_telefone'];
+                        }
+
+                        if (!empty($this->dataUnidade['tx_fax'])) {
+                            if (!empty($foneFax))
+                                $foneFax .= '/';
+                            $foneFax .= $this->dataUnidade['tx_fax'];
+                        }
+                        ?>
+                        <?php if (!empty($foneFax)): ?>
+                            Fone/Fax: <?php echo $foneFax; ?>
+                        <?php endif; ?>
+
+
+                        &nbsp;&nbsp;<?php //echo $this->dataUnidade['tx_cnpj']; ?>
+                    </b>
+
+                    <br/>
+
+                    <b style="font-size: 14px;">    
+                        <?php if (!empty($this->dataUnidade['tx_email'])): ?> 
+                            E-mail: <?php echo Base_Db_Table::toLowerCase($this->dataUnidade['tx_email']) ?>
+                        <?php endif; ?>
+                    </b>
+                </td>            
+            </tr>
+        </table>
+    </page_header>
+    <page_footer>
+        <table style="width: 100%; border: solid 1px black;">
+            <tr>
+                <td style="text-align: left;	width: 50%"><?php echo $this->utf8("Relatório de Teste")->decode(); ?></td>
+                <td style="text-align: right;	width: 50%"><?php echo $this->utf8("Página")->decode(); ?> [[page_cu]] de [[page_nb]]</td>
+            </tr>
+        </table>
+    </page_footer>
+
+    <br/><br/>
+
+    <div style="text-align: center; width: 100%; font-weight: bold; font-size: 16px;">
+        <?php echo $this->utf8("RELATÓRIO TESTE")->decode(); ?>
+    </div>
+
+    <br/><br/>   
+
+    <br/><br/>
+    <table border='1' style='border:1px solid #000000; border-collapse:collapse; font-size:9px;'>
+        <thead>
+        <tr style="font-size: 12;">
+            <th class="styleTDTitulo" style="text-align: center">
+                Nome do Aluno 
+            </th>
+            <th class="styleTDTitulo" style="text-align: center">
+                Sexo
+            </th>
+            <th class="styleTDTitulo" style="text-align: center">
+                Dt.Nasc.
+            </th>
+            <th class="styleTDTitulo" style="text-align: center">
+                <?php echo $this->utf8("Completou/Completará")->decode(); ?> 
+            </th>
+            <th class="styleTDTitulo" style="text-align: center">
+                Turma
+            </th>
+        </tr>
+        </thead>
+        <?php
+        if (!empty($this->dataAlunos)) {
+            foreach ($this->dataAlunos as $aluno) {
+                ?>
+                <tr>
+                    <td style="width: 240px;">
+                        <?= $aluno['tx_nomaluno']; ?>
+                    </td>
+                    <td style="width: 50px;text-align: center;">
+                        <?php
+                        if ($aluno['tx_sexo'] == 'M') {
+                            echo 'Masculino';
+                        } else {
+                            echo 'Feminino';
+                        }
+                        ?>
+                    </td>
+                    <td style="text-align: center;">
+                        <?= $this->string($aluno['dt_nascimento'])->reverseDate(); ?>
+                    </td>
+                    <td style="text-align: center;">
+                        <?php
+                        $anoatual = date('Y');
+                        $arrNasc = explode('-', $aluno['dt_nascimento']);
+                        $idade = $anoatual - $arrNasc[0];
+                        if ($idade > 1) {
+                            echo $idade . ' Anos';
+                        } else {
+                            $idade . ' Ano';
+                        }
+                        ?>
+                    </td>
+                    <td style="text-align: left;width: 200px;">
+                        <?php
+                            $turmas = Model_Tbturma::getInstance()->getTurmasAtivasAlunoAniversariante(array('id_unidade'=>$this->id_unidade, 'id_aluno' => $aluno['id_aluno']));
+                            foreach ($turmas as $turma) {
+                                //echo $turma['id_turma'];
+                                echo Model_Tbturma::getInstance()->getNomeTurma($turma['id_turma']) . " - " . Model_Tbturma::getInstance()->getNomeCurso($turma['id_turma'])."<br>";
+                                //echo ",";
+                            }
+                            
+                        ?>
+                    </td>
+                </tr>
+            <?php
+            }
+        } else {
+        ?>
+            <?php 
+            
+            //Para fazer linhas cor sim cornão
+            $exibe_cor = false;                                    
+            for($i=0;$i<5;$i++) {
+                //Para fazer linhas cor sim cornão
+                if ($exibe_cor) {
+                    $cor = '#F0FFFF';
+                    $exibe_cor = false;
+                } else {
+                    $cor = '#FFFFFF';
+                    $exibe_cor = true;
+                }
+                
+            ?>
+                <tr>
+                    <td colspan="5" class="styleTD" style="width: 600px;background-color:<?php echo $cor ?>">
+                        Nenhum aluno encontrado!
+                    </td>
+                </tr>
+            <?php } ?>
+        <?php } ?>
+    </table>
+</page>
+
+<?php
+/** finaliza a captura do conteudo */
+
+$content = ob_get_clean();
+/** renderiza o PDF */
+$orientation = 'P'; //L = PAISAGEM
+//P = Porta Retrato
+/** renderiza o PDF */
+$this->pdf($content, 'RELATORIO_TESTE.pdf', null, $orientation);
+?>
