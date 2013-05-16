@@ -33,7 +33,7 @@ class TipoController extends Zend_Controller_Action
             $dadosAutoComplete[] = $tipo['descricao'];
         }
         //manda pra view tds as descriçoes do tipo de despesas
-        $this->view->dadosAutoComplete = $dadosAutoComplete;
+        $this->view->dadosAutoComplete = $this->_helper->util->utf8Encode($dadosAutoComplete);
     }
 
     public function gridAction() {
@@ -44,7 +44,7 @@ class TipoController extends Zend_Controller_Action
         $tipoMercadoriaDbTable = new Application_Model_DbTable_TipoMercadoria();
         //die($this->_getParam('nome'));
         //pega o nome ou qualquer coisa que o usuario digitar para buscar
-        $descricao = $this->_getParam('nome');
+        $descricao = $this->_helper->util->utf8Decode($this->_helper->util->urldecodeGet($this->_getParam('nome')));
 
         //faz uma busca em tipo de Mercadoria para popular o grid
         $select = $tipoMercadoriaDbTable->select();
@@ -57,7 +57,7 @@ class TipoController extends Zend_Controller_Action
         $select->order('descricao');
         
         //a variavel recebe todos os tipos de depesas buscados
-        $tipoMercadoria = $select->query()->fetchAll();
+        $tipoMercadoria = $this->_helper->util->utf8Encode($select->query()->fetchAll());
         
         // para saber o que vc está buscando é só tirar o comentario abaixo
         //print_r($tipoMercadoria);die;
@@ -91,7 +91,7 @@ class TipoController extends Zend_Controller_Action
             $tipoMercadoria = $tipoMercadoriaDbTable->fetchRow("id_tipomercadoria = {$id}")->toArray();
 
             //envia para a view 
-            $this->view->tipoMercadoria = $tipoMercadoria;
+            $this->view->tipoMercadoria = $this->_helper->util->utf8Encode($tipoMercadoria);
         } else {
             /**
              * Cadastro do registro
@@ -111,7 +111,7 @@ class TipoController extends Zend_Controller_Action
         //print_r($this->getRequest()->getPost());
         //die;
         //pega o que está vindo por post do formulario
-        $dados = $this->getRequest()->getPost();
+        $dados = $this->_helper->util->utf8Decode($this->getRequest()->getPost());
 
         try {
 
@@ -176,11 +176,17 @@ class TipoController extends Zend_Controller_Action
             echo Zend_Json::encode($json);
         } catch (Exception $exc) {
             //mensagem que retorna no json para javascript que no caso é de erro 
-            $json = array(
-                'tipo' => 'erro',
-                'msg' => $exc->getMessage()
-            );
-
+            if($exc->getCode() == 23000) {
+                $json = array(
+                    'tipo' => 'erro',
+                    'msg' => 'Esse registro possui vínculos e não pode ser excluído'
+                );
+            } else {
+                $json = array(
+                    'tipo' => 'erro',
+                    'msg' => $exc->getMessage()
+                );
+            }
             //envia a mensagem 
             echo Zend_Json::encode($json);
         }

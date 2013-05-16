@@ -39,10 +39,10 @@
             source: tipoAutoComplete
         });
     
-        $('#divResTipo').load('/tipo/grid/nome/' + $('#nomeTipo').val());
+        $('#divResTipo').load('/tipo/grid/nome/' + urlencodeGet($('#nomeTipo').val()));
         $('#btBuscarTipo').click(function(){
-        
-            $('#divResTipo').load('/tipo/grid/nome/' + $('#nomeTipo').val());
+            nome = urlencodeGet($('#nomeTipo').val())
+            $('#divResTipo').load('/tipo/grid/nome/' + nome);
         });
     }); 
     

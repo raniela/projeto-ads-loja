@@ -2,16 +2,18 @@
 
 <!-- formulário -->
 
-<form id="formSubtipo" action="/compra/salvar" method="post" enctype="multipart/form-data">
+<form id="formSubtipo" action="/subtipo/salvar" method="post" enctype="multipart/form-data">
     <div class="formfield">
+        <input class="required" id="subtipo-id_subtipomercadoria" name="subtipo[id_subtipomercadoria]" type="hidden" value=""/>
         <label for="">Tipo de Mercadoria:</label>
-        <input class="required" id="tipo-merc" name="tipo-merc" type="text" size="50" value=""/>
+        <?php echo $this->formSelect('subtipo[id_tipomercadoria]', '', array('class' => 'required'), $this->dadosComboTipoMercadoria); ?>                
     </div>
 
     <div class="formfield">
         <label for="">Descrição:</label>
-        <input class="required teste" id="descricao" name="descricao" type="text" maxlength="45" size="50" value=""/>
+        <input class="required teste" id="subtipo-descricao" name="subtipo[descricao]" type="text" maxlength="45" size="50" value=""/>
     </div>
+    
     <div class="formbutton">
         <input id="btEnviar" type="submit" value="Enviar" />
         <button type="button" id="btVoltarSubtipo">Voltar</button> 
@@ -24,27 +26,29 @@
 
 
 <script>
-
+    //dados do subtipo que será editado, em caso de inserção fica vazio
+    var dataForm = <?php echo Zend_Json::encode(array('subtipo' => $this->subtipo)); ?>;
+    
     $(function(){
         //Melhora aparência dos botões
         $( "input[type=submit], button" ).button();
+        
         $( "#sucessoSubtipo" ).dialog({
             autoOpen: false
         });
         
-        $("#data").datepicker({dateFormat:'dd/mm/yy'});
-        
-        //$('#form').populate(dataForm);
+        //Preenche o formulario com base nos dados do subtipo
+        $('#formSubtipo').populate(dataForm);
         
         $('#formSubtipo').validate({
             submitHandler: function(form){
                 jQuery(form).ajaxSubmit({
                     dataType:  'json', 
-                    success: function(r){
-                        if(r.tipo == 'sucesso'){                    
+                    success: function(r) {
+                        if(r.tipo == 'sucesso') {                    
                             $('#sucessoSubtipo p').html(r.msg);
-                            $('#sucessoSubtipo').dialog("open");
-                            $( "#sucessoSubtipo" ).dialog({
+                            
+                            $("#sucessoSubtipo").dialog({
                                 modal: true,
                                 buttons: {
                                     Ok: function() {
@@ -53,12 +57,12 @@
                                     }
                                 }
                             });
+                            $('#sucessoSubtipo').dialog("open");
                             
                             //$('#divMsg').html(r.msg)
                             //window.location = r.url;
                         } else {
-                            $('#sucessoSubtipo p').html(r.msg);
-                            $('#sucessoSubtipo').dialog("open");
+                            $('#sucessoSubtipo p').html(r.msg);                           
                             $( "#sucessoSubtipo" ).dialog({
                                 modal: true,
                                 buttons: {
@@ -69,8 +73,8 @@
                                 }
                                 
                             });
-                        }
-          
+                            $('#sucessoSubtipo').dialog("open");
+                        }          
                     } 
                 });
             }
