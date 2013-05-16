@@ -4,6 +4,13 @@
         <label for="">Nome:</label>
         <input id="nomeSubtipo" name="nomeSubtipo" type="text">
     </div>
+    
+    <div class="formfield">
+        <label for="">Tipo:</label>
+        <?php echo $this->formSelect('id_tipomercadoria', '', null, $this->dadosComboTipoMercadoria); ?>        
+    </div>
+    
+    
     <div class="formbutton">
         <button id="btBuscarSubtipo" type="button">Buscar</button>
         <button id="btNovoSubtipo" type="button" value="/subtipo/formulario">Novo</button> 
@@ -23,8 +30,8 @@
 
 <script>
 
-    var subtipoAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
-
+    var subtipoAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>;
+        
     $(function(){
         //Melhora aparência dos botões
         $( "input[type=submit], button" ).button();
@@ -41,8 +48,9 @@
     
         $('#divResSubtipo').load('/subtipo/grid/nome/' + $('#nomeSubtipo').val());
         $('#btBuscarSubtipo').click(function(){
-        
-            $('#divResSubtipo').load('/subtipo/grid/nome/' + $('#nomeSubtipo').val());
+            nome = urlencodeGet($('#nomeSubtipo').val());
+            id_tipomercadoria = $('#id_tipomercadoria').val()
+            $('#divResSubtipo').load('/subtipo/grid/nome/' + nome + '/id_tipomercadoria/' + id_tipomercadoria);
         });
     }); 
     

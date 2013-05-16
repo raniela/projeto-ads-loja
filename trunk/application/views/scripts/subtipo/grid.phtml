@@ -5,17 +5,17 @@
         <th>Ações</th>
     </tr>
 
-    <tr class="alt" >
-        <?php foreach ($this->paginator as $k => $subtipos): ?>
+    
+    <?php foreach ($this->paginator as $k => $subtipos): ?>
         <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
-            <td><?php echo $subtipos['subtipo'] ?></td>
+            <td><?php echo $subtipos['descricao'] ?></td>
             <td><?php echo $subtipos['tipo'] ?></td>
 
             <td>
-                <a class="linkEditar" href="/subtipo/formulario/id/<?php echo $subtipo['id_subtipo'] ?>">
+                <a class="linkEditar" href="/subtipo/formulario/id/<?php echo $subtipos['id_subtipomercadoria'] ?>">
                     <img src="/img/edit-icon.gif" title="Editar registro" />
                 </a>
-                <a class="btExcluir" href="/subtipo/excluir/id/<?php echo $subtipo['id_subtipo'] ?>">
+                <a class="btExcluir" href="/subtipo/excluir/id/<?php echo $subtipos['id_subtipomercadoria'] ?>">
                     <img src="/img/delete-icon.gif" title="Excluir Registro" />
                 </a>
             </td>
@@ -27,7 +27,7 @@
 <?php echo $this->paginationControl($this->paginator, 'Sliding', 'my_pagination_control.phtml'); ?>
 
 <div id="dcSubtipo">
-    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse subtipo?</p>
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse Subtipo de Mercadoria?</p>
 </div>
 
 <div id="subtipoErro">
@@ -62,36 +62,39 @@
                 "Ok": function() {
                     $.get(url, null, function(retorno){
                         if(retorno.tipo == 'sucesso'){
-                            $('#subtipoSucesso').html(retorno.msg);
-                            $('#subtipoSucesso').dialog("open");
+                            $('#subtipoSucesso').html(retorno.msg);                            
+                            
                             $('#subtipoSucesso').dialog({
+                                modal: true,
+                                autoOpen: false,
                                 buttons: {
                                     Ok: function() {
-                                        $( this ).dialog( "close" );
+                                        $(this).dialog( "close" );
                                     }
                                 }
                             });
-                                
-                            $('#divResSubtipo').load('/subtipo/grid/nome/' + $('#nomeSubtipo').val());
+                            $('#subtipoSucesso').dialog("open");    
+                            $('#divResSubtipo').load('/subtipo/grid/');
                                 
                         } else {
-                            $('#subtipoErro').html(retorno.msg);
-                            $('#subtipoErro').dialog("open");
+                            $('#subtipoErro').html(retorno.msg);                            
                             $('#subtipoErro').dialog({
+                                modal: true,
+                                autoOpen: false,
                                 buttons: {
                                     Ok: function() {
                                         $( this ).dialog( "close" );
                                     }
                                 }
                             });
-                            $('#divResSubtipo').load('/subtipo/grid/nome/' + $('#nomeSubtipo').val());
+                            $('#subtipoErro').dialog("open");
+                            $('#divResSubtipo').load('/subtipo/grid/');
                         }                    
                     }, 'json');
-                    $( this ).dialog("close");
-                    
+                    $( this ).dialog("close");                    
                 },
                 Cancel: function() {
-                    $('#divResSubtipo').load('/subtipo/grid/nome/' + $('#nomeSubtipo').val());
+                    $('#divResSubtipo').load('/subtipo/grid/');
                     $( this ).dialog( "close" );
                         
                 }
