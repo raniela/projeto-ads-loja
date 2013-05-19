@@ -56,4 +56,42 @@ class Application_Model_DbTable_Mercadoria extends Zend_Db_Table_Abstract
             return true;
         }                
     }
+    
+    public function getDataToRelatorioMercadorias($params = null) {
+        //obj select
+        $select = $this->getDefaultAdapter()->select();
+        //from contato
+        $select->from(array('m' => $this->_name));                
+        
+        //join com subtipo de mercadoria
+        $select->joinInner(array('st' => 'subtipomercadoria'),'m.id_subtipomercadoria = st.id_subtipomercadoria', array('subtipo' => 'descricao'));
+        
+        //join com tipo de mercadoria
+        $select->joinInner(array('t' => 'tipomercadoria'),'st.id_tipomercadoria = t.id_tipomercadoria', array('tipo' => 'descricao'));
+        
+        //join com item venda
+        $dadosItemVenda = array('qtdeVendida' => new Zend_Db_Expr("COALESCE(SUM(iv.quantidade),0)"));
+        $select->joinLeft(array('iv' => 'itemvenda'),'m.id_mercadoria = iv.id_mercadoria', $dadosItemVenda);
+        
+        //agrupamento
+        $select->group('m.id_mercadoria');
+        
+        //ordenacao
+        $select->order('m.descricao');
+       
+        //filtros do formulario
+        if(!empty($params['descricao'])) {
+            $select->where("m.descricao LIKE '%{$params['descricao']}%'");
+        }
+        
+        if(!empty($params['id_subtipomercadoria'])) {
+            $select->where("st.id_subtipomercadoria = '{$params['id_subtipomercadoria']}'");
+        }
+        
+        if(!empty($params['id_tipomercadoria'])) {
+            $select->where("t.id_tipomercadoria = '{$params['id_tipomercadoria']}'");
+        }
+        
+        return $select->query()->fetchAll();
+    }
 }
