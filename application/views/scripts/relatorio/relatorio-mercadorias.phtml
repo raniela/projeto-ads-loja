@@ -1,0 +1,175 @@
+<?php
+/** incia a captura do conteudo que sera renderizado como PDF */
+ob_start();
+?>
+<style type="text/css">            
+    .styleTD
+    {
+        font-size:10px; 
+        border-bottom:1px solid #000000; 
+        border-right:1px solid #000000; 
+        padding:2px; 
+        border-top:0px;
+    }
+    
+    .styleTDTitulo
+    {
+        font-size:10px; 
+        border-bottom:1px solid #000000; 
+        border-right:1px solid #000000; 
+        padding:2px; 
+        border-top:1px solid #000000;
+        background-color: #74b2e2;
+    }         
+</style>
+
+<page backtop="7mm" backbottom="7mm" backleft="7mm" backright="7mm" style="font-size: 10pt">
+    <page_header>
+        <table style="border: solid 1px #000000; border-top:0px; border-left:0px; border-right:0px; border-bottom: 0px; padding: 5px; width: 100%; text-align: center;">
+            <tr>           
+                <td style="width: 100%; font-size: 16px;">
+                    <b><?php echo strtoupper("SISTEMA LOJA") ?></b>                                                          
+                </td>            
+            </tr>
+        </table>
+    </page_header>
+    
+    <page_footer>
+        <table style="width: 100%; border: solid 1px black;">
+            <tr>
+                <td style="text-align: left;	width: 50%"><?php echo $this->utf8("Relatório de Mercadorias")->decode(); ?></td>
+                <td style="text-align: right;	width: 50%"><?php echo $this->utf8("Página")->decode(); ?> [[page_cu]] de [[page_nb]]</td>
+            </tr>
+        </table>
+    </page_footer>
+
+    <br/><br/>
+
+    <div style="text-align: center; width: 100%; font-weight: bold; font-size: 16px;">
+        <?php echo $this->utf8("RELATÓRIO DE MERCADORIAS")->decode(); ?>
+    </div>
+
+    <br/><br/>   
+
+    <br/><br/>
+    
+    <table border='1' style='border:1px solid #000000; border-collapse:collapse; font-size:9px;'>
+        <thead>
+        <tr style="font-size: 12;">
+            <th class="styleTDTitulo" style="text-align: center">
+                Mercadoria
+            </th>
+            <th class="styleTDTitulo" style="text-align: center">
+                Tipo
+            </th>
+            <th class="styleTDTitulo" style="text-align: center">
+                Subtipo
+            </th>
+            <th class="styleTDTitulo" style="text-align: center">
+                Qtde. Estoque 
+            </th>
+            <th class="styleTDTitulo" style="text-align: center">
+                Qtde. Min. Estoque
+            </th>
+            <th class="styleTDTitulo" style="text-align: center">
+                Qtde. Vendida
+            </th>
+        </tr>
+        </thead>
+        
+        <?php
+        
+        $widthMercadoria = 'width: 200px';
+        $widthTipo = 'width: 105px';
+        $widthSubtipo = 'width: 105px';
+        $widthEstoque = 'width: 80px';
+        $widthMinimo = 'width: 80px';
+        $widthVendido = 'width: 80px';
+        
+        if (!empty($this->dataMercadorias)) {
+            //Para fazer linhas cor sim cornão
+            $exibe_cor = false;            
+            
+            $somaEstoque = 0;
+            $somaVendidos = 0;
+            
+            foreach ($this->dataMercadorias as $mercadoria) {
+                //Para fazer linhas cor sim cornão
+                if ($exibe_cor) {
+                    $cor = '#F0FFFF';
+                    $exibe_cor = false;
+                } else {
+                    $cor = '#FFFFFF';
+                    $exibe_cor = true;
+                }
+                
+                if($mercadoria['qtde_estoque'] < $mercadoria['qtde_minima_estoque']) {
+                    $cor = '#FF6347';
+                }
+                if($mercadoria['qtde_estoque'] == $mercadoria['qtde_minima_estoque']) {
+                    $cor = '#EEEE00';
+                }
+                
+                $somaEstoque += $mercadoria['qtde_estoque'];
+                $somaVendidos += $mercadoria['qtdeVendida'];                
+            ?>
+                <tr>
+                    <td style="<?=$widthMercadoria?>;background-color:<?php echo $cor ?>">
+                        <?= $mercadoria['descricao']; ?>
+                    </td>
+                    <td style="<?=$widthTipo?>;text-align: center;background-color:<?php echo $cor ?>">
+                        <?= $mercadoria['tipo']; ?>
+                    </td>
+                    <td style="<?=$widthSubtipo?>;text-align: center;background-color:<?php echo $cor ?>">
+                        <?= $mercadoria['subtipo']; ?>
+                    </td>
+                    <td style="<?=$widthEstoque?>;text-align: center;background-color:<?php echo $cor ?>">
+                        <?= $mercadoria['qtde_estoque']; ?>
+                    </td>
+                    <td style="<?=$widthMinimo?>;text-align: center;background-color:<?php echo $cor ?>">
+                        <?= $mercadoria['qtde_minima_estoque']; ?>
+                    </td>
+                    <td style="<?=$widthVendido?>;text-align: center;background-color:<?php echo $cor ?>">
+                        <?= $mercadoria['qtdeVendida']; ?>
+                    </td>                    
+                </tr>                
+            <?php
+            }
+            ?>
+                <tr>
+                    <td colspan="3" style="text-align: right;background-color:#CDCDB4">
+                        <b>TOTAL</b>
+                    </td>
+                    <td  style="text-align: center;background-color:#CDCDB4">
+                        <b><?=$somaEstoque?></b>
+                    </td>
+                    <td  style="text-align: center;background-color:#CDCDB4">
+                        &nbsp;
+                    </td>
+                    <td  style="text-align: center;background-color:#CDCDB4">
+                        <b><?=$somaVendidos?></b>
+                    </td>
+                </tr>
+                
+        <?php        
+        } else {
+        ?>            
+            <tr>
+                <td colspan="6" class="styleTD" style="width: 680px;">
+                    Nenhuma mercadoria encontrada, tente escolher outros filtros e gere novamente o relat&oacute;rio.
+                </td>
+            </tr>           
+        <?php } ?>
+    </table>
+</page>
+
+<?php
+/** finaliza a captura do conteudo */
+
+$content = ob_get_clean();
+/** renderiza o PDF */
+$orientation = 'P'; //L = PAISAGEM
+//P = Porta Retrato
+/** renderiza o PDF */
+$this->pdf($content, 'RELATORIO_MERCADORIA.pdf', null, $orientation);
+?>
