@@ -176,5 +176,17 @@ class SubtipoController extends Zend_Controller_Action
             echo Zend_Json::encode($json);
         }
     }
+    
+    /**
+     * action para buscar os dados por ajax no formato json
+     */
+    public function jsonComboSubtipomercadoriaAction() {
+        $this->getHelper('viewRenderer')->setNoRender();
+        $this->getHelper('layout')->disableLayout();
+        
+        $data = $this->_helper->util->utf8Encode($this->subTipoMercadoriaDbTable->getDataCombo($this->_getAllParams()));
+        
+        echo Zend_Json::encode($data);
+    }
 
 }

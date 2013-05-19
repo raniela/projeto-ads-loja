@@ -9,6 +9,72 @@ $(function(){
     
 });
 
+$.fn.populateSelectJson = function(data)
+{
+    /* gera o html das options */
+    isdata = true;
+    var options = '<option value=""></option>';        
+    $.each(data, function(key, val) {
+        if($.trim(val) != ''){
+            options += '<option value="' + key + '">' + val.toUpperCase() + '</option>';
+            if(!isDate(val) && !isDate(reverseDate(val)) && !isDateString(val)){
+                isdata = false;
+            }
+        }
+    });
+    /* seta as options na combo turma */
+    obj = $(this).empty().html(options)
+    
+    /** só ordena se os valores não forem datas */
+    if(!isdata){
+        return obj.selectSorting();
+    }else{
+        return obj;
+    }    
+}
+
+$.fn.selectSorting = function(){
+    var selectedVal = $(this).val();	     
+    var my_options = $(this).find("option");
+    my_options.sort(function(a,b) {
+        if (a.text > b.text) return 1;
+        else if (a.text < b.text) return -1;
+        else return 0
+    })
+    $(this).empty().append(my_options);	
+    $(this).val(selectedVal);   
+}
+
+function isDateString(val){
+    val = val.toUpperCase();
+    if(val.indexOf('JANEIRO') == 0){
+        return true;
+    }else if(val.indexOf('FEVEREIRO') == 0){
+        return true;
+    }else if(val.indexOf('MARÇO') == 0 || val.indexOf('MARCO') == 0){
+        return true;
+    }else if(val.indexOf('ABRIL') == 0){
+        return true;
+    }else if(val.indexOf('MAIO') == 0){
+        return true;
+    }else if(val.indexOf('JUNHO') == 0){
+        return true;
+    }else if(val.indexOf('JULHO') == 0){
+        return true;
+    }else if(val.indexOf('AGOSTO') == 0){
+        return true;
+    }else if(val.indexOf('SETEMBRO') == 0){
+        return true;
+    }else if(val.indexOf('OUTUBRO') == 0){
+        return true;
+    }else if(val.indexOf('NOVEMBRO') == 0){
+        return true;
+    }else if(val.indexOf('DEZEMBRO') == 0){
+        return true;
+    }
+    return false;
+}
+
 function CapitalizeAll(elemId){
     var txt = $('#' + elemId).val();
     $('#' + elemId).val(txt.toUpperCase());

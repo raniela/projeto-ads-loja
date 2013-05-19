@@ -16,11 +16,14 @@ class MercadoriaController extends Zend_Controller_Action
         $this->view->msg = $this->flashMessenger->getMessages();
         $this->logger = Zend_Registry::get('logger');
         
+        $this->tipoMercadoriaDbTable = new Application_Model_DbTable_Tipomercadoria();
+        $this->subTipoMercadoriaDbTable = new Application_Model_DbTable_Subtipomercadoria();
+        
+        $this->view->dadosComboTipoMercadoria = $this->_helper->util->utf8Encode($this->tipoMercadoriaDbTable->getDataCombo());        
     }
 
     public function indexAction()
-    {
-        
+    {        
         if($this->_getParam('menu')){
             $this->getHelper('layout')->disableLayout();
         }
@@ -29,45 +32,32 @@ class MercadoriaController extends Zend_Controller_Action
         
         $dadosAutoComplete = array();
         $mercadoriasAC = array();
-        //$mercadorias = $this->usuarioDbTable->fetchAll(null, 'nome')->toArray();
         
-        $mercadoriasAC[0]['nome'] = "Teste";
-        $mercadoriasAC[1]['nome'] = "Nome";
+        //chama o metodo que busca todos as Mercadorias do bd
+        $mercadoriasAC = $this->mercadoriaDbTable->fetchAll(null, 'descricao')->toArray();
+                
         
-        foreach ($mercadoriasAC as $mercadoria){
-            
-            $dadosAutoComplete[] = $mercadoria['nome'];
-            
+        //passa a descrição da mercadoria para um array q será utilizado no autocompletar da pesquisa
+        foreach ($mercadoriasAC as $mercadoria){            
+            $dadosAutoComplete[] = $this->_helper->util->utf8Encode($mercadoria['descricao']);            
         }
         
-        $this->view->dadosAutoComplete = $dadosAutoComplete;
-        
+        $this->view->dadosAutoComplete = $dadosAutoComplete;                        
     }
 
     public function gridAction()
     {
-
         $this->getHelper('layout')->disableLayout();
-
-        /*$nome = $this->_getParam('nome');
         
-        $select =$this->usuarioDbTable->select();
-        if (!empty($nome)) {            
-            $select->where("nome LIKE ?", "%$nome%");
-        }
-        $select->order('nome');
+        //pega o nome ou qualquer coisa que o usuario digitar para buscar
+        $params['descricao'] = $this->_helper->util->urldecodeGet($this->_getParam('nome'));
+        $params['id_tipomercadoria'] = $this->_getParam('id_tipomercadoria');
+        $params['id_subtipomercadoria'] = $this->_getParam('id_subtipomercadoria');
+        $params = $this->_helper->util->utf8Decode($params);
         
-        $mercadorias = $select->query()->fetchAll();*/
-
-        $mercadorias = array();
-        
-        $mercadorias[0]['descricao'] = "Teste";
-        $mercadorias[0]['qtde'] = "2";
-        $mercadorias[0]['valor'] = "R$ 65,90";
-        
-        $mercadorias[1]['descricao'] = "Nome";
-        $mercadorias[1]['qtde'] = "223";
-        $mercadorias[1]['valor'] = "R$ 34,00";
+        //variavel que recebe as mercadorias buscadas
+        $mercadorias = $this->mercadoriaDbTable->getDataGrid($params);
+        $mercadorias = $this->_helper->util->utf8Encode($mercadorias);
         
         $paginator = Zend_Paginator::factory($mercadorias);
         $paginator->setCurrentPageNumber($this->_getParam('page'));
@@ -80,27 +70,34 @@ class MercadoriaController extends Zend_Controller_Action
         $this->getHelper('layout')->disableLayout();
         
         //se já tem id é edição, tem que mandar os dados desse id pra view
-        /*if ($this->_getParam('id')) {
+        if ($this->_getParam('id')) {
             /**
              * Edição do registro
              */
-            /*$this->view->titulo = "Edição de Usuario";
+            $this->view->titulo = "Edição de Mercadoria";
             $id = $this->_getParam('id');
-            $usuario = $this->usuarioDbTable->fetchRow("id_usuario = {$id}")->toArray();
-            $this->view->usuario = $usuario;*/
-        /*} else {
+            
+            $mercadoria = $this->mercadoriaDbTable->fetchRow("id_mercadoria = {$id}")->toArray();
+            $mercadoria['preco_venda_unitario'] = $this->_helper->util->floatToMoney($mercadoria['preco_venda_unitario']);
+            
+            //Busca o tipo de mercadoria conforme o subtipo 
+            $idTipoMercadoria = $this->subTipoMercadoriaDbTable->getIdTipoMercadoria($mercadoria['id_subtipomercadoria']);
+            $mercadoria['id_tipomercadoria'] = $idTipoMercadoria; 
+            
+            
+            //Monta o combo de subtipo para o tipo daquela mercadoria
+            $this->view->dadosComboSubTipoMercadoria = $this->_helper->util->utf8Encode($this->subTipoMercadoriaDbTable->getDataCombo(array('id_tipomercadoria' => $idTipoMercadoria)));
+            
+            $this->view->mercadoria = $this->_helper->util->utf8Encode($mercadoria);
+        } else {
             /**
              * Cadastro do registro
              */
             //se for cadastro é só enviar o titulo
-            /*$this->view->titulo = "Cadastro de Subtipos";
-        }*/
-        $this->view->titulo = "Cadastro de Mercadorias";
-        /*$sessao = new Zend_Session_Namespace();
-        if (isset($sessao->dados)) {
-            $this->view->usuario = $sessao->dados;
-            unset($sessao->dados);
-        }*/
+            $this->view->titulo = "Cadastro de Mercadoria";
+            
+            $this->view->dadosComboSubTipoMercadoria = array('' => '');
+        }
     }
 
     public function salvarAction()
@@ -108,68 +105,66 @@ class MercadoriaController extends Zend_Controller_Action
         $this->getHelper('viewRenderer')->setNoRender();
         $this->getHelper('layout')->disableLayout();
 
-        /*$dados = $this->getRequest()->getPost('u');
-
+        $dados = $this->_helper->util->utf8Decode($this->getRequest()->getPost('mercadoria'));
+        //Remove o id_mercadoria que não faz parte da tabela mercadoria
+        unset($dados['id_tipomercadoria']);
+        $dados['preco_venda_unitario'] = $this->_helper->util->moneyToFloat($dados['preco_venda_unitario']);
+        
         $id = null;
-        if ($this->_getParam('id')) {
-            $id = $this->_getParam('id');
-        }*/
+        if (!empty($dados['id_mercadoria'])) {
+            $id = $dados['id_mercadoria'];
+        }
+        
+        //Verifica a existência de algums Subtipo de Mercadoria com os mesmos dados
+        if ($this->mercadoriaDbTable->verificaDb($id, $dados) == false) {
+             $this->_helper->json->sendJson(array(
+                 'tipo' => 'erro',
+                 'url' => '/index/tabs/dir/7/',
+                 'msg' => 'Mercadoria já existente com esses dados, verifique!'
+             ));
+        }
+        
+        try {           
+            //verifica se o id existe
+            if (!empty($dados['id_mercadoria'])) {
+                //passa o valor do id tipo de despesa para a variavel id
+                $id = $dados['id_mercadoria'];
 
-       /*if ($this->usuarioDbTable->verificaDb($id, $dados) == false) {
-            $this->_helper->json->sendJson(array(
-                'tipo' => 'erro',
-                'msg' => 'Usuário já existente'
-            ));
-        }*/
-
-        /*try {
-
-            $data = $this->getRequest()->getPost('u');
-
-
-            if ($this->_getParam('id')) {
-                $id = $this->_getParam('id');
-                $this->usuarioDbTable->update($data, "id_usuario = {$id}");
+                //atualiza o subtipo da mercadoria que está vindo pelo post
+                $this->mercadoriaDbTable->update($dados, "id_mercadoria = {$id}");
             } else {
-                $this->usuarioDbTable->insert($data);
+                //insere um novo subtipo de mercadoria, ja que não temos um id para editar
+                $this->mercadoriaDbTable->insert($dados);
             }
 
-            $this->flashMessenger->addMessage('Salvo com sucesso!');
-            $json = array(
-                'tipo' => 'sucesso',
-                'msg' => 'Salvo com sucesso!',
-                'url' => '/index/tabs/dir/2/'
-            );
-        } catch (Exception $exc) {
-            $json = array(
-                'tipo' => 'erro',
-                'msg' => "Erro errado!",
-            );
-
-            $this->logger->err($exc->getMessage());
-        }*/
-        
-        
-        $this->flashMessenger->addMessage('Salvo com sucesso!');
+            //retorna a mensagem de sucesso, o tipo da mensagem e a url para o usuario em javascript
             $json = array(
                 'tipo' => 'sucesso',
                 'msg' => 'Salvo com sucesso!',
                 'url' => '/index/tabs/dir/7/'
             );
+        } catch (Exception $exc) {
+            //retorna a mensagem de erro para o usuario
+            $json = array(
+                'tipo' => 'erro',
+                'msg' => $exc->getMessage()
+            );            
+        }                        
         
         echo Zend_Json::encode($json);
     }
 
     public function excluirAction()
     {
-
         $this->getHelper('viewRenderer')->setNoRender();
         $this->getHelper('layout')->disableLayout();
 
         try {
+            //Recebe o id que é transmitido do link de exclusão
             $id = $this->getRequest()->getParam('id');
-            $usuarioDbTable = new Application_Model_DbTable_Usuario();
-            $usuarioDbTable->delete("id_usuario = $id");
+            
+            //Realiaza a exclusão
+            $this->mercadoriaDbTable->delete("id_mercadoria = $id");
 
             $json = array(
                 'tipo' => 'sucesso',
@@ -178,10 +173,18 @@ class MercadoriaController extends Zend_Controller_Action
 
             echo Zend_Json::encode($json);
         } catch (Exception $exc) {
-            $json = array(
-                'tipo' => 'erro',
-                'msg' => $exc->getMessage()
-            );
+            //mensagem que retorna no json para javascript que no caso é de erro 
+            if($exc->getCode() == 23000) {
+                $json = array(
+                    'tipo' => 'erro',
+                    'msg' => 'Esse registro possui vínculos e não pode ser excluído'
+                );
+            } else {
+                $json = array(
+                    'tipo' => 'erro',
+                    'msg' => $exc->getMessage()
+                );
+            }
 
             echo Zend_Json::encode($json);
         }

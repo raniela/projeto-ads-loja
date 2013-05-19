@@ -9,10 +9,11 @@ class Application_Model_DbTable_Subtipomercadoria extends Zend_Db_Table_Abstract
     {
         //obj select
         $select = $this->getDefaultAdapter()->select();
-        //from contato
+        
+        //from subtipomercadoria
         $select->from(array('st' => $this->_name));
         
-        //join 
+        //join com tipo de mercadoria
         $select->joinInner(array('t' => 'tipomercadoria'),'t.id_tipomercadoria = st.id_tipomercadoria', array('tipo' => 'descricao'));
         
         //ordenacao
@@ -48,5 +49,28 @@ class Application_Model_DbTable_Subtipomercadoria extends Zend_Db_Table_Abstract
         }else{
             return true;
         }                
+    }
+    
+    public function getDataCombo($params = null)
+    {
+    	$data = $this->getDataGrid($params);
+        $dataCombo = array('' => '');
+        
+        foreach ($data as $k => $val) {
+            $dataCombo[$val['id_subtipomercadoria']] = $val['descricao'];
+        }
+        
+        return $dataCombo;
+    }
+    
+    public function getIdTipoMercadoria($id_subtipomercadoria)
+    {
+    	$data = $this->fetchRow("id_subtipomercadoria = '{$id_subtipomercadoria}'")->toArray();
+        
+        if(!empty($data['id_tipomercadoria'])) {
+            return $data['id_tipomercadoria'];
+        } else {
+            return "";
+        }
     }
 }

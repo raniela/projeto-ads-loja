@@ -1,8 +1,11 @@
 <table>
     <tr>
         <th>Descrição</th>
-        <th>Quantidade em estoque</th>
-        <th>Valor</th>
+        <th>Tipo</th>
+        <th>Subtipo</th>
+        <th>Qtde. Estoque</th>
+        <th>Qtde. Min. Estoque</th>
+        <th>Vl. Venda Unitário</th>
         <th>Ações</th>
     </tr>
 
@@ -10,13 +13,16 @@
         <?php foreach ($this->paginator as $k => $mercadorias): ?>
         <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
             <td><?php echo $mercadorias['descricao'] ?></td>
-            <td><?php echo $mercadorias['qtde'] ?></td>
-            <td><?php echo $mercadorias['valor'] ?></td>
+            <td><?php echo $mercadorias['tipo'] ?></td>
+            <td><?php echo $mercadorias['subtipo'] ?></td>
+            <td><?php echo $mercadorias['qtde_estoque'] ?></td>
+            <td><?php echo $mercadorias['qtde_minima_estoque'] ?></td>
+            <td><?php echo $this->String($mercadorias['preco_venda_unitario'])->floatToMoney(); ?></td>
             <td>
-                <a class="linkEditar" href="/mercadoria/formulario/id/<?php echo $mercadoria['id_mercadoria'] ?>">
+                <a class="linkEditar" href="/mercadoria/formulario/id/<?php echo $mercadorias['id_mercadoria'] ?>">
                     <img src="/img/edit-icon.gif" title="Editar registro" />
                 </a>
-                <a class="btExcluir" href="/mercadoria/excluir/id/<?php echo $mercadoria['id_mercadoria'] ?>">
+                <a class="btExcluir" href="/mercadoria/excluir/id/<?php echo $mercadorias['id_mercadoria'] ?>">
                     <img src="/img/delete-icon.gif" title="Excluir Registro" />
                 </a>
             </td>
@@ -64,35 +70,40 @@
                     $.get(url, null, function(retorno){
                         if(retorno.tipo == 'sucesso'){
                             $('#mercadoriaSucesso').html(retorno.msg);
-                            $('#mercadoriaSucesso').dialog("open");
+                            
                             $('#mercadoriaSucesso').dialog({
+                                modal: true,
+                                autoOpen: false,
                                 buttons: {
                                     Ok: function() {
                                         $( this ).dialog( "close" );
                                     }
                                 }
                             });
-                                
-                            $('#divResMerc').load('/mercadoria/grid/nome/' + $('#nomeMercadoria').val());
+                            $('#mercadoriaSucesso').dialog("open");
+                            
+                            $('#divResMerc').load('/mercadoria/grid/');
                                 
                         } else {
-                            $('#mercadoriaErro').html(retorno.msg);
-                            $('#mercadoriaErro').dialog("open");
+                            $('#mercadoriaErro').html(retorno.msg);                            
                             $('#mercadoriaErro').dialog({
                                 buttons: {
+                                    modal: true,
+                                    autoOpen: false,
                                     Ok: function() {
-                                        $( this ).dialog( "close" );
+                                        $( this ).dialog("close");
                                     }
                                 }
                             });
-                            $('#divResMerc').load('/mercadoria/grid/nome/' + $('#nomeMercadoria').val());
+                            $('#mercadoriaErro').dialog("open");
+                            $('#divResMerc').load('/mercadoria/grid/');
                         }                    
                     }, 'json');
                     $( this ).dialog("close");
                     
                 },
                 Cancel: function() {
-                    $('#divResMerc').load('/mercadoria/grid/nome/' + $('#nomeMercadoria').val());
+                    $('#divResMerc').load('/mercadoria/grid/');
                     $( this ).dialog( "close" );
                         
                 }
