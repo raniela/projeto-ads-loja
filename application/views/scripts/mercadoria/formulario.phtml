@@ -4,33 +4,34 @@
 
 <form id="formMercadoria" action="/mercadoria/salvar" method="post" enctype="multipart/form-data">
     <div class="formfield">
+        <input class="required" id="mercadoria-id_mercadoria" name="mercadoria[id_mercadoria]" type="hidden" value=""/>
         <label style="width: 225px" for="">Descrição:</label>
-        <input class="required" id="descricao" name="descricao" type="text" maxlength="45" size="50" value=""/>
+        <input class="required" id="mercadoria-descricao" name="mercadoria[descricao]" type="text" maxlength="45" size="50" value=""/>
     </div>
 
     <div class="formfield">
         <label style="width: 225px" for="">Tipo de Mercadoria:</label>
-        <input class="required teste" id="tipo-merc" name="tipo-merc" type="text" size="30" value=""/>
+        <?php echo $this->formSelect('mercadoria[id_tipomercadoria]', '', array('class' => 'required'), $this->dadosComboTipoMercadoria); ?>                
     </div>
 
     <div class="formfield">
         <label style="width: 225px" for="">Subtipo de Mercadoria:</label>
-        <input class="required teste" id="subtipo-merc" name="subtipo-merc" type="text" size="30" value=""/>
+        <?php echo $this->formSelect('mercadoria[id_subtipomercadoria]', '', array('class' => 'required'), $this->dadosComboSubTipoMercadoria); ?>                
     </div>
     
     <div class="formfield">
         <label style="width: 225px" for="">Quantidade em estoque:</label>
-        <input class="required teste" id="qtde-estoq" name="qtde-estoq" type="text" size="15" maxlength="11" value=""/>
+        <input class="required numeric" id="mercadoria-qtde_estoque" name="mercadoria[qtde_estoque]" type="text" size="15" maxlength="11" value=""/>
     </div>
     
     <div class="formfield">
         <label style="width: 225px" for="">Quantidade mínima em estoque:</label>
-        <input class="required teste" id="qtde-min-estoq" name="qtde-min-estoq" type="text" size="15" maxlength="11" value=""/>
+        <input class="required numeric" id="mercadoria-qtde_minima_estoque" name="mercadoria[qtde_minima_estoque]" type="text" size="15" maxlength="11" value=""/>
     </div>
     
     <div class="formfield">
         <label style="width: 225px" for="">Preço venda unitário:</label>
-        <input class="required teste" id="preco" name="preco" type="text" size="15" maxlength="11" value=""/>
+        <input class="required money" id="mercadoria-preco_venda_unitario" name="mercadoria[preco_venda_unitario]" type="text" size="15" maxlength="11" value=""/>
     </div>
     
     <div class="formbutton">
@@ -45,10 +46,37 @@
 
 
 <script>
-
+    var dataForm = <?php echo Zend_Json::encode(array('mercadoria' => $this->mercadoria)); ?>;
+    
     $(function(){
+        $('#formMercadoria').populate(dataForm);
+        
         //Melhora aparência dos botões
         $( "input[type=submit], button" ).button();
+        
+        //Adiciona mascaras nos campos numericos
+        $('.money').maskMoney({
+            allowZero:true,
+            decimal:",", 
+            thousands:".", 
+            defaultZero:false
+        });
+        $('.numeric').numeric();
+        
+        //Combo de tipo mercadoria popula o combo do subtipomercadoria
+        $('#mercadoria-id_tipomercadoria').change(function(){                        
+            jsonComboSubTipoMercadoria = $.getJSON('/subtipo/json-combo-subtipomercadoria/id_tipomercadoria/' + $(this).val(), null, function(data){
+                $('#mercadoria-id_subtipomercadoria').populateSelectJson(data);                
+               
+                /** se existir apenas 1 registros no retorno da combo, então seleciona esse registro e dispara o onchange da combo*/
+                if($('#mercadoria-id_subtipomercadoria').find('option[value!=""]').length == 1){
+                    $('#mercadoria-id_subtipomercadoria').find('option[value!=""]:first').attr('SELECTED',true);
+                    $('#mercadoria-id_subtipomercadoria').change();
+                }               
+            });            
+        });
+        
+        
         $( "#sucessoMercadoria" ).dialog({
             autoOpen: false
         });
@@ -64,7 +92,7 @@
                     success: function(r){
                         if(r.tipo == 'sucesso'){                    
                             $('#sucessoMercadoria p').html(r.msg);
-                            $('#sucessoMercadoria').dialog("open");
+                            
                             $( "#sucessoMercadoria" ).dialog({
                                 modal: true,
                                 buttons: {
@@ -75,11 +103,12 @@
                                 }
                             });
                             
+                            $('#sucessoMercadoria').dialog("open");
                             //$('#divMsg').html(r.msg)
                             //window.location = r.url;
                         } else {
                             $('#sucessoMercadoria p').html(r.msg);
-                            $('#sucessoMercadoria').dialog("open");
+                            
                             $( "#sucessoMercadoria" ).dialog({
                                 modal: true,
                                 buttons: {
@@ -90,6 +119,8 @@
                                 }
                                 
                             });
+                            
+                            $('#sucessoMercadoria').dialog("open");
                         }
           
                     } 

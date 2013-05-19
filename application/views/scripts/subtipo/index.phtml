@@ -2,7 +2,7 @@
 <form action="" method=get">
     <div class="formfield">
         <label for="">Nome:</label>
-        <input id="nomeSubtipo" name="nomeSubtipo" type="text">
+        <input id="nomeSubtipo" name="nomeSubtipo" type="text" maxlength="45">
     </div>
     
     <div class="formfield">
@@ -46,10 +46,10 @@
             source: subtipoAutoComplete
         });
     
-        $('#divResSubtipo').load('/subtipo/grid/nome/' + $('#nomeSubtipo').val());
+        $('#divResSubtipo').load('/subtipo/grid/nome/' + urlencodeGet($('#nomeSubtipo').val()));
         $('#btBuscarSubtipo').click(function(){
             nome = urlencodeGet($('#nomeSubtipo').val());
-            id_tipomercadoria = $('#id_tipomercadoria').val()
+            id_tipomercadoria = $('#id_tipomercadoria').val();
             $('#divResSubtipo').load('/subtipo/grid/nome/' + nome + '/id_tipomercadoria/' + id_tipomercadoria);
         });
     }); 

@@ -2,8 +2,19 @@
 <form action="" method=get">
     <div class="formfield">
         <label for="">Nome:</label>
-        <input id="nomeMerc" name="nomeMerc" type="text">
+        <input id="nomeMerc" name="nomeMerc" type="text" maxlength="45">
     </div>
+    
+    <div class="formfield">
+        <label for="">Tipo:</label>
+        <?php echo $this->formSelect('id_tipomercadoria', '', null, $this->dadosComboTipoMercadoria); ?>        
+    </div>
+    
+    <div class="formfield">
+        <label for="">Subtipo:</label>
+        <?php echo $this->formSelect('id_subtipomercadoria', '', null, array(''=>'')); ?>        
+    </div>
+    
     <div class="formbutton">
         <button id="btBuscarMerc" type="button">Buscar</button>
         <button id="btNovaMerc" type="button" value="/mercadoria/formulario">Novo</button> 
@@ -28,6 +39,20 @@
     $(function(){
         //Melhora aparência dos botões
         $( "input[type=submit], button" ).button();
+        
+        //Combo de tipo mercadoria popula o combo do subtipomercadoria
+        $('#id_tipomercadoria').change(function(){                        
+            jsonComboSubTipoMercadoria = $.getJSON('/subtipo/json-combo-subtipomercadoria/id_tipomercadoria/' + $(this).val(), null, function(data){
+                $('#id_subtipomercadoria').populateSelectJson(data);                
+               
+                /** se existir apenas 1 registros no retorno da combo, então seleciona esse registro e dispara o onchange da combo*/
+                if($('#id_subtipomercadoria').find('option[value!=""]').length == 1){
+                    $('#id_subtipomercadoria').find('option[value!=""]:first').attr('SELECTED',true);
+                    $('#id_subtipomercadoria').change();
+                }               
+            });            
+        });
+        
         $('#btNovaMerc').click(function(){
             var url = $(this).attr('value');
             $('#ui-tabs-8').load(url);
@@ -39,10 +64,13 @@
             source: mercAutoComplete
         });
     
-        $('#divResMerc').load('/mercadoria/grid/nome/' + $('#nomeMerc').val());
-        $('#btBuscarMerc').click(function(){
+        $('#divResMerc').load('/mercadoria/grid/nome/' + urlencodeGet($('#nomeMerc').val()));
         
-            $('#divResMerc').load('/mercadoria/grid/nome/' + $('#nomeMerc').val());
+        $('#btBuscarMerc').click(function(){
+            nome = urlencodeGet($('#nomeMerc').val());
+            id_tipomercadoria = $('#id_tipomercadoria').val();
+            id_subtipomercadoria = $('#id_subtipomercadoria').val();
+            $('#divResMerc').load('/mercadoria/grid/nome/' + nome + '/id_subtipomercadoria/' + id_subtipomercadoria + '/id_tipomercadoria/' + id_tipomercadoria);
         });
     }); 
     
