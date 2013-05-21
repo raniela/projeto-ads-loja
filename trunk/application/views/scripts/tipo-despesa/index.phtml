@@ -43,10 +43,10 @@
             source: tipoDespesaAutoComplete
         });
         //carrega a grid com tds tiposDespesa
-        $('#divResTipoDespesa').load('/tipo-despesa/grid/nome/' + $('#nomeTipoDespesa').val());
+        $('#divResTipoDespesa').load('/tipo-despesa/grid/nome/' + urlencodeGet($('#nomeTipoDespesa').val()));
         //Se usuarrio buscar por alguma descrição especifica o grid será carregado com ela
         $('#btBuscarTipoDespesa').click(function(){        
-            var link = encodeURI('/tipo-despesa/grid/nome/' + $('#nomeTipoDespesa').val());
+            var link = '/tipo-despesa/grid/nome/' + urlencodeGet($('#nomeTipoDespesa').val());
             $('#divResTipoDespesa').load(link);
         });
     }); 

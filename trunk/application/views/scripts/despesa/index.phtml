@@ -4,6 +4,12 @@
         <label for="">Nome:</label>
         <input id="nomeDespesa" name="nomeDespesa" type="text">
     </div>
+    
+    <div class="formfield">
+        <label for="">Tipo:</label>
+        <?php echo $this->formSelect('id_tipodespesa', '', null, $this->dadosComboTipoDespesa); ?>        
+    </div>
+    
     <div class="formbutton">
         <button id="btBuscarDespesa" type="button">Buscar</button>
         <button id="btNovaDespesa" type="button" value="/despesa/formulario">Novo</button> 
@@ -39,10 +45,11 @@
             source: despesaAutoComplete
         });
     
-        $('#divResDespesa').load('/despesa/grid/nome/' + $('#nomeDespesa').val());
+        $('#divResDespesa').load('/despesa/grid/nome/' + urlencodeGet($('#nomeDespesa').val()));
         $('#btBuscarDespesa').click(function(){
-        
-            $('#divResDespesa').load('/despesa/grid/nome/' + $('#nomeDespesa').val());
+            nome = urlencodeGet($('#nomeDespesa').val());
+            id_tipodespesa = $('#id_tipodespesa').val();
+            $('#divResDespesa').load('/despesa/grid/nome/' + nome + '/id_tipodespesa/' + id_tipodespesa);
         });
     }); 
     

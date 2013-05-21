@@ -41,7 +41,7 @@ CREATE TABLE `cliente` (
   `telefone_comercial` varchar(14) DEFAULT NULL,
   `email` varchar(30) NOT NULL,
   PRIMARY KEY (`id_cliente`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COMMENT='Tabela que armazena os dados do cliente.';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COMMENT='Tabela que armazena os dados do cliente.';
 
 --
 -- Dumping data for table `cliente`
@@ -50,7 +50,8 @@ CREATE TABLE `cliente` (
 /*!40000 ALTER TABLE `cliente` DISABLE KEYS */;
 INSERT INTO `cliente` (`id_cliente`,`documento`,`nome`,`rg`,`rua`,`numero`,`bairro`,`cidade`,`estado`,`cep`,`telefone_residencial`,`telefone_comercial`,`email`) VALUES 
  (1,'39418088851','Cesar Augusto Vieira Giovani',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,''),
- (2,'382.172.068-99','Maria ssssssssssssssssssssssssssssssssssssssssssss','444444444','xxxxxxeeee','22','ss','ss','SP','23333-33','(22) 2222-2222','(22) 2222-2222','ssssss@bol.com.br');
+ (2,'382.172.068-99','Maria ssssssssssssssssssssssssssssssssssssssssssss','444444444','xxxxxxeeee','22','ss','ss','SP','23333-33','(22) 2222-2222','(22) 2222-2222','ssssss@bol.com.br'),
+ (3,'394.180.888-51','JoÃ£o','48480937-4','Augusto Cardoso de Moura','125','Ouro Verde','Ourinhos','SÃƒO PAULO','19906-240','(14) 3324-9561','(14) 3324-9561','cesar.augusto.giovani@gmail.co');
 /*!40000 ALTER TABLE `cliente` ENABLE KEYS */;
 
 
@@ -88,17 +89,20 @@ CREATE TABLE `despesa` (
   `id_despesa` int(11) NOT NULL AUTO_INCREMENT,
   `id_tipodespesa` int(11) NOT NULL,
   `valor_despesa` float NOT NULL DEFAULT '0',
-  `descricao` varchar(45) NOT NULL,
+  `descricao` varchar(45) CHARACTER SET latin1 NOT NULL,
   PRIMARY KEY (`id_despesa`),
   KEY `FOR_DES_TIP` (`id_tipodespesa`),
   CONSTRAINT `FOR_DES_TIP` FOREIGN KEY (`id_tipodespesa`) REFERENCES `tipodespesa` (`id_tipodespesa`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Dumping data for table `despesa`
 --
 
 /*!40000 ALTER TABLE `despesa` DISABLE KEYS */;
+INSERT INTO `despesa` (`id_despesa`,`id_tipodespesa`,`valor_despesa`,`descricao`) VALUES 
+ (7,2,35.95,'testão da conta'),
+ (8,2,2.22,'testão 2');
 /*!40000 ALTER TABLE `despesa` ENABLE KEYS */;
 
 
@@ -232,14 +236,14 @@ DROP TABLE IF EXISTS `mercadoria`;
 CREATE TABLE `mercadoria` (
   `id_mercadoria` int(11) NOT NULL AUTO_INCREMENT,
   `id_subtipomercadoria` int(11) NOT NULL,
-  `descricao` varchar(45) NOT NULL,
+  `descricao` varchar(45) CHARACTER SET latin1 NOT NULL,
   `qtde_estoque` int(11) NOT NULL DEFAULT '0',
   `qtde_minima_estoque` int(11) NOT NULL DEFAULT '0',
   `preco_venda_unitario` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_mercadoria`),
   KEY `FOR_MER_SUB` (`id_subtipomercadoria`),
   CONSTRAINT `FOR_MER_SUB` FOREIGN KEY (`id_subtipomercadoria`) REFERENCES `subtipomercadoria` (`id_subtipomercadoria`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Dumping data for table `mercadoria`
@@ -249,9 +253,9 @@ CREATE TABLE `mercadoria` (
 INSERT INTO `mercadoria` (`id_mercadoria`,`id_subtipomercadoria`,`descricao`,`qtde_estoque`,`qtde_minima_estoque`,`preco_venda_unitario`) VALUES 
  (6,1,'CAMISETA P MARCA X',7,3,30.99),
  (7,2,'BERMUNA G MARCA Y',15,5,45.5),
- (8,3,'CALÇA 45 MARCA Z',4,2,79.9),
+ (8,3,'CALÇA 45 MARCA Z',1,2,79.9),
  (9,4,'SHAPE MARCA AB',7,2,120),
- (10,5,'JOELHEIRA COR C MARCA R',5,1,80.5);
+ (10,5,'JOELHEIRA COR C MARCA R',2,2,90);
 /*!40000 ALTER TABLE `mercadoria` ENABLE KEYS */;
 
 
@@ -261,7 +265,7 @@ INSERT INTO `mercadoria` (`id_mercadoria`,`id_subtipomercadoria`,`descricao`,`qt
 
 DROP TABLE IF EXISTS `parcela`;
 CREATE TABLE `parcela` (
-  `id_parcela` int(11) NOT NULL,
+  `id_parcela` int(11) NOT NULL AUTO_INCREMENT,
   `id_despesa` int(11) NOT NULL,
   `data_vencimento` date NOT NULL,
   `data_pagamento` date DEFAULT NULL,
@@ -271,13 +275,17 @@ CREATE TABLE `parcela` (
   PRIMARY KEY (`id_parcela`),
   KEY `FK_PAR_DES` (`id_despesa`),
   CONSTRAINT `FK_PAR_DES` FOREIGN KEY (`id_despesa`) REFERENCES `despesa` (`id_despesa`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `parcela`
 --
 
 /*!40000 ALTER TABLE `parcela` DISABLE KEYS */;
+INSERT INTO `parcela` (`id_parcela`,`id_despesa`,`data_vencimento`,`data_pagamento`,`valor_total_parcela`,`valor_pago`,`moeda_pagamento`) VALUES 
+ (2,7,'2013-06-18',NULL,10,NULL,''),
+ (3,7,'2013-07-16',NULL,25.95,NULL,''),
+ (5,8,'2013-05-21',NULL,2.22,NULL,'');
 /*!40000 ALTER TABLE `parcela` ENABLE KEYS */;
 
 
@@ -289,11 +297,11 @@ DROP TABLE IF EXISTS `subtipomercadoria`;
 CREATE TABLE `subtipomercadoria` (
   `id_subtipomercadoria` int(11) NOT NULL AUTO_INCREMENT,
   `id_tipomercadoria` int(11) NOT NULL,
-  `descricao` varchar(45) NOT NULL,
+  `descricao` varchar(45) CHARACTER SET dec8 NOT NULL,
   PRIMARY KEY (`id_subtipomercadoria`),
   KEY `FOR_SUB_TIP` (`id_tipomercadoria`),
   CONSTRAINT `FOR_SUB_TIP` FOREIGN KEY (`id_tipomercadoria`) REFERENCES `tipomercadoria` (`id_tipomercadoria`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=dec8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Dumping data for table `subtipomercadoria`
@@ -305,7 +313,10 @@ INSERT INTO `subtipomercadoria` (`id_subtipomercadoria`,`id_tipomercadoria`,`des
  (2,1,'BERMUDAS'),
  (3,1,'CALÇAS'),
  (4,2,'SHAPES'),
- (5,2,'ACESSÓRIOS');
+ (5,2,'ACESSÓRIOS'),
+ (6,6,'teste'),
+ (7,2,'anilha'),
+ (8,2,'ddddddddddddddddddddddddddddddddddddddddddddd');
 /*!40000 ALTER TABLE `subtipomercadoria` ENABLE KEYS */;
 
 
@@ -316,9 +327,9 @@ INSERT INTO `subtipomercadoria` (`id_subtipomercadoria`,`id_tipomercadoria`,`des
 DROP TABLE IF EXISTS `tipodespesa`;
 CREATE TABLE `tipodespesa` (
   `id_tipodespesa` int(11) NOT NULL AUTO_INCREMENT,
-  `descricao` varchar(45) NOT NULL,
+  `descricao` varchar(45) CHARACTER SET latin1 NOT NULL,
   PRIMARY KEY (`id_tipodespesa`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Dumping data for table `tipodespesa`
@@ -326,9 +337,11 @@ CREATE TABLE `tipodespesa` (
 
 /*!40000 ALTER TABLE `tipodespesa` DISABLE KEYS */;
 INSERT INTO `tipodespesa` (`id_tipodespesa`,`descricao`) VALUES 
- (1,'luz'),
- (2,'agua'),
- (3,'sssssssssssaaaaaaaaaaaaaaaaassssssssssssssss');
+ (1,'Luz'),
+ (2,'Conta de Água edição'),
+ (3,'sssssssssssaaaaaaaaaaaaaaaaassssssssssssssss'),
+ (4,'testão editado'),
+ (5,'testão nov');
 /*!40000 ALTER TABLE `tipodespesa` ENABLE KEYS */;
 
 
@@ -339,9 +352,9 @@ INSERT INTO `tipodespesa` (`id_tipodespesa`,`descricao`) VALUES
 DROP TABLE IF EXISTS `tipomercadoria`;
 CREATE TABLE `tipomercadoria` (
   `id_tipomercadoria` int(11) NOT NULL AUTO_INCREMENT,
-  `descricao` varchar(45) NOT NULL,
+  `descricao` varchar(45) CHARACTER SET latin1 NOT NULL,
   PRIMARY KEY (`id_tipomercadoria`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Dumping data for table `tipomercadoria`
@@ -352,7 +365,9 @@ INSERT INTO `tipomercadoria` (`id_tipomercadoria`,`descricao`) VALUES
  (1,'VESTUÁRIO'),
  (2,'MATERIAL ESPORTIVO'),
  (3,'aaa'),
- (4,'aaa');
+ (4,'aaa'),
+ (5,'etetsete'),
+ (6,'testão edição');
 /*!40000 ALTER TABLE `tipomercadoria` ENABLE KEYS */;
 
 
@@ -376,7 +391,7 @@ CREATE TABLE `usuario` (
 
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
 INSERT INTO `usuario` (`id_usuario`,`login`,`senha`,`tipo_usuario`,`dt_ultimo_acesso`) VALUES 
- (1,'a','a','A','2013-05-04 15:46:21'),
+ (1,'a','a','A','2013-05-21 18:04:02'),
  (4,'cesar','cesar','C','0000-00-00 00:00:00'),
  (5,'cecec','ce','A','0000-00-00 00:00:00'),
  (6,'cesar_admin','cesar12345','C','0000-00-00 00:00:00');

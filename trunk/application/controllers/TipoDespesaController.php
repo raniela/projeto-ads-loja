@@ -33,7 +33,7 @@ class TipoDespesaController extends Zend_Controller_Action {
             $dadosAutoComplete[] = $tipo['descricao'];
         }
         //manda pra view tds as descriçoes do tipo de despesas
-        $this->view->dadosAutoComplete = $dadosAutoComplete;
+        $this->view->dadosAutoComplete = $this->_helper->util->utf8Encode($dadosAutoComplete);
     }
 
     public function gridAction() {
@@ -44,14 +44,14 @@ class TipoDespesaController extends Zend_Controller_Action {
         $tipoDespesaDbTable = new Application_Model_DbTable_TipoDespesa();
         //die($this->_getParam('nomeTipoDespesa'));
         //pega o nome ou qualquer coisa que o usuario digitar para buscar
-        $descricao = $this->_getParam('nome');
-
+        $descricao = $this->_helper->util->utf8Decode($this->_helper->util->urldecodeGet($this->_getParam('nome')));
+               
         //faz uma busca em tipo de despesa para popular o grid
         $select = $tipoDespesaDbTable->select();
 
         //verificar se o usuario buscou por alguma descrição se sim ele utiliza de where para comparar
         if (!empty($descricao)) {
-            $select->where("descricao LIKE ?", "%$descricao%");
+            $select->where("descricao LIKE '%{$descricao}%'");
         }
         //ordena por descrição
         $select->order('descricao');
@@ -60,11 +60,10 @@ class TipoDespesaController extends Zend_Controller_Action {
         //$tipoDespesa = array();
         
         //a variavel recebe todos os tipos de depesas buscados
-        $tipoDespesa = $select->query()->fetchAll();
-        
+        $tipoDespesa = $this->_helper->util->utf8Encode($select->query()->fetchAll());
+               
         // para saber o que vc está buscando é só tirar o comentario abaixo
         //print_r($tipoDespesa);die;
-
         
         //faz a paginação propria do zend
         $paginator = Zend_Paginator::factory($tipoDespesa);
@@ -94,7 +93,7 @@ class TipoDespesaController extends Zend_Controller_Action {
             $tipoDespesa = $tipoDespesaDbTable->fetchRow("id_tipodespesa = {$id}")->toArray();
 
             //envia para a view 
-            $this->view->tipoDespesa = $tipoDespesa;
+            $this->view->tipoDespesa = $this->_helper->util->utf8Encode($tipoDespesa);
         } else {
             /**
              * Cadastro do registro
@@ -114,7 +113,7 @@ class TipoDespesaController extends Zend_Controller_Action {
         //print_r($this->getRequest()->getPost());
         //die;
         //pega o que está vindo por post do formulario
-        $dados = $this->getRequest()->getPost();
+        $dados = $this->_helper->util->utf8Decode($this->getRequest()->getPost());
 
         try {
 
