@@ -4,24 +4,44 @@
 
 <form id="formDespesa" action="/despesa/salvar" method="post" enctype="multipart/form-data">
     <div class="formfield">
+        <input class="required" id="despesa-id_despesa" name="despesa[id_despesa]" type="hidden" value=""/>
         <label style="width: 140px" for="">Tipo da Despesa:</label>
-        <input class="required" id="tipo-despesa" name="tipo-despesa" type="text" size="50" value=""/>
+        <?php echo $this->formSelect('despesa[id_tipodespesa]', '', array('class' => 'required'), $this->dadosComboTipoDespesa); ?>
     </div>
-
 
     <div class="formfield">
         <label style="width: 140px" for="">Descrição:</label>
-        <input class="required" id="descricao" name="descricao" type="text" maxlength="45" size="50" value=""/>
+        <input class="required" id="despesa-descricao" name="despesa[descricao]" type="text" maxlength="45" size="50" value=""/>
     </div>
 
     <div class="formfield">
-        <label style="width: 140px" for="">Valor Total:</label>
-        <input class="required" id="valor-total" name="valor-total" type="text" size="15" value=""/>
+        <label style="width: 140px" for="">Valor Total (Calculado Automaticamente):</label>
+        <input class="required money" id="despesa-valor_despesa" readonly="true" name="despesa[valor_despesa]" type="text" size="15" value=""/>
+        
     </div>
 
-    <br/>
-    <h01>Parcela:</h01>
-    <div class="formfield">
+    <br/>            
+    
+    <div id="parcelas" class="formfield">        
+        <fieldset>                               
+            <legend><h01>Parcelas:</h01></legend>    
+        
+            <div class="formbutton">
+                <button type="button" id="btAdicionarParcelas">Adicionar Parcela</button>             
+            </div>
+            
+            <table id="tblParcelas" style="width: 350px">
+                <tr>
+                    <th style="width: 200px" >Data de Vencimento</th> 
+                    <th style="width: 150px" >Valor</th>
+                    <th >Ações</th>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+    
+    
+<!--    <div class="formfield">
         <label style="width: 140px" for="">Valor da Parcela:</label>
         <input class="required" id="valor" name="valor" type="text" size="15" value=""/>
     </div>
@@ -43,13 +63,9 @@
             <option value="cheque">Cheque</option>
             <option value="banco">Banco</option>
         </select>
-    </div>
+    </div>-->
 </div>
 
-<div id="teste">
-
-
-</div>
 <div class="formbutton">
     <input id="btEnviar" type="submit" value="Enviar" />
     <button type="button" id="btVoltarDespesa">Voltar</button> 
@@ -62,77 +78,185 @@
 
 
 <script>
-
+    var dataForm = <?php echo Zend_Json::encode(array('despesa' => $this->despesa)); ?>;
+    var numParcelas = 0; 
     $(function(){
         //Melhora aparência dos botões
         $( "input[type=submit], button" ).button();
+        
+        //Preenche o formulario com base nos dados do subtipo
+        $('#formDespesa').populate(dataForm);
+        
         $( "#sucessoDespesa" ).dialog({
             autoOpen: false
         });
         
-        $("#datepicker").datepicker({dateFormat:'dd/mm/yy'});
-        $("#date").datepicker({dateFormat:'dd/mm/yy'});
-        //$('#form').populate(dataForm);
+        $('.money').maskMoney({
+            allowZero:true,
+            decimal:",", 
+            thousands:".", 
+            defaultZero:false
+        });
+        $('.numeric').numeric();                 
+        $("#date").datepicker({dateFormat:'dd/mm/yy'});                
+        
+        $('#btAdicionarParcelas').click(function() {
+            adicionarParcela('','');
+        });
+        
+        
         
         $('#formDespesa').validate({
             submitHandler: function(form){
-                jQuery(form).ajaxSubmit({
-                    dataType:  'json', 
-                    success: function(r){
-                        if(r.tipo == 'sucesso'){                    
-                            $('#sucessoDespesa p').html(r.msg);
-                            $('#sucessoDespesa').dialog("open");
-                            $( "#sucessoDespesa" ).dialog({
-                                modal: true,
-                                buttons: {
-                                    Ok: function() {
-                                        $(this).dialog("close");
-                                        window.location = r.url;
-                                    }
+                $('.fieldInvalid').removeClass('fieldInvalid');
+                salva = true;
+                
+                $('.valorParcela').each(function() {
+                    valor = $(this).val();
+                    valor = moneyToFloat(valor)
+                    if(valor <= 0) {
+                       salva = false;
+                       $(this).addClass('fieldInvalid');
+                       $('#sucessoDespesa p').html('Uma Parcela não pode ter valor igual a R$0,00 , verifique!');                            
+                        $( "#sucessoDespesa" ).dialog({
+                            modal: true,
+                            buttons: {
+                                Ok: function() {
+                                    $(this).dialog("close");                        
                                 }
-                            });
-                            
-                            //$('#divMsg').html(r.msg)
-                            //window.location = r.url;
-                        } else {
-                            $('#sucessoDespesa p').html(r.msg);
-                            $('#sucessoDespesa').dialog("open");
-                            $( "#sucessoDespesa" ).dialog({
-                                modal: true,
-                                buttons: {
-                                    Ok: function() {
-                                        $(this).dialog("close");
-                                        window.location = r.url;
-                                    }
-                                }
-                                
-                            });
-                        }
-          
-                    } 
+                            }
+                        });
+                        $('#sucessoDespesa').dialog("open");
+                        return;
+                    }
                 });
+                
+                if($('.valorParcela').length == 0) {
+                    salva = false;
+                    $(this).addClass('fieldInvalid');
+                    $('#sucessoDespesa p').html('Adicione no MÍNIMO UMA Parcela!');                            
+                     $("#sucessoDespesa").dialog({
+                         modal: true,
+                         buttons: {
+                             Ok: function() {
+                                 $(this).dialog("close");                        
+                             }
+                         }
+                     });
+                     $('#sucessoDespesa').dialog("open");
+                     return;
+                }
+                
+                if(salva) {
+                    jQuery(form).ajaxSubmit({
+                        dataType:  'json', 
+                        success: function(r){
+                            if(r.tipo == 'sucesso'){                    
+                                $('#sucessoDespesa p').html(r.msg);
+
+                                $( "#sucessoDespesa" ).dialog({
+                                    modal: true,
+                                    buttons: {
+                                        Ok: function() {
+                                            $(this).dialog("close");
+                                            window.location = r.url;
+                                        }
+                                    }
+                                });
+                                $('#sucessoDespesa').dialog("open");
+                                //$('#divMsg').html(r.msg)
+                                //window.location = r.url;
+                            } else {
+                                $('#sucessoDespesa p').html(r.msg);
+
+                                $( "#sucessoDespesa" ).dialog({
+                                    modal: true,
+                                    buttons: {
+                                        Ok: function() {
+                                            $(this).dialog("close");
+                                            window.location = r.url;
+                                        }
+                                    }                                
+                                });
+                                $('#sucessoDespesa').dialog("open");
+                            }
+
+                        } 
+                    });
+                }
             }
         });
         
         $('#btVoltarDespesa').click(function(){
             $('#ui-tabs-10').load('/despesa/index/menu/1');
         })
-       
-        var html;
-        
-        html = "<div class='formfield'>" +
-            "<label for=''>Parcela:</label>" +
-            "<input class='required' id='parcela' name='parcela' type='text' size='50'/>" +
-            "<label style='width: 80px' for=''>&nbsp;Quantidade:</label>" +
-            "<input class='required' id='qtde' name='qtde' type='text' size='5 value=''/>" +
-            "<a id='btRemover' style='cursor: pointer'>" +
-            "&nbsp;&nbsp;<img src='/img/symbol_remove.png' width='30' height='30' title='Remover Produto' />" +
-            "</a>" +
-            "</div>";
-        
-        $('#btAdicionar').click(function(){
-            $("#teste").append(html);
-        });
-       
+          
+          
+        <?php foreach($this->parcelas as $parcela) { ?>
+            adicionarParcela('<?=$this->String($parcela['data_vencimento'])->reverseDate()?>', '<?=$this->String($parcela['valor_total_parcela'])->floatToMoney()?>');            
+        <?php } ?>  
     });
+    
+    function adicionarParcela(data_vencimento, valor_total_parcela) {
+        numParcelas++;
+        htmlParcela = '<tr id="tr_parcela_'+numParcelas+'" class="trParcela">'                                  
+            + '<td>'
+            + '<input class="required" id="parcelas-'+numParcelas+'-data_vencimento" name="parcelas['+numParcelas+'][data_vencimento]" value="'+data_vencimento+'" type="text" size="21"/>'
+            + '</td>'
+
+            + '<td>'
+            + '<input onblur="atualizarTotal()" class="required money valorParcela" id="parcelas-'+numParcelas+'-valor_total_parcela" name="parcelas['+numParcelas+'][valor_total_parcela]" value="'+valor_total_parcela+'" type="text" size="21"/>'
+            + '</td>' 
+        
+            + '<td>'
+            + "<a id='btRemover' onClick='removeDespesa(this)' style='cursor: pointer'>" 
+            + "&nbsp;&nbsp;<img src='/img/symbol_remove.png' width='30' height='30' title='Remover Parcela' />" 
+            + "</a>"   
+            + '</td>'
+
+            + '</tr>';
+
+        $("#tblParcelas tr:last").after(htmlParcela);
+        
+        $('#parcelas-'+numParcelas+'-valor_total_parcela').maskMoney({
+            allowZero:true,
+            decimal:",", 
+            thousands:".", 
+            defaultZero:false
+        });
+
+        $('#parcelas-'+numParcelas+'-data_vencimento').datepicker({dateFormat:'dd/mm/yy'});
+    }
+    
+    function removeDespesa(obj) {
+        $('#sucessoDespesa p').html('Deseja realmente remover essa Parcela da listagem?');                            
+        $( "#sucessoDespesa" ).dialog({
+            modal: true,
+            buttons: {
+                "Não": function() {
+                    $(this).dialog("close");                                        
+                },
+                "Sim": function() {
+                    $(obj).parent().parent().remove();
+                    atualizarTotal();                    
+                    $(this).dialog("close");
+                }
+            }
+        });
+        $('#sucessoDespesa').dialog("open");                 
+    }
+    
+    function atualizarTotal() {
+        valorTotal = 0.0;
+        
+        $('.valorParcela').each(function() {                        
+            valor = $(this).val();
+            valor_total_parcela = moneyToFloat(valor);
+            
+            valorTotal += valor_total_parcela;
+        });
+        
+        valorTotal = floatToMoney(valorTotal);
+        $('#despesa-valor_despesa').val(valorTotal);
+    }
 </script>

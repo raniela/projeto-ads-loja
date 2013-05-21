@@ -1,21 +1,23 @@
 <table>
     <tr>
         <th>Descrição</th>
+        <th>Tipo</th>
         <th>Valor</th>
         <th>Ações</th>
     </tr>
 
     <tr class="alt" >
-        <?php foreach ($this->paginator as $k => $compras): ?>
+        <?php foreach ($this->paginator as $k => $despesa): ?>
         <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
-            <td><?php echo $compras['descricao'] ?></td>
-            <td><?php echo $compras['valor'] ?></td>
+            <td><?php echo $despesa['descricao'] ?></td>
+            <td><?php echo $despesa['tipo'] ?></td>
+            <td><?php echo $this->String($despesa['valor_despesa'])->floatToMoney(); ?></td>
 
             <td>
-                <a class="linkEditar" href="/compra/formulario/id/<?php echo $compra['id_compra'] ?>">
+                <a class="linkEditar" href="/despesa/formulario/id/<?php echo $despesa['id_despesa'] ?>">
                     <img src="/img/edit-icon.gif" title="Editar registro" />
                 </a>
-                <a class="btExcluir" href="/compra/excluir/id/<?php echo $compra['id_compra'] ?>">
+                <a class="btExcluir" href="/despesa/excluir/id/<?php echo $despesa['id_despesa'] ?>">
                     <img src="/img/delete-icon.gif" title="Excluir Registro" />
                 </a>
             </td>
@@ -26,32 +28,31 @@
 
 <?php echo $this->paginationControl($this->paginator, 'Sliding', 'my_pagination_control.phtml'); ?>
 
-<div id="dcCompra">
+<div id="dcDespesa">
     <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Deseja realmente excluir esse compra?</p>
 </div>
 
-<div id="compraErro">
+<div id="despesaErro">
     <p>Erro</p>    
 </div>
 
-<div id="compraSucesso">
+<div id="despesaSucesso">
     <p>Sucesso</p>    
 </div>
 
 <script>
     
     var url = "";
-    $(function(){       
-                
-        $( "#compraSucesso" ).dialog({
+    $(function(){                       
+        $( "#despesaSucesso" ).dialog({
             autoOpen: false
         });
         
-        $( "#compraErro" ).dialog({
+        $( "#despesaErro" ).dialog({
             autoOpen: false
         });
                 
-        $("#dcCompra").dialog({
+        $("#dcDespesa").dialog({
             resizable: false,
             height:250,
             width:500,
@@ -62,36 +63,39 @@
                 "Ok": function() {
                     $.get(url, null, function(retorno){
                         if(retorno.tipo == 'sucesso'){
-                            $('#compraSucesso').html(retorno.msg);
-                            $('#compraSucesso').dialog("open");
-                            $('#compraSucesso').dialog({
+                            $('#despesaSucesso').html(retorno.msg);                            
+                            $('#despesaSucesso').dialog({
+                                modal: true,
+                                autoOpen: false,
                                 buttons: {
                                     Ok: function() {
                                         $( this ).dialog( "close" );
                                     }
                                 }
                             });
-                                
-                            $('#divResCompra').load('/compra/grid/nome/' + $('#nomeCompra').val());
+                            $('#despesaSucesso').dialog("open");    
+                            $('#divResDespesa').load('/despesa/grid/');
                                 
                         } else {
-                            $('#compraErro').html(retorno.msg);
-                            $('#compraErro').dialog("open");
-                            $('#compraErro').dialog({
+                            $('#despesaErro').html(retorno.msg);                            
+                            $('#despesaErro').dialog({
+                                modal: true,
+                                autoOpen: false,
                                 buttons: {
                                     Ok: function() {
                                         $( this ).dialog( "close" );
                                     }
                                 }
                             });
-                            $('#divResCompra').load('/compra/grid/nome/' + $('#nomeCompra').val());
+                            $('#despesaErro').dialog("open");                            
+                            $('#divResDespesa').load('/despesa/grid/');
                         }                    
                     }, 'json');
                     $( this ).dialog("close");
                     
                 },
                 Cancel: function() {
-                    $('#divResCompra').load('/compra/grid/nome/' + $('#nomeCompra').val());
+                    $('#divResDespesa').load('/despesa/grid/');
                     $( this ).dialog( "close" );
                         
                 }
@@ -103,20 +107,20 @@
         $('.pagination a').click(function(){
            
             var href = $(this).attr('href');
-            $('#divResCompra').load(href);
+            $('#divResDespesa').load(href);
             return false;
         });
         
         $('.linkEditar').click(function(){
             var url = $(this).attr('href');
-            $('#ui-tabs-3').load(url);
+            $('#ui-tabs-10').load(url);
             return false;
         });
         
         $('.btExcluir').click(function(){
             
             url = $(this).attr('href');
-            $("#dcCompra").dialog("open");
+            $("#dcDespesa").dialog("open");
             
             return false;
         });
