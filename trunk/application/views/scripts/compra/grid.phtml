@@ -1,23 +1,26 @@
 <table>
     <tr>
         <th>Data</th>
+        <th>Número Nota Fiscal</th>
         <th>Fornecedor</th>
-        <th>Valor</th>
+        <th>Valor total</th>
+        <th>Descrição</th>
         <th>Ações</th>
     </tr>
 
     <tr class="alt" >
         <?php foreach ($this->paginator as $k => $compras): ?>
         <tr class="<?php echo ($k % 2 == 0) ? 'alt' : '' ?>">
-            <td><?php echo $compras['data'] ?></td>
-            <td><?php echo $compras['fornecedor'] ?></td>
-            <td><?php echo $compras['valor'] ?></td>
-
+            <td><?php echo $this->String($compras['data'])->reverseDate(); ?></td>
+            <td><?php echo $compras['num_nota_fiscal'] ?></td>
+            <td><?php echo $compras['razao_social'] ?></td>
+            <td><?php echo $compras['valor_total_nota'] ?></td>
+            <td><?php echo $compras['descricao'] ?></td>
             <td>
-                <a class="linkEditar" href="/compra/formulario/id/<?php echo $compra['id_compra'] ?>">
+                <a class="linkEditar" href="/compra/formulario/id/<?php echo $compras['id_compra'] ?>">
                     <img src="/img/edit-icon.gif" title="Editar registro" />
                 </a>
-                <a class="btExcluir" href="/compra/excluir/id/<?php echo $compra['id_compra'] ?>">
+                <a class="btExcluir" href="/compra/excluir/id/<?php echo $compras['id_compra'] ?>">
                     <img src="/img/delete-icon.gif" title="Excluir Registro" />
                 </a>
             </td>

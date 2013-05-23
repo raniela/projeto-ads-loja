@@ -1,13 +1,31 @@
 <h1><?php echo $this->titlePage; ?></h1>
+
 <form action="" method=get">
+
     <div class="formfield">
-        <label for="">Nome:</label>
-        <input id="nomeCompra" name="nomeCompra" type="text">
+        <label for="numNotaFiscal">Núm Nota Fiscal:</label>
+        <input id="numNotaFiscal" name="numNotaFiscal" type="text" maxlength="50">
     </div>
+
+    <div class="formfield">
+        <label for="razaoSocial">Razão Social:</label>
+        <input id="razaoSocial" name="razaoSocial" type="text" maxlength="50">
+    </div>
+
+    <div class="formfield">
+        <label for="dataInicial">Data Inicial:</label>
+        <input id="dataInicial" name="dataInicial" type="text">               
+    </div>
+
+    <div class="formfield">
+        <label for="dataFinal">Data Final:</label>
+        <input id="dataFinal" name="dataFinal" type="text">             
+    </div>
+
     <div class="formbutton">
         <button id="btBuscarCompra" type="button">Buscar</button>
         <button id="btNovaCompra" type="button" value="/compra/formulario">Novo</button> 
-    </div>
+    </div>    
 </form>
 
 <br />
@@ -26,6 +44,12 @@
     var compraAutoComplete = <?php echo Zend_Json::encode($this->dadosAutoComplete); ?>
 
     $(function(){
+        
+        $('#dataInicial').mask("99/99/9999");
+        $('#dataFinal').mask("99/99/9999");
+        $("#dataInicial").datepicker({dateFormat:'dd/mm/yy'});     
+        $("#dataFinal").datepicker({dateFormat:'dd/mm/yy'});
+        
         //Melhora aparência dos botões
         $( "input[type=submit], button" ).button();
         $('#btNovaCompra').click(function(){
@@ -39,10 +63,15 @@
             source: compraAutoComplete
         });
     
-        $('#divResCompra').load('/compra/grid/nome/' + $('#nomeCompra').val());
+        $('#divResCompra').load('/compra/grid/');
         $('#btBuscarCompra').click(function(){
-        
-             $('#divResCompra').load('/compra/grid/nome/' + $('#nomeCompra').val());
+            
+            num_nota_fiscal = urlencodeGet($('#numNotaFiscal').val());
+            razao_social = urlencodeGet($('#razaoSocial').val());
+            data_inicial = urlencodeGet($('#dataInicial').val());
+            data_final = urlencodeGet($('#dataFinal').val());
+            
+            $('#divResCompra').load('/compra/grid/razao_social/' + razao_social + '/num_nota_fiscal/' + num_nota_fiscal + '/data_final/' + data_final + '/data_inicial/' + data_inicial);
         });
     }); 
     
