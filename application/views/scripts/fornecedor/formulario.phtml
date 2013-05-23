@@ -1,7 +1,7 @@
 <h1><?php echo $this->titulo; ?></h1>
 
 <!-- formulário -->
-<form id="formFornecedor" action="/fornecedor/salvar/id/<?php echo $this->fornecedor['id_fornecedor'] ?>"" method="post" enctype="multipart/form-data">
+<form id="formFornecedor" action="/fornecedor/salvar/id/<?php echo $this->fornecedor['id_fornecedor'] ?>" method="post" enctype="multipart/form-data">
     <div class="formfield">
         <label for="">Razão Social:</label>
         <input class="required" id="razao_social" name="f[razao_social]" type="text" size="50" maxlength="45" value=""/>
@@ -31,9 +31,9 @@
         <label for="">E-mail Repr. Comerc.:</label>
         <input class="required email" id="email" name="f[email]" type="text"  size="30" maxlength="30" value="" />
     </div>
-<br/>
-  
-        <h01>Endereço do Representante Comercial:</h01>
+    <br/>
+
+    <h01>Endereço do Representante Comercial:</h01>
     <div class="formfield">
         <label for="">Rua:</label>
         <input class="required" id="rua" name="f[rua]" type="text"  size="33" maxlength="45" value="" />
@@ -57,6 +57,7 @@
 
     <div class="formbutton">
         <input id="btEnviar" type="submit" value="Enviar" />
+        <?php $this->isModal ?>
         <button type="button" id="btVoltarFornecedor">Voltar</button> 
     </div>
 </form>
@@ -67,10 +68,12 @@
 
 
 <script>
- var dataFormularioFornecedor = <?php echo Zend_Json::encode(array('f' => $this->fornecedor)) ?>;
+    var dataFormularioFornecedor = <?php echo Zend_Json::encode(array('f' => $this->fornecedor)) ?>;
+    var isModal = <?php echo Zend_Json::encode($this->isModal) ?>;
+ 
     $(function(){
         //Melhora aparência dos botões
-       $( "input[type=submit], button" ).button();
+        $( "input[type=submit], button" ).button();
         $("#documento").mask("99.999.999/9999-99");
         $("#telefone").mask("(99) 9999-9999");
         $("#cep").mask("99999-999");
@@ -94,7 +97,11 @@
                                 buttons: {
                                     Ok: function() {
                                         $(this).dialog("close");
-                                        window.location = r.url;
+                                        if(isModal != 1){
+                                            window.location = r.url;
+                                        }else if(isModal == 1){
+                                            $("#novoFornecedor").dialog("close");
+                                        }
                                     }
                                 }
                             });

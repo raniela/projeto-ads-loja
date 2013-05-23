@@ -1,31 +1,55 @@
+<!-- @author Raniela Carvalho -->
 
 <h1><?php echo $this->titulo; ?></h1>
 
 <div style="float: right;">
-    <a id="newMercadoria" style="text-decoration: none;" class="" href=""><img width="14" height="14" title="Adicionar Mercadoria" src="/img/add_256.png"><h01>&nbsp;Nova Mercadoria</h01></a>
+    <a id="newMercadoria" style="text-decoration: none; cursor: pointer;" class=""><img width="14" height="14" title="Adicionar Mercadoria" src="/img/add_256.png"><h01>&nbsp;Nova Mercadoria</h01></a>
 
-    <a style="margin-left: 30px; text-decoration: none;" class="" href=""><img width="14" height="14" title="Adicionar Mercadoria" src="/img/add_256.png"><h01>&nbsp;Novo Fornecedor</h01></a>
+    <a id="newFornecedor" style="margin-left: 30px; text-decoration: none; cursor: pointer;" class=""><img width="14" height="14" title="Adicionar Mercadoria" src="/img/add_256.png"><h01>&nbsp;Novo Fornecedor</h01></a>
 </div>
 
-<form id="formCompra" action="/compra/salvar" method="post" enctype="multipart/form-data">
+<form id="formCompra" action="/compra/salvar/id_compra/<?= $this->compra['id_compra'] ?>" method="post" enctype="multipart/form-data">
+
     <div class="formfield">
         <label for="">Nº Nota Fiscal:</label>
-        <input class="required" id="num-nota" name="num-nota" type="text" size="30" maxlength="20" value=""/>
+        <input class="required" id="compra-num_nota_fiscal" name="compra[num_nota_fiscal]" type="text" size="30" maxlength="20" value=""/>
     </div>
+
+    <div class="formfield">
+        <label for="">Fornecedor:</label>
+        <input class="required" id="compra-id_fornecedor" name="compra[id_fornecedor]" type="hidden" value=""/>
+        <input class="required" id="compra-razao_social" name="compra[razao_social]" maxlength="50" type="text" size="44" value="" maxlength="50"/>
+
+        <label for="" style="width: 50px;">&nbsp;&nbsp;Data:</label>
+        <input class="required" id="compra-data" name="compra[data]" type="text" size="21px" value=""/>
+    </div>
+
+    <div id="produtosF" class="formfield">
+        <fieldset>
+            <legend>Mercadorias</legend>
+
+            <div class="formbutton">
+                <button type="button" id="btModalMercadoriaF">Buscar</button>             
+            </div>
+
+            <table id="tblMercadoriasF">
+                <tr>
+                    <th style="width: 300px">Descrição</th>
+                    <th >Quantidade</th>
+                    <th >Valor de Compra Unitário</th>                    
+                    <th >Ações</th>
+                </tr>
+            </table>
+        </fieldset>
+    </div>
+
+    <?php
+    echo $this->render('partials/modal-pesquisa-mercadoria-fornecedor.phtml');
+    ?>
 
     <div class="formfield">
         <label for="">Valor Total:</label>
-        <input class="required teste" id="valor" name="valor" type="text" size="30" maxlength="11" value=""/>
-    </div>
-
-    <div id="mercadoria" class="formfield">
-        <label for="">Mercadoria:</label>
-        <input class="required" id="mercadoria" name="mercadoria" type="text" size="50" value=""/>
-        <label style="width: 90px" for="">&nbsp;Quantidade:</label>
-        <input class="required" id="qtde" name="qtde" type="text" size="5" value=""/>
-        <a id="btAdicionar" style="cursor: pointer">
-            &nbsp;&nbsp;&nbsp;<img src="/img/add_256.png" width="20" height="20" title="Adicionar Mercadoria" />
-        </a>
+        <input id="compra-valor_total_nota" class="required money" readonly="true" name="compra[valor_total_nota]" type="text" size="21px" value=""/>
     </div>
 
     <div id="teste">
@@ -35,17 +59,7 @@
 
     <div class="formfield">
         <label for="">Descrição:</label>
-        <input class="required" id="descricao" name="descricao" type="text" size="30" maxlength="30" value=""/>
-    </div>
-
-    <div class="formfield">
-        <label for="">Data:</label>
-        <input class="required" id="data" name="data" type="text" size="30" value=""/>
-    </div>
-
-    <div class="formfield">
-        <label for="">Fornecedor:</label>
-        <input class="required" id="fornecedor" name="fornecedor" type="text" size="30" value=""/>
+        <input id="compra-descricao" class="required" name="compra[descricao]" type="text" size="35px" maxlength="30" value=""/>
     </div>
 
     <div class="formbutton">
@@ -62,12 +76,72 @@
 
 </div>
 
+<div id="novoFornecedor">
 
-
+</div>
 
 <script>
 
+    var dataAutoCompleteFornecedor = <?php echo $this->dataAutoCompleteFornecedor; ?>;
+    var dataForm = <?php echo Zend_Json::encode(array('compra' => $this->compra)); ?>;
+
     $(function(){
+        
+        $('#formCompra').populate(dataForm);
+        
+        $('.money').maskMoney({
+            allowZero:true,
+            decimal:",", 
+            thousands:".", 
+            defaultZero:false
+        });
+        
+        // campo datepicker
+        $('#compra-data').datepicker({dateFormat:'dd/mm/yy'});
+        
+        <?php foreach($this->itensCompra as $item) { ?>
+            callBackPesquisarMercadoriaF(<?=$item['id_mercadoria']?>, '<?=$item['descricao']?>', <?=$item['qtde_estoque']?>, <?=$item['valor_unitario']?>, <?=$item['quantidade']?>);
+        <?php } ?>  
+        
+        //trata o autocomplete de fornecedores
+        $("#compra-razao_social").autocomplete({
+            source: dataAutoCompleteFornecedor,
+            autoFill:true,	
+            mustMatch:true,           
+            formatItem: function(row, ui, total) {
+                return ui.item.value;
+            }, 
+            formatResult: function(row, ui) { 
+                return ui.item.value;
+            },
+            formatMatch: function(row, ui){
+                return ui.item.value;
+            },
+            change: function (event, ui) {
+                if (!ui.item) {
+                    $(this).val('');
+                }
+            },
+            select: function(e, ui) {                                  
+                if(ui.item.id == '') {
+                    $('#compra-id_fornecedor').val('');
+                    $("#compra-razao_social").val('');
+                } else {
+                    $('#compra-id_fornecedor').val(ui.item.id);
+                    result = ui.item.value.split(" - ");
+                    //alert(result[0]);
+                    $(this).val(result[0]);
+                    
+                }
+                return false;
+            }            
+        });//autocomplete fornecedores       
+        
+        // botao que chama modal pra pesquisa de mercadorias
+        $('#btModalMercadoriaF').click(function(){            
+            openModalPesquisaMercadoriaF();
+        });
+        
         //Melhora aparência dos botões
         $( "input[type=submit], button" ).button();
         //modal para cadastro de nova mercadoria
@@ -81,15 +155,41 @@
         
         });
 
-        $('#novaMercadoria').load('/mercadoria/formulario/');
-
+        //modal de confirmacao do cadastro
         $("#sucessoCompra").dialog({
             autoOpen: false
         });
+
+        //carrega os formularios dentro das divs
+        $('#novaMercadoria').load('/mercadoria/formulario/isModal/1');
+        $('#novoFornecedor').load('/fornecedor/formulario/isModal/1');
+
+        //modal para cadastro de nova mercadoria
+        $('#novaMercadoria').dialog({
+            autoOpen: false,
+            height: 450,
+            width: 800
+        });
         
+        //se clicar no botao de nova mercadoria, abre a modal
         $('#newMercadoria').click(function(){
-            $('#novaMercadoria').dialog("open");
-            $( "#novaMercadoria" ).dialog({
+            $("#novaMercadoria").dialog("open");
+            $("#novaMercadoria").dialog({
+                modal: true
+            });
+        });
+        
+        //modal para cadastro de novo fornecedor
+        $('#novoFornecedor').dialog({
+            autoOpen: false,
+            height: 600,
+            width: 800
+        });
+        
+        //se clicar no botao de nova mercadoria, abre a modal
+        $('#newFornecedor').click(function(){
+            $("#novoFornecedor").dialog("open");
+            $("#novoFornecedor").dialog({
                 modal: true
             });
         });
@@ -141,27 +241,105 @@
         $('#btVoltarCompra').click(function(){
             $('#ui-tabs-5').load('/compra/index/menu/1');
         })
-        
-        var html;
-        
-        html = "<div class='formfield'>" +
-            "<label for=''>Mercadoria:</label>" +
-            "<input class='required' id='mercadoria' name='mercadoria' type='text' size='50'/>" +
-            "<label style='width: 90px' for=''>&nbsp;Quantidade:</label>" +
-            "<input class='required' id='qtde' name='qtde' type='text' size='5 value=''/>" +
-            "<a id='btRemover' onClick='removerItem(this)' style='cursor: pointer'>" +
-            "&nbsp;&nbsp;<img src='/img/symbol_remove.png' width='30' height='30' title='Remover Mercadoria' />" +
-            "</a>" +
-            "</div>";
-        
-        $('#btAdicionar').click(function(){
-            $("#teste").append(html);
-        });
+       
         
     });
     
-    function removerItem(obj) {
-        $(obj).parent().remove();
-        //alert("a");
+    /** funcao que trata o retorno da selecao de uma mercadoria na modal */
+    function callBackPesquisarMercadoriaF(id_mercadoria, descricao, qtde_estoque, valor_unitario, quantidade){                      
+        preco = floatToMoney(valor_unitario);
+        
+        if($('#tr_mercadoria_'+id_mercadoria).length > 0){
+            $('#sucessoCompra p').html('As Mercadorias que já estão na lista não serão adicionadas novamente!');                            
+            $( "#sucessoCompra" ).dialog({
+                modal: true,
+                buttons: {
+                    Ok: function() {
+                        $(this).dialog("close");                        
+                    }
+                }
+            });
+            $('#sucessoCompra').dialog("open");
+        } else {
+            htmlMercadoriaF = '<tr id="tr_mercadoria_'+id_mercadoria+'">'
+                        
+                + '<td style="text-align: left">'
+                + '<label style="width: 270px">'+descricao+'</label>'
+                + '<input type="hidden" name="item-compra['+id_mercadoria+'][id_mercadoria]" value="'+id_mercadoria+'"/>'
+                + '<input type="hidden" id="qtde_estoque_'+id_mercadoria+'" value="'+qtde_estoque+'"/>'
+                + '</td>'
+                                  
+                + '<td>'
+                + '<label style="width: 100px" for="">Qtde.:</label>' 
+                + '<input id_mercadoria="'+id_mercadoria+'" class="required numeric quantidade" onchange="atualizarTotalF();" id="item-compra-'+id_mercadoria+'-quantidade" name="item-compra['+id_mercadoria+'][quantidade]" value="'+quantidade+'" type="text" size="5"/>'
+                + '<label style="width: 100px" for="">&nbsp;&nbsp;Estoque: '+qtde_estoque+'</label>'
+                + '</td>'
+                                   
+                + '<td>'
+                + '<label style="width: 100px" for="">R$:</label>'
+                + '<input class="required" onblur="atualizarTotalF()" id="item-compra-'+id_mercadoria+'-valor_unitario" name="item-compra['+id_mercadoria+'][valor_unitario]" value="'+preco+'" type="text" size="21"/>'
+                + '</td>'                                   
+                                   
+                + '<td>'
+                + "<a id='btRemover' onClick='removeMercadoriaF(this)' style='cursor: pointer'>" 
+                + "&nbsp;&nbsp;<img src='/img/symbol_remove.png' width='30' height='30' title='Remover Mercadoria' />" 
+                + "</a>"   
+                + '</td>'
+                                  
+                + '</tr>';
+                       
+            $("#tblMercadoriasF tr:last").after(htmlMercadoriaF);
+            
+            /** Força novamento o inicio das máscaras */
+            $('.numeric').numeric();            
+            $('#item-compra-'+id_mercadoria+'-valor_unitario').maskMoney({
+                allowZero:true,
+                decimal:",", 
+                thousands:".", 
+                defaultZero:false
+            });
+            
+            atualizarTotalF();
+        }
     }
+    
+    function atualizarTotalF() {
+        valorTotal = 0.0;
+        
+        $('.quantidade').each(function() {
+            id_mercadoria = $(this).attr('id_mercadoria');
+            
+            quantidade = $('#item-compra-'+id_mercadoria+'-quantidade').val();
+            quantidade = parseInt(quantidade, 10);
+            
+            preco = $('#item-compra-'+id_mercadoria+'-valor_unitario').val();
+            valor_unitario = moneyToFloat(preco);
+            
+            valorTotal = valorTotal + (quantidade * valor_unitario);
+        });
+        
+        valorTotal = floatToMoney(valorTotal);
+        $('#compra-valor_total_nota').val(valorTotal);
+    }
+        
+    function removeMercadoriaF(obj) {
+        $('#sucessoCompra p').html('Deseja realmente remover essa Mercadoria da listagem?');                            
+        $( "#sucessoCompra" ).dialog({
+            modal: true,
+            buttons: {
+                "Não": function() {
+                    $(this).dialog("close");                                        
+                },
+                "Sim": function() {
+                    $(obj).parent().parent().remove();
+                    atualizarTotalF();
+                    $(this).dialog("close");
+                }
+            }
+        });
+        $('#sucessoCompra').dialog("open"); 
+        
+        
+    }
+    
 </script>
