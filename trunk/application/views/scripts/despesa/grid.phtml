@@ -20,6 +20,9 @@
                 <a class="btExcluir" href="/despesa/excluir/id/<?php echo $despesa['id_despesa'] ?>">
                     <img src="/img/delete-icon.gif" title="Excluir Registro" />
                 </a>
+                <a class="btConsultarDespesa" href="/despesa/consultar/id/<?php echo $despesa['id_despesa'] ?>">
+                    <img src="/img/lupa.png" title="Consultar Registro" />
+                </a>
             </td>
         </tr>    
     <?php endforeach; ?>
@@ -112,6 +115,12 @@
         });
         
         $('.linkEditar').click(function(){
+            var url = $(this).attr('href');
+            $('#ui-tabs-10').load(url);
+            return false;
+        });
+        
+        $('.btConsultarDespesa').click(function(){
             var url = $(this).attr('href');
             $('#ui-tabs-10').load(url);
             return false;

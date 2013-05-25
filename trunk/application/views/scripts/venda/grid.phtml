@@ -44,6 +44,11 @@
                 <a class="btExcluir" href="/venda/excluir/id_venda/<?php echo $venda['id_venda'] ?>">
                     <img src="/img/delete-icon.gif" title="Excluir Registro" />
                 </a>
+               <?php if($venda['forma_pagamento'] == "D" && $venda['tipo_pagamento'] == "P") { ?>
+                  <a class="btConsultarVenda" href="/venda/consultar/id_venda/<?php echo $venda['id_venda'] ?>">
+                    <img src="/img/lupa.png" title="Consultar Registro" />
+                  </a> 
+               <?php }?>
             </td>
         </tr>    
     <?php endforeach; ?>
@@ -134,6 +139,11 @@
         });
         
         $('.linkEditar').click(function(){
+            var url = $(this).attr('href');
+            $('#ui-tabs-1').load(url);
+            return false;
+        });
+        $('.btConsultarVenda').click(function(){
             var url = $(this).attr('href');
             $('#ui-tabs-1').load(url);
             return false;
