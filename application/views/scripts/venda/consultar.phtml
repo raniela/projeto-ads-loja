@@ -1,0 +1,583 @@
+<h1><?php echo $this->titulo; ?></h1>
+
+<!-- formulário -->
+
+<form id="formVenda" action="/venda/salvar/id_venda/<?=$this->venda['id_venda']?>" method="post" enctype="multipart/form-data">
+    <div class="formfield">
+        <label for="">Cliente:</label>
+        <input class="required" id="venda-id_cliente" name="venda[id_cliente]" type="hidden" value=""/>
+        <input class="required" id="venda-nome" name="venda[nome]" maxlength="50" type="text" size="44" value="" maxlength="50"/>
+        
+        <label for="" style="width: 50px;">&nbsp;&nbsp;Data:</label>
+        <input class="required geraParcela" id="venda-data_venda" name="venda[data_venda]" type="text" size="21px" value=""/>
+    </div>
+       
+    <div id="teste">                
+    </div>
+    
+    <div id="produtos" class="formfield">
+        <fieldset>
+            <legend>Mercadorias</legend>
+            
+        <div class="formbutton">
+            <button type="button" id="btModalMercadoria">Buscar</button>             
+        </div>
+            
+        <table id="tblMercadorias">
+            <tr>
+                <th >Descrição</th>
+                <th >Quantidade</th>
+                <th >Valor Unitário</th>                    
+                <th >Ações</th>
+            </tr>
+        </table>
+        </fieldset>
+    </div>
+    
+    <?php    
+        echo $this->render('partials/modal-pesquisa-mercadoria.phtml');
+    ?>
+    
+    <div class="formfield">
+        <label for="">Desconto:</label>
+        <input id="venda-valor_desconto" class="money geraParcela" name="venda[valor_desconto]" type="text" size="21px" value=""/>
+        
+        <label for="">&nbsp;&nbsp;Valor Total:</label>
+        <input id="venda-valor_total_venda" class="required money geraParcela" readonly="true" name="venda[valor_total_venda]" type="text" size="21px" value=""/>
+    </div>
+    
+
+    <div class="formfield">
+        <label for="">Forma de Pagamento:</label>
+        <?php echo $this->formSelect('venda[forma_pagamento]', $this->venda['forma_pagamento'], array('class' => 'required','onchange' => 'mostrarParcelas()'), array(''=>'SELECIONE', 'D'=>'DINHEIRO', 'CC' => 'CARTÃO DE CRÉDITO', 'CD' => 'CARTÃO DE DÉBITO')); ?>        
+    </div>
+    
+    <div class="formfield">
+        <label for="">Tipo de Pagamento:</label>
+        <?php echo $this->formSelect('venda[tipo_pagamento]', $this->venda['tipo_pagamento'], array('class' => 'required', 'onchange' => 'mostrarParcelas()'), array(''=>'SELECIONE','V'=>'A VISTA', 'P' => 'A PRAZO')); ?>        
+    </div>
+    
+    <div id="parcelas" class="formfield" style="display: none">
+        <fieldset>
+            <legend>Parcelas</legend>
+        
+        <div class="formfield">
+            <label for="num_parcelas">Nº Parcelas:</label>
+            <input id="num_parcelas" class="numeric geraParcela" name="num_parcelas" type="text" size="21px" value=""/>
+            
+            <span id="campo_valor_entrada">
+                <label for="">&nbsp;&nbsp;Valor Entrada:</label>
+                <input id="valor_entrada" class="money" name="valor_entrada" type="text" size="21px" value=""/>
+            </span>
+        </div>    
+            
+        <div class="formbutton">
+            <button type="button" id="btGerarParcelas">Gerar Parcelas</button>             
+        </div>
+            
+        <table id="tblParcelas" style="width: 350px">
+            <tr>
+                <th style="width: 200px" >Data de Vencimento</th> 
+                <th style="width: 150px" >Valor</th>                              
+            </tr>
+        </table>
+        </fieldset>
+    </div>
+           
+    <div class="formbutton">
+        <input id="btEnviar" type="submit" value="Enviar"/>
+        <button type="button" id="btVoltarVenda">Voltar</button> 
+    </div>
+</form>
+
+<div id="sucessoVenda">
+    <p>Sucesso</p>
+</div>
+
+
+<script>
+    var dataForm = <?php echo Zend_Json::encode(array('venda' => $this->venda)); ?>;
+    var dataAutoCompleteCliente = <?php echo $this->dataAutoCompleteCliente; ?>;
+    var numParcelas = 0;    
+    $(document).ready(function(){
+        //Melhora aparência dos botões
+        $( "input[type=submit], button" ).button();
+        $('#formVenda').populate(dataForm);
+                
+        $('.money').maskMoney({
+            allowZero:true,
+            decimal:",", 
+            thousands:".", 
+            defaultZero:false
+        });
+        $('.numeric').numeric();        
+        //$('#venda-data_venda').mask("99/99/9999");
+        $('#venda-data_venda').datepicker({dateFormat:'dd/mm/yy'});
+        
+        $('#sucessoVenda').dialog({
+            autoOpen: false
+        });
+        
+        
+        $.expr[':'].textEquals = function (a, i, m) {
+            return $(a).text().match("^" + escape_regexp(m[3]) + "$");
+        };
+        
+        $("#venda-nome").autocomplete({
+            source: dataAutoCompleteCliente,
+            autoFill:true,	
+            mustMatch:true,           
+            formatItem: function(row, ui, total) {
+                return ui.item.value;
+            }, 
+            formatResult: function(row, ui) { 
+                return ui.item.value;
+            },
+            formatMatch: function(row, ui){
+                return ui.item.value;
+            },
+            change: function (event, ui) {
+                if (!ui.item) {
+                 $(this).val('');
+                }
+            },
+            select: function(e, ui) {                                  
+                if(ui.item.id == '') {
+                    $('#venda-id_cliente').val('');
+                    $("#venda-nome").val('');
+                } else {
+                    $('#venda-id_cliente').val(ui.item.id);
+                    result = ui.item.value.split(" - ");
+                    //alert(result[0]);
+                    $(this).val(result[0]);
+                    
+                }
+                return false;
+            }            
+       });
+        
+//        $('input#venda-nome').result(function(event, data, formatted) {
+//            if(!data) {
+//               $('#venda-id_cliente').val('');
+//               $("#venda-nome").val('');
+//           } else {
+//               $('#venda-id_cliente').val(data.id);
+//           }
+//           alert(data.id);
+//           });
+        
+        
+        $('#btGerarParcelas').click(function () {
+            podeGerar = true;
+            $('.fieldInvalid').removeClass('fieldInvalid');
+            
+            $('.geraParcela').each(function() {
+                if($(this).val() == '') {
+                    podeGerar = false;
+                    
+                    $(this).addClass('fieldInvalid');
+                    $('#sucessoVenda p').html('Campo(s) necessário(s) para gerar as parcelas, verifique!');                            
+                     $( "#sucessoVenda" ).dialog({
+                         modal: true,
+                         buttons: {
+                             Ok: function() {
+                                 $(this).dialog("close");                        
+                             }
+                         }
+                     });
+                     $('#sucessoVenda').dialog("open");
+                     return;
+                }
+            });
+            
+            if(podeGerar) {
+                numParcelas = 0;
+                $('.trParcela').remove();
+                
+                qtd_parcelas = parseInt($('#num_parcelas').val(),10);
+                data_venda = $('#venda-data_venda').val();
+                valor_desconto = moneyToFloat($('#venda-valor_desconto').val());
+                valor_venda = moneyToFloat($('#venda-valor_total_venda').val());
+                valor_entrada = moneyToFloat($('#valor_entrada').val());
+                
+                if(qtd_parcelas > 0) {
+                    if(valor_entrada == 0) {
+                        valor_parcela = (valor_venda - valor_desconto) / qtd_parcelas;
+                        
+                        for(i=0;i<qtd_parcelas;i++) {
+                            adicionarParcela(somaMesData(data_venda, i+1),floatToMoney(valor_parcela));
+                            if($('#venda-forma_pagamento').val() == 'CC') {
+                                $('#parcelas-'+numParcelas+'-data_vencimento').attr('readonly',true);
+                                $('#parcelas-'+numParcelas+'-data_vencimento').datepicker("destroy");
+                            } else {
+                                $('#parcelas-'+numParcelas+'-data_vencimento').attr('readonly',false);
+                                $('#parcelas-'+numParcelas+'-data_vencimento').datepicker({dateFormat:'dd/mm/yy'});
+                            }
+                        }
+                    } else {
+                        adicionarParcela(data_venda,floatToMoney(valor_entrada));
+                        
+                        valor_parcela = (valor_venda - valor_desconto - valor_entrada) / qtd_parcelas;
+                        
+                        for(i=0;i<qtd_parcelas;i++) {
+                            adicionarParcela(somaMesData(data_venda, i+1),floatToMoney(valor_parcela));
+                            if($('#venda-forma_pagamento').val() == 'CC') {
+                                $('#parcelas-'+numParcelas+'-data_vencimento').attr('readonly',true);
+                                $('#parcelas-'+numParcelas+'-data_vencimento').datepicker("destroy");
+                            } else {
+                                $('#parcelas-'+numParcelas+'-data_vencimento').attr('readonly',false);
+                                $('#parcelas-'+numParcelas+'-data_vencimento').datepicker({dateFormat:'dd/mm/yy'});
+                            }
+                        }
+                    }
+                }                
+            } 
+        });
+        
+        $('#formVenda').validate({            
+            submitHandler: function(form){
+                $('.fieldInvalid').removeClass('fieldInvalid');
+                salva = true;
+                $('.quantidade').each(function() {
+                    qtd = $(this).val();
+                    id_mercadoria = $(this).attr('id_mercadoria');
+                    qtd_estoque = $('#qtde_estoque_'+id_mercadoria).val();
+                    if(parseInt(qtd,10) > parseInt(qtd_estoque,10)) {
+                       salva = false;
+                       $(this).addClass('fieldInvalid');
+                       $('#sucessoVenda p').html('A quantidade escolhida não existe no estoque, verifique!');                            
+                        $( "#sucessoVenda" ).dialog({
+                            modal: true,
+                            buttons: {
+                                Ok: function() {
+                                    $(this).dialog("close");                        
+                                }
+                            }
+                        });
+                        $('#sucessoVenda').dialog("open");
+                        return;
+                    }
+                }); 
+                if($('.quantidade').length == 0) {
+                    salva = false;
+                    $(this).addClass('fieldInvalid');
+                    $('#sucessoVenda p').html('Selecione no MÍNIMO UMA Mercadoria!');                            
+                     $( "#sucessoVenda" ).dialog({
+                         modal: true,
+                         buttons: {
+                             Ok: function() {
+                                 $(this).dialog("close");                        
+                             }
+                         }
+                     });
+                     $('#sucessoVenda').dialog("open");
+                     return;
+                }
+                
+                if($('#venda-forma_pagamento').val() == 'CD' && $('#venda-tipo_pagamento').val() == 'P') {
+                    salva = false;
+                    $(this).addClass('fieldInvalid');
+                    $('#sucessoVenda p').html('Não é possível realizar um venda a PRAZO no Cartão de Débito!');                            
+                     $( "#sucessoVenda" ).dialog({
+                         modal: true,
+                         buttons: {
+                             Ok: function() {
+                                 $(this).dialog("close");                        
+                             }
+                         }
+                     });
+                     $('#sucessoVenda').dialog("open");
+                     return;
+                }
+                
+                if($('#venda-tipo_pagamento').val() == 'P' && ($('#venda-forma_pagamento').val() == 'CC' || $('#venda-forma_pagamento').val() == 'D')) {
+                    if($('.trParcela').length == 0) {
+                        salva = false;
+                        $(this).addClass('fieldInvalid');
+                        $('#sucessoVenda p').html('Não esqueça de gerar as parcelas para uma venda a PRAZO!');                            
+                         $( "#sucessoVenda" ).dialog({
+                             modal: true,
+                             buttons: {
+                                 Ok: function() {
+                                     $(this).dialog("close");                        
+                                 }
+                             }
+                         });
+                         $('#sucessoVenda').dialog("open");
+                         return;
+                    }
+                    
+                    dataVenda = dateToNumber(reverseDate($('#venda-data_venda').val()));
+                    $('.dataVencimentoParcela').each(function (){
+                        dataParcela = dateToNumber(reverseDate($(this).val()));
+                        if(dataParcela < dataVenda) {
+                            salva = false;
+                        $(this).addClass('fieldInvalid');
+                        $('#sucessoVenda p').html('A data de Vencimento da Parcela não pode ser INFERIOR a Data da Venda!');                            
+                         $( "#sucessoVenda" ).dialog({
+                             modal: true,
+                             buttons: {
+                                 Ok: function() {
+                                     $(this).dialog("close");                        
+                                 }
+                             }
+                         });
+                         $('#sucessoVenda').dialog("open");
+                            return;
+                        }
+                    });
+                }
+                if(salva){
+                    jQuery(form).ajaxSubmit({
+                        dataType:  'json', 
+                        success: function(r){
+                            if(r.tipo == 'sucesso'){                    
+                                $('#sucessoVenda p').html(r.msg);                            
+                                $( "#sucessoVenda" ).dialog({
+                                    modal: true,
+                                    buttons: {
+                                        Ok: function() {
+                                            $(this).dialog("close");
+                                            window.location = r.url;
+                                        }
+                                    }
+                                });
+                                $('#sucessoVenda').dialog("open");
+                                //$('#divMsg').html(r.msg)
+                                //window.location = r.url;
+                            } else {
+                                $('#sucessoVenda p').html(r.msg);                            
+                                $( "#sucessoVenda" ).dialog({
+                                    modal: true,
+                                    buttons: {
+                                        Ok: function() {
+                                            $(this).dialog("close");
+                                            window.location = r.url;
+                                        }
+                                    }
+
+                                });
+                                $('#sucessoVenda').dialog("open");
+                            }
+
+                        } 
+                    });
+                }
+            }
+        });
+        
+        
+        
+        $('#btVoltarVenda').click(function(){
+            $('#ui-tabs-1').load('/venda/index/menu/1');
+        });
+        
+        
+        $('#btModalMercadoria').click(function(){            
+            openModalPesquisaMercadoria();
+        });
+        
+//        var html;
+//        
+//        html = "<div class='formfield'>" +
+//            "<label for=''>Produto:</label>" +
+//            "<input class='required' id='produto' name='produto' type='text' size='50'/>" +
+//            "<label style='width: 100px' for=''>&nbsp;&nbsp;Quantidade:</label>" +
+//            "<input class='required' id='qtde' name='qtde' type='text' size='5 value=''/>" +
+//            "<a id='btRemover' onClick='removerItem(this)' style='cursor: pointer'>" +
+//            "&nbsp;&nbsp;<img src='/img/symbol_remove.png' width='30' height='30' title='Remover Produto' />" +
+//            "</a>" +
+//            "</div>";
+//        
+//        $('#btAdicionar').click(function(){
+//            $("#teste").append(html);
+//        });
+
+        mostrarParcelas();
+        <?php foreach($this->itensVenda as $item) { ?>
+            callBackPesquisarMercadoria(<?=$item['id_mercadoria']?>, '<?=$item['descricao']?>', <?=$item['valor_unitario']?>, <?=$item['qtde_estoque']?>, <?=$item['quantidade']?>);
+        <?php } ?>  
+            
+        <?php foreach($this->duplicatas as $parcela) { ?>
+            adicionarParcela('<?=$this->String($parcela['data_vencimento'])->reverseDate()?>', '<?=$this->String($parcela['valor_total'])->floatToMoney()?>');
+            if($('#venda-forma_pagamento').val() == 'CC') {
+                $('#parcelas-'+numParcelas+'-data_vencimento').attr('readonly',true);
+                $('#parcelas-'+numParcelas+'-data_vencimento').datepicker("destroy");
+            } else {
+                $('#parcelas-'+numParcelas+'-data_vencimento').attr('readonly',false);
+                $('#parcelas-'+numParcelas+'-data_vencimento').datepicker({dateFormat:'dd/mm/yy'});
+            }
+        <?php } ?>    
+    });
+    
+    function escape_regexp(text) {
+        return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    }
+    
+        
+    function removerItem(obj) {
+        $(obj).parent().remove();
+        //alert("a");
+    }
+    
+    function mostrarParcelas() {
+        if($('#venda-tipo_pagamento').val() == 'P' && ($('#venda-forma_pagamento').val() == 'CC' || $('#venda-forma_pagamento').val() == 'D')) {
+            $('.trParcela').remove();
+            $('#parcelas').show();
+            if($('#venda-forma_pagamento').val() == 'D') {
+                $('#campo_valor_entrada').show();
+            } else {
+                $('#campo_valor_entrada').hide();
+                $('#valor_entrada').val(0);
+            }
+        } else {
+            $('.trParcela').remove();
+            $('#parcelas').hide();
+        }
+    }
+    
+    function removeMercadoria(obj) {
+        $('#sucessoVenda p').html('Deseja realmente remover essa Mercadoria da listagem?');                            
+        $( "#sucessoVenda" ).dialog({
+            modal: true,
+            buttons: {
+                "Não": function() {
+                    $(this).dialog("close");                                        
+                },
+                "Sim": function() {
+                    $(obj).parent().parent().remove();
+                    atualizarTotal();
+                    $('.trParcela').remove();
+                    $(this).dialog("close");
+                }
+            }
+        });
+        $('#sucessoVenda').dialog("open"); 
+        
+        
+    }
+    
+    function adicionarParcela(data_vencimento, valor_parcela) {
+        numParcelas++;
+        htmlParcela = '<tr id="tr_parcela_'+numParcelas+'" class="trParcela">'                                  
+            + '<td>'
+            + '<input class="required dataVencimentoParcela" id="parcelas-'+numParcelas+'-data_vencimento" name="parcelas['+numParcelas+'][data_vencimento]" value="'+data_vencimento+'" type="text" size="21"/>'
+            + '</td>'
+
+            + '<td>'
+            + '<input class="required money" readonly="true" id="parcelas-'+numParcelas+'-valor_total" name="parcelas['+numParcelas+'][valor_total]" value="'+valor_parcela+'" type="text" size="21"/>'
+            + '</td>'                                   
+
+            + '</tr>';
+
+        $("#tblParcelas tr:last").after(htmlParcela);
+        
+        $('#parcelas-'+numParcelas+'-valor_total').maskMoney({
+            allowZero:true,
+            decimal:",", 
+            thousands:".", 
+            defaultZero:false
+        });        
+    }
+    
+    /** funcao que trata o retorno da selecao de uma mercadoria na modal */
+    function callBackPesquisarMercadoria(id_mercadoria, descricao, preco_venda_unitario, qtde_estoque, quantidade){                      
+        preco = floatToMoney(preco_venda_unitario);
+        
+        if($('#tr_mercadoria_'+id_mercadoria).length > 0){
+            $('#sucessoVenda p').html('As Mercadorias que já estão na lista não serão adicionadas novamente!');                            
+            $( "#sucessoVenda" ).dialog({
+                modal: true,
+                buttons: {
+                    Ok: function() {
+                        $(this).dialog("close");                        
+                    }
+                }
+            });
+            $('#sucessoVenda').dialog("open");
+        } else {
+            htmlMercadoria = '<tr id="tr_mercadoria_'+id_mercadoria+'">'
+                        
+                + '<td style="text-align: left">'
+                + '<label>'+descricao+'</label>'
+                + '<input type="hidden" name="item-venda['+id_mercadoria+'][id_mercadoria]" value="'+id_mercadoria+'"/>'
+                + '<input type="hidden" id="qtde_estoque_'+id_mercadoria+'" value="'+qtde_estoque+'"/>'
+                + '</td>'
+                                  
+                + '<td>'
+                + '<label style="width: 100px" for="">Qtde.:</label>' 
+                + '<input id_mercadoria="'+id_mercadoria+'" class="required numeric quantidade" onchange="atualizarTotal();verificaEstoque('+id_mercadoria+');" id="item-venda-'+id_mercadoria+'-quantidade" name="item-venda['+id_mercadoria+'][quantidade]" value="'+quantidade+'" type="text" size="5"/>'
+                + '<label style="width: 100px" for="">&nbsp;&nbsp;Estoque: '+qtde_estoque+'</label>'
+                + '</td>'
+                                   
+                + '<td>'
+                + '<label style="width: 100px" for="">R$:</label>'
+                + '<input class="required" readonly="true" onblur="atualizarTotal()" id="item-venda-'+id_mercadoria+'-valor_unitario" name="item-venda['+id_mercadoria+'][valor_unitario]" value="'+preco+'" type="text" size="21"/>'
+                + '</td>'                                   
+                                   
+                + '<td>'
+                + "<a id='btRemover' onClick='removeMercadoria(this)' style='cursor: pointer'>" 
+                + "&nbsp;&nbsp;<img src='/img/symbol_remove.png' width='30' height='30' title='Remover Mercadoria' />" 
+                + "</a>"   
+                + '</td>'
+                                  
+                + '</tr>';
+                       
+            $("#tblMercadorias tr:last").after(htmlMercadoria);
+            
+            /** Força novamento o inicio das máscaras */
+            $('.numeric').numeric();            
+            $('#item-venda-'+id_mercadoria+'-valor_unitario').maskMoney({
+                allowZero:true,
+                decimal:",", 
+                thousands:".", 
+                defaultZero:false
+            });
+            
+            atualizarTotal();
+        }
+    }
+    
+    function verificaEstoque(id_mercadoria) {
+        $('#item-venda-'+id_mercadoria+'-quantidade').removeClass('fieldInvalid');
+        
+        quantidade = $('#item-venda-'+id_mercadoria+'-quantidade').val();
+        quantidade = parseInt(quantidade, 10);
+        estoque = $('#qtde_estoque_'+id_mercadoria).val();
+        estoque = parseInt(estoque, 10);
+        
+        if(quantidade > estoque) {
+            $('#sucessoVenda p').html('Não existe essa quantidade em Estoque, verifique!');                            
+            $( "#sucessoVenda" ).dialog({
+                modal: true,
+                buttons: {
+                    Ok: function() {
+                        $(this).dialog("close");                        
+                    }
+                }
+            });
+            $('#sucessoVenda').dialog("open");
+            $('#item-venda-'+id_mercadoria+'-quantidade').addClass('fieldInvalid');            
+        }
+    }
+    
+    function atualizarTotal() {
+        valorTotal = 0.0;
+        
+        $('.quantidade').each(function() {
+            id_mercadoria = $(this).attr('id_mercadoria');
+            
+            quantidade = $('#item-venda-'+id_mercadoria+'-quantidade').val();
+            quantidade = parseInt(quantidade, 10);
+            
+            preco = $('#item-venda-'+id_mercadoria+'-valor_unitario').val();
+            valor_unitario = moneyToFloat(preco);
+            
+            valorTotal = valorTotal + (quantidade * valor_unitario);
+        });
+        
+        valorTotal = floatToMoney(valorTotal);
+        $('#venda-valor_total_venda').val(valorTotal);
+    }
+    
+</script>

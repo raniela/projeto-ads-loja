@@ -290,5 +290,59 @@ class VendaController extends Zend_Controller_Action
             echo Zend_Json::encode($json);
         }
     }
+    
+    public function consultarAction()
+    {
+        $this->getHelper('layout')->disableLayout();
+        
+        /** Traz os cados do cliente para utilizar no autocomplete */
+        $this->view->dataAutoCompleteCliente = $this->clienteDbTable->getDataAutoCompleteClienteFormulario();
+        
+        /** Possiveis itens que a venda possui */
+        $this->view->itensVenda = array();
+        
+        /** Possiveis duplicatas que a venda possui */
+        $this->view->duplicatas = array();
+        
+        //se já tem id é edição, tem que mandar os dados desse id pra view
+        if ($this->_getParam('id_venda')) {
+            /**
+             * Edição do registro
+             */
+            $this->view->titulo = "Consultar Venda";
+            $id = $this->_getParam('id_venda');
+            //busca todos os campos da venda 
+            $venda = $this->vendaDbTable->getDataGrid(array('id_venda' => $id));
+            
+            //aqui ele manda pra view 
+            $this->view->venda = $venda[0];
+            //aqui ele esta editando a data_venda através de uma helper para padrao brasileiro e mandando pra view
+            $this->view->venda['data_venda'] = $this->_helper->util->reverseDate($this->view->venda['data_venda']);
+            
+            //aqui ele está editando valor_total_venda com uma helper para money
+            $this->view->venda['valor_total_venda'] = $this->_helper->util->floatToMoney($this->view->venda['valor_total_venda']);
+            
+            //aqui ele está editando valor_total_venda com uma helper para money
+            $this->view->venda['valor_desconto'] = $this->_helper->util->floatToMoney($this->view->venda['valor_desconto']);
+            
+            //Recupera os itens da venda
+            $this->view->itensVenda = $this->_helper->util->utf8Encode($this->itemVendaDbTable->getItensVenda($this->view->venda['id_venda']));
+            
+            if($this->view->venda['tipo_pagamento'] == 'P') {
+                 $this->view->duplicatas = $this->duplicataDbTable->fetchAll("id_venda = '{$this->view->venda['id_venda']}'")->toArray();
+            }
+        } else {
+            /**
+             * Cadastro do registro
+             */
+            //se for cadastro é só enviar o titulo
+            $this->view->titulo = "Cadastro de Vendas";
+        }        
+        $sessao = new Zend_Session_Namespace();
+        if (isset($sessao->dados)) {
+            $this->view->usuario = $sessao->dados;
+            unset($sessao->dados);
+        }
+    }
 
 }
