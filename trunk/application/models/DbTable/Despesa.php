@@ -53,4 +53,31 @@ class Application_Model_DbTable_Despesa extends Zend_Db_Table_Abstract
             return true;
         }                
     }
+    
+    public function getDataToRelatorioMovimentacaoCaixa($params = null)
+    {
+        //obj select
+        $select = $this->getDefaultAdapter()->select();
+        //from despesa
+        $select->from(array('d' => $this->_name));                
+        
+        //join parcela
+        //$dadosParcela = array('valorPago' => new Zend_Db_Expr("COALESCE(SUM(p.valor_pago),0)"));
+        $select->joinInner(array('p' => 'parcela'),'d.id_despesa = p.id_despesa', array('valor_pago','data_pagamento'));                                        
+        
+        //ordenacao
+        $select->order('descricao');
+       
+        //filtros do formulario                
+        if(!empty($params['data_inicial'])) {
+            $select->where("p.data_pagamento >= '{$params['data_inicial']}'");
+        }
+        
+        if(!empty($params['data_final'])) {
+            $select->where("p.data_pagamento <= '{$params['data_final']}'");
+        }
+        
+        //die($select);
+        return $select->query()->fetchAll();
+    }
 }

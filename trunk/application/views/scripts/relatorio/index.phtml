@@ -1,11 +1,5 @@
 <h1><?php echo $this->titulo; ?></h1>
 
-<!--<h01>Relatório Teste</h01>
-
-<div class="formbutton">
-    <button type="button" id="btGerarRelatorioTeste">Gerar Relatório</button> 
-</div>-->
-
 <div id="menuRelatorios">
     <h3>Relatório de Mercadorias</h3>
     <div>
@@ -26,44 +20,26 @@
         </form>
     </div>
     
-    <h3>Section 2</h3>
-    <div>
-    <p>
-    Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
-    purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
-    velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
-    suscipit faucibus urna.
-    </p>
-    </div>
-    <h3>Section 3</h3>
-    <div>
-    <p>
-    Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
-    Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
-    ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
-    lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
-    </p>
-    <ul>
-    <li>List item one</li>
-    <li>List item two</li>
-    <li>List item three</li>
-    </ul>
-    </div>
-    <h3>Section 4</h3>
-    <div>
-    <p>
-    Cras dictum. Pellentesque habitant morbi tristique senectus et netus
-    et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
-    faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
-    mauris vel est.
-    </p>
-    <p>
-    Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus.
-    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-    inceptos himenaeos.
-    </p>
-    </div>
+    <h3>Relatório de Movimentação do Caixa</h3>
+        <div>
+            <p>
+                <form action="" method=get">            
+                     <div class="formfield">
+                        <label for="dataInicialMovimentacaoCaixa">Data Inicial:</label>
+                        <input id="dataInicialMovimentacaoCaixa" name="dataInicialMovimentacaoCaixa" type="text">               
+                    </div>
 
+                    <div class="formfield">
+                        <label for="dataFinalMovimentacaoCaixa">Data Final:</label>
+                        <input id="dataFinalMovimentacaoCaixa" name="dataFinalMovimentacaoCaixa" type="text">             
+                    </div>
+
+                    <div class="formbutton">
+                        <button id="btGerarRelatorioMovimentacaoCaixa" type="button">Gerar Relatório</button>                
+                    </div>
+                </form>            
+            </p>
+        </div>    
 </div>
 
 <script>
@@ -91,17 +67,19 @@
         $("#btGerarRelatorioMercadorias").click(function(){
             id_tipomercadoria = $('#relatorio_mercadoria-id_tipomercadoria').val();
             id_subtipomercadoria = $('#relatorio_mercadoria-id_subtipomercadoria').val();
-            window.open('/relatorio/relatorio-mercadorias/id_tipomercadoria/' + id_tipomercadoria + '/id_subtipomercadoria/' + id_subtipomercadoria);
-            //$('#ui-tabs-12').load('/relatorio/teste');
-            //alert('teste');
+            window.open('/relatorio/relatorio-mercadorias/id_tipomercadoria/' + id_tipomercadoria + '/id_subtipomercadoria/' + id_subtipomercadoria);            
         });
         
-        
-        $("#btGerarRelatorioTeste").click(function(){
-            window.open('/relatorio/teste');
-            //$('#ui-tabs-12').load('/relatorio/teste');
-            //alert('teste');
-        });
+        //Data utilizadaos no relatorio de Movimentacao do Caixa
+        $('#dataInicialMovimentacaoCaixa').mask("99/99/9999");
+        $('#dataFinalMovimentacaoCaixa').mask("99/99/9999");
+        $("#dataInicialMovimentacaoCaixa").datepicker({dateFormat:'dd/mm/yy'});     
+        $("#dataFinalMovimentacaoCaixa").datepicker({dateFormat:'dd/mm/yy'});
        
+        $("#btGerarRelatorioMovimentacaoCaixa").click(function(){
+            data_inicial = urlencodeGet($('#dataInicialMovimentacaoCaixa').val());
+            data_final = urlencodeGet($('#dataFinalMovimentacaoCaixa').val());
+            window.open('/relatorio/relatorio-movimentacao-caixa/data_inicial/' + data_inicial + '/data_final/' + data_final);           
+        });
     });
 </script>
