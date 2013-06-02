@@ -68,4 +68,36 @@ class Application_Model_DbTable_Venda extends Zend_Db_Table_Abstract
         
         return $select->query()->fetchAll();
     }
+    
+    public function getDataToRelatorioMovimentacaoCaixa($params = null)
+    {
+        //obj select
+        $select = $this->getDefaultAdapter()->select();
+        //from contato
+        $select->from(array('v' => $this->_name));
+        
+        //join cliente
+        $select->joinInner(array('c' => 'cliente'),'c.id_cliente = v.id_cliente', array('nome'));
+        
+        //join duplicata
+        $dadosDuplicata = array('valorRecebido' => new Zend_Db_Expr("COALESCE(SUM(d.valor_pago),0)"));
+        $select->joinInner(array('d' => 'duplicata'),'d.id_venda = v.id_venda', $dadosDuplicata);                        
+        
+        //agrupamento
+        $select->group('v.id_venda');
+        
+        //ordenacao
+        $select->order('data_venda DESC');
+       
+        //filtros do formulario                
+        if(!empty($params['data_inicial'])) {
+            $select->where("d.data_pagamento >= '{$params['data_inicial']}'");
+        }
+        
+        if(!empty($params['data_final'])) {
+            $select->where("d.data_pagamento <= '{$params['data_final']}'");
+        }
+        
+        return $select->query()->fetchAll();
+    }
 }

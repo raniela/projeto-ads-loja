@@ -9,6 +9,9 @@ class RelatorioController extends Zend_Controller_Action {
         $this->tipoMercadoriaDbTable = new Application_Model_DbTable_Tipomercadoria();
         $this->mercadoriaDbTable = new Application_Model_DbTable_Mercadoria();
         
+        $this->vendaDbTable = new Application_Model_DbTable_Venda();        
+        $this->despesaDbTable = new Application_Model_DbTable_Despesa();        
+        
         $this->view->dadosComboTipoMercadoria = $this->_helper->util->utf8Encode($this->tipoMercadoriaDbTable->getDataCombo());        
     }
 
@@ -27,7 +30,8 @@ class RelatorioController extends Zend_Controller_Action {
                
         
     }
-     public function relatorioMercadoriasAction() {
+    
+    public function relatorioMercadoriasAction() {
         //desabilita layout
         $this->getHelper('layout')->disableLayout();
                
@@ -41,5 +45,31 @@ class RelatorioController extends Zend_Controller_Action {
         die();*/
         
         $this->view->dataMercadorias = $dataRelatorioMercadorias;
+    }
+    
+    public function relatorioMovimentacaoCaixaAction() {
+        //desabilita layout
+        $this->getHelper('layout')->disableLayout();
+               
+        $params = $this->_getAllParams();
+        
+        $params['data_inicial'] = $this->_helper->util->urldecodeGet($this->_getParam('data_inicial'));
+        $params['data_inicial'] = trim($this->_helper->util->reverseDate($params['data_inicial']));
+        
+        $params['data_final'] = $this->_helper->util->urldecodeGet($this->_getParam('data_final'));
+        $params['data_final'] = trim($this->_helper->util->reverseDate($params['data_final']));  
+                
+        
+        $dataRelatorioVendas = $this->vendaDbTable->getDataToRelatorioMovimentacaoCaixa($params);
+        $dataRelatorioDespesas = $this->despesaDbTable->getDataToRelatorioMovimentacaoCaixa($params);
+        
+//        echo "<pre>";
+//        print_r($dataRelatorioDespesas);
+//        
+//        die();
+        
+        $this->view->dataVendas = $dataRelatorioVendas;
+        $this->view->dataDespesas = $dataRelatorioDespesas;
+        $this->view->params = $params;
     }
 }
