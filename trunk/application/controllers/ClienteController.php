@@ -60,7 +60,7 @@ class ClienteController extends Zend_Controller_Action {
 
         $select->order('nome');
 
-        $clientes = $select->query()->fetchAll();
+        $clientes = $this->_helper->util->utf8Encode($select->query()->fetchAll());
 
         $paginator = Zend_Paginator::factory($clientes);
         $paginator->setCurrentPageNumber($this->_getParam('page'));
@@ -79,7 +79,7 @@ class ClienteController extends Zend_Controller_Action {
             $this->view->titulo = "Edição de Usuario";
             $id = $this->_getParam('id');
             $cliente = $this->clienteDbTable->fetchRow("id_cliente = {$id}")->toArray();
-            $this->view->cliente = $cliente;
+            $this->view->cliente = $this->_helper->util->utf8Encode($cliente);
         } else {
             /**
              * Cadastro do registro
@@ -108,7 +108,7 @@ class ClienteController extends Zend_Controller_Action {
 
         try {
 
-            $data = $this->getRequest()->getPost('c');
+            $data = $this->_helper->util->utf8Decode($this->getRequest()->getPost('c'));
 
             if ($this->_getParam('id')) {
                 $id = $this->_getParam('id');

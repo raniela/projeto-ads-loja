@@ -46,7 +46,8 @@ class IndexController extends Zend_Controller_Action {
                     /* Direciona o usuário para a página de abertura do sistema*/
                     $this->_redirect('/index/tabs');
                     $usuario = Zend_Auth::getInstance()->getIdentity();
-
+                    
+                    $this->view->usuario = $usuario;
                     /* $ident = $auth->getIdentity();
                       Zend_Debug::dump($ident);
                       die; */

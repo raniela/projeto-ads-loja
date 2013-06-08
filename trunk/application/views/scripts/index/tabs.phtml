@@ -1,13 +1,22 @@
+<?php     
+    $usuario = Zend_Auth::getInstance()->getIdentity();
+    $tipo_usuario = $usuario->tipo_usuario;       
+?>
+
 <div id="tabs">
     <ul>
         <li><a href="/venda/index/menu/1">Vendas</a></li>
         <li><a href="/cliente/index/menu/1">Clientes</a></li>
-        <li><a href="/usuario/index/menu/1">Usuários</a></li>
+        <?php if($tipo_usuario == 'A') {?>
+            <li><a href="/usuario/index/menu/1">Usuários</a></li>
+        <?php } ?>
         <li><a href="/fornecedor/index/menu/1">Fornecedores</a></li>
-        <li><a href="/compra/index/menu/1">Compras</a></li>
-        <li><a href="/subtipo/index/menu/1">Subtipos de Mercadoria</a></li>
-        <li><a href="/tipo/index/menu/1">Tipos de Mercadoria</a></li>
-        <li><a href="/mercadoria/index/menu/1">Mercadorias</a></li>
+        <?php if($tipo_usuario == 'A') {?>
+            <li><a href="/compra/index/menu/1">Compras</a></li>        
+            <li><a href="/subtipo/index/menu/1">Subtipos de Mercadoria</a></li>
+            <li><a href="/tipo/index/menu/1">Tipos de Mercadoria</a></li>
+            <li><a href="/mercadoria/index/menu/1">Mercadorias</a></li>
+        <?php } ?>
         <li><a href="/tipo-despesa/index/menu/1">Tipos de Despesa</a></li>
         <li><a href="/despesa/index/menu/1">Despesas</a></li>
         <li><a href="/manutencao/index/menu/1">Manutenção</a></li>
