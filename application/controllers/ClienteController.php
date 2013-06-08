@@ -152,10 +152,18 @@ class ClienteController extends Zend_Controller_Action {
 
             echo Zend_Json::encode($json);
         } catch (Exception $exc) {
-            $json = array(
-                'tipo' => 'erro',
-                'msg' => $exc->getMessage()
-            );
+            //mensagem que retorna no json para javascript que no caso é de erro 
+            if($exc->getCode() == 23000) {
+                $json = array(
+                    'tipo' => 'erro',
+                    'msg' => 'Esse registro possui vínculos e não pode ser excluído'
+                );
+            } else {
+                $json = array(
+                    'tipo' => 'erro',
+                    'msg' => $exc->getMessage()
+                );
+            }
 
             echo Zend_Json::encode($json);
         }
