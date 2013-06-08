@@ -1,17 +1,67 @@
 <h1><?php echo $this->titulo; ?></h1>
 
-<h01>Gerar backup do banco</h01>
+<!--<h01>Gerar backup do banco</h01>
 
 <div class="formbutton">
     <button type="button" id="btGerarBackup">Gerar</button> 
+</div>-->
+
+<div id="menuManutencao">
+    <h3>Gerar Backup do Banco</h3>
+    <div id="containerGerarBackup" class="formbutton">
+        <button type="button" id="btGerarBackup">Gerar</button> 
+    </div>
+    
+    <h3>Restaurar Backup do Banco</h3>
+    <div>
+        <form enctype="multipart/form-data" action="" id="formRestaurar" method="post">
+            <input class="input" type="file" name="fileUploadBackup" id="fileUploadBackup"/>	
+        </form>
+    </div>    
+</div>
+
+<div id="backupSucesso">
+    <p></p>    
 </div>
 
 <script>
     $(function(){
         //Melhora aparência dos botões
         $( "input[type=submit], button" ).button();
+        
+        $("#menuManutencao").accordion();
+        
         $("#btGerarBackup").click(function(){
-            $('#ui-tabs-11').load('/manutencao/backup');
+            $('#containerGerarBackup').load('/manutencao/backup');
+        });
+        
+        $( "#backupSucesso" ).dialog({
+            autoOpen: false
+        });
+        
+        
+        $('#fileUploadBackup').change(function(){
+            url_original = $('#formRestaurar').attr('action');
+            //ShowMsgAguarde();
+            $('#formRestaurar').ajaxSubmit({
+                url: '/manutencao/upload-backup/',
+                success: function(data){                
+                    $('#formRestaurar').attr('action', url_original);
+                    $('#formRestaurar').removeAttr('target');
+                    //$('#div-imagem-anexo').html(data);
+                    $('#backupSucesso').html(data);                            
+                    $('#backupSucesso').dialog({
+                        modal: true,
+                        buttons: {
+                            "Ok": function() {
+                                $( this ).dialog( "close" );
+                            }
+                        }
+                    });
+                    $('#backupSucesso').dialog("open");
+                }
+            });
+            //CloseMsgAguarde();
         });
        
     });
