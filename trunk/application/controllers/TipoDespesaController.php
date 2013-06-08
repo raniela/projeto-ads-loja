@@ -178,10 +178,17 @@ class TipoDespesaController extends Zend_Controller_Action {
             echo Zend_Json::encode($json);
         } catch (Exception $exc) {
             //mensagem que retorna no json para javascript que no caso é de erro 
-            $json = array(
-                'tipo' => 'erro',
-                'msg' => $exc->getMessage()
-            );
+            if($exc->getCode() == 23000) {
+                $json = array(
+                    'tipo' => 'erro',
+                    'msg' => 'Esse registro possui vínculos e não pode ser excluído'
+                );
+            } else {
+                $json = array(
+                    'tipo' => 'erro',
+                    'msg' => $exc->getMessage()
+                );
+            }
 
             //envia a mensagem 
             echo Zend_Json::encode($json);
