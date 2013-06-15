@@ -100,4 +100,30 @@ class Application_Model_DbTable_Venda extends Zend_Db_Table_Abstract
         
         return $select->query()->fetchAll();
     }
+    
+    public function getDataToRelatorioVendas($params = null)
+    {
+        //obj select
+        $select = $this->getDefaultAdapter()->select();
+        //from contato
+        $select->from(array('v' => $this->_name));
+        
+        //join cliente
+        $select->joinInner(array('c' => 'cliente'),'c.id_cliente = v.id_cliente', array('nome'));                                                      
+        
+        //ordenacao
+        $select->order('id_venda');
+       
+        //filtros do formulario                
+        if(!empty($params['data_inicial'])) {
+            $select->where("v.data_venda >= '{$params['data_inicial']}'");
+        }
+        
+        if(!empty($params['data_final'])) {
+            $select->where("v.data_venda <= '{$params['data_final']}'");
+        }
+        
+        return $select->query()->fetchAll();
+    }
+    
 }

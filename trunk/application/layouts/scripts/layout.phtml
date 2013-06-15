@@ -44,6 +44,11 @@
                             <?php
                                 $usuario = Zend_Auth::getInstance()->getIdentity();
                                 echo $usuario->login;
+                                if($usuario->tipo_usuario == 'A') {
+                                    echo " (ADMIN)";
+                                } else {
+                                    echo " (COMUM)";
+                                }
                             ?>
                             
                             <b>Último Login: </b>
