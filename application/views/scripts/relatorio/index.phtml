@@ -39,7 +39,36 @@
                     </div>
                 </form>            
             </p>
-        </div>    
+        </div>
+    
+    <h3>Relatório de Vendas</h3>
+        <div>
+            <p>
+                <form action="" method=get">   
+                    <div class="formfield">       
+                        <label class="field"> Período: </label>
+                        <input type="radio" name="tx_filtrar_por" value="H" id="tx_filtrar_por_hoje"><label class="field">Hoje</label>
+                        <input type="radio" name="tx_filtrar_por" value="M" id="tx_filtrar_por_mes"><label class="field">Mês Atual</label>
+                        <input type="radio" name="tx_filtrar_por" value="" id="tx_filtrar_por_especificar" checked><label class="field">Especificar</label>
+
+                    </div>
+                    
+                     <div class="formfield">
+                        <label for="dataInicialVendas">Data Inicial:</label>
+                        <input id="dataInicialVendas" name="dataInicialVendas" type="text">               
+                    </div>
+
+                    <div class="formfield">
+                        <label for="dataFinalVendas">Data Final:</label>
+                        <input id="dataFinalVendas" name="dataFinalVendas" type="text">             
+                    </div>
+
+                    <div class="formbutton">
+                        <button id="btGerarRelatorioVendas" type="button">Gerar Relatório</button>                
+                    </div>
+                </form>            
+            </p>
+        </div> 
 </div>
 
 <script>
@@ -80,6 +109,42 @@
             data_inicial = urlencodeGet($('#dataInicialMovimentacaoCaixa').val());
             data_final = urlencodeGet($('#dataFinalMovimentacaoCaixa').val());
             window.open('/relatorio/relatorio-movimentacao-caixa/data_inicial/' + data_inicial + '/data_final/' + data_final);           
+        });
+        
+        //Datas utilizada no relatorio de Vendas
+        $('#dataInicialVendas').mask("99/99/9999");
+        $('#dataFinalVendas').mask("99/99/9999");
+        $("#dataInicialVendas").datepicker({dateFormat:'dd/mm/yy'});     
+        $("#dataFinalVendas").datepicker({dateFormat:'dd/mm/yy'});
+        
+        $('#tx_filtrar_por_hoje').click(function(){
+            $('#dataInicialVendas').val('<?php echo date('d'). '/'.date('m'). '/'. date('Y')?>');
+            $('#dataFinalVendas').val('<?php echo date('d'). '/'.date('m'). '/'. date('Y')?>');
+
+            $('#dataInicialVendas').attr('disabled',true);
+            $('#dataFinalVendas').attr('disabled',true);                    
+        });
+
+        $('#tx_filtrar_por_mes').click(function(){
+            $('#dataFinalVendas').val('<?php echo date('d'). '/'.date('m'). '/'. date('Y')?>');
+            $('#dataInicialVendas').val('<?php echo '01'. '/'.date('m'). '/'. date('Y')?>');
+
+            $('#dataInicialVendas').attr('disabled',true);
+            $('#dataFinalVendas').attr('disabled',true);
+        });
+
+        $('#tx_filtrar_por_especificar').click(function(){
+            $('#dataInicialVendas').val('');
+            $('#dataFinalVendas').val('');
+
+            $('#dataInicialVendas').attr('disabled',false);
+            $('#dataFinalVendas').attr('disabled',false);                    
+        });
+        
+        $("#btGerarRelatorioVendas").click(function(){
+            data_inicial = urlencodeGet($('#dataInicialVendas').val());
+            data_final = urlencodeGet($('#dataFinalVendas').val());
+            window.open('/relatorio/relatorio-vendas/data_inicial/' + data_inicial + '/data_final/' + data_final);           
         });
     });
 </script>

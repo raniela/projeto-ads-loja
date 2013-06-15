@@ -11,31 +11,56 @@
             <input type="password" name="senha" id="senha" maxlength="45"/>
         </div>
         <div class="formbutton">
-            <input type="submit" value="Entrar"/>
+            <input id="btEnviar" type="submit" value="Entrar"/>
         </div>
     </form>
 </div>
 
-<script>
-    
+<div id="mensagem">
+    <p></p>
+</div>
+
+<script>    
     $(function(){
         //Melhora aparência dos botões
         $( "input[type=submit], button" ).button();
+        
+        $( "#mensagem" ).dialog({
+            autoOpen: false
+        });
+        
         $('#btEnviar').click(function(){
             if($('#login').val() == ""){
-                alert('Informe um login');
+                $('#mensagem p').html("Informe um login");                            
+                $('#mensagem').dialog({
+                    modal: true,
+                    buttons: {
+                        Ok: function() {
+                            $(this).dialog("close");                            
+                        }
+                    }
+                });
+                $('#mensagem').dialog("open");                
                 $('#login').focus();
                 return false;
             }
             
             if($('#senha').val() == ""){
-                alert('Informe uma senha');
+                $('#mensagem p').html("Informe uma senha");                            
+                    $('#mensagem').dialog({
+                        modal: true,
+                        buttons: {
+                            Ok: function() {
+                                $(this).dialog("close");                            
+                        }
+                    }
+                });
+                $('#mensagem').dialog("open");                
                 $('#senha').focus();
                 return false;
             }
             
     
         });              
-    })
-    
+    })    
 </script>

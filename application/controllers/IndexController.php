@@ -14,7 +14,15 @@ class IndexController extends Zend_Controller_Action {
 
             $login = $this->getRequest()->getPost('login');
             $senha = $this->getRequest()->getPost('senha');
-
+            
+            if(empty($login)) {
+                $login = "";
+            }
+            
+            if(empty($senha)) {
+                $senha = " ";
+            }
+            
             /* usa a classe Zend_Auth_Adapter_DbTable na autenticação */
             $authAdapterDbTable = new Zend_Auth_Adapter_DbTable($db);
 

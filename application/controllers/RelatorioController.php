@@ -72,4 +72,22 @@ class RelatorioController extends Zend_Controller_Action {
         $this->view->dataDespesas = $dataRelatorioDespesas;
         $this->view->params = $params;
     }
+    
+    public function relatorioVendasAction() {
+        //desabilita layout
+        $this->getHelper('layout')->disableLayout();
+               
+        $params = $this->_getAllParams();
+        
+        $params['data_inicial'] = $this->_helper->util->urldecodeGet($this->_getParam('data_inicial'));
+        $params['data_inicial'] = trim($this->_helper->util->reverseDate($params['data_inicial']));
+        
+        $params['data_final'] = $this->_helper->util->urldecodeGet($this->_getParam('data_final'));
+        $params['data_final'] = trim($this->_helper->util->reverseDate($params['data_final']));  
+                        
+        $dataRelatorioVendas = $this->vendaDbTable->getDataToRelatorioVendas($params);                       
+        
+        $this->view->dataVendas = $dataRelatorioVendas;        
+        $this->view->params = $params;
+    }
 }

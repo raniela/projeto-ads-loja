@@ -145,13 +145,21 @@ class UsuarioController extends Zend_Controller_Action
         try {
             $id = $this->getRequest()->getParam('id_usuario');
             
-            $this->usuarioDbTable->delete("id_usuario = $id");
+            $usuario = Zend_Auth::getInstance()->getIdentity();
+            
+            if($id == $usuario->id_usuario) {
+                $json = array(
+                    'tipo' => 'sucesso',
+                    'msg' => 'Atenção, não é possível excluir seu próprio usuário!',
+                );
+            } else {
+                $this->usuarioDbTable->delete("id_usuario = $id");
 
-            $json = array(
-                'tipo' => 'sucesso',
-                'msg' => 'Registro excluído com sucesso!',
-            );
-
+                $json = array(
+                    'tipo' => 'sucesso',
+                    'msg' => 'Registro excluído com sucesso!',
+                );
+            }
             echo Zend_Json::encode($json);
         } catch (Exception $exc) {
             $json = array(
