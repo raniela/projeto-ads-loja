@@ -249,6 +249,10 @@
     function callBackPesquisarMercadoriaF(id_mercadoria, descricao, qtde_estoque, valor_unitario, quantidade){                      
         preco = floatToMoney(valor_unitario);
         
+        if(quantidade == undefined){
+            quantidade = 1;
+        }
+        
         if($('#tr_mercadoria_'+id_mercadoria).length > 0){
             $('#sucessoCompra p').html('As Mercadorias que já estão na lista não serão adicionadas novamente!');                            
             $( "#sucessoCompra" ).dialog({
@@ -270,7 +274,7 @@
                 + '</td>'
                                   
                 + '<td>'
-                + '<label style="width: 100px" for="">Qtde.:</label>' 
+                + '<label style="width: 100px" for="">Quantidade:</label>' 
                 + '<input id_mercadoria="'+id_mercadoria+'" class="required numeric quantidade" onchange="atualizarTotalF();" id="item-compra-'+id_mercadoria+'-quantidade" name="item-compra['+id_mercadoria+'][quantidade]" value="'+quantidade+'" type="text" size="5"/>'
                 + '<label style="width: 100px" for="">&nbsp;&nbsp;Estoque: '+qtde_estoque+'</label>'
                 + '</td>'
